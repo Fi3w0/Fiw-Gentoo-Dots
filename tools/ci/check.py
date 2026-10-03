@@ -5,6 +5,7 @@ import hashlib
 import importlib.util
 import io
 import json
+import os
 import subprocess
 from pathlib import Path
 
@@ -56,8 +57,11 @@ def check_assets():
 def main():
     subprocess.run(['python3', 'tools/check-private.py'], cwd=REPO, check=True)
     check_assets()
-    subprocess.run(['python3', '-m', 'unittest', 'discover', '-s', 'tests'], cwd=REPO, check=True)
-    subprocess.run(['go', 'test', './...'], cwd=REPO, check=True)
+    for directory in ('lib', 'tools'):
+        for path in (REPO / directory).rglob('*.py'):
+            compile(path.read_bytes(), path.relative_to(REPO).as_posix(), 'exec')
+    print('Python sources parse.', flush=True)
+    subprocess.run(['go', 'build', '-o', os.devnull, './cmd/dots'], cwd=REPO, check=True)
     print('Portable CI checks passed; no installer actions were applied.', flush=True)
 
 

@@ -7,7 +7,7 @@ Its `.forgejo/workflows/ci.yml` runs these checks:
 - Publishable files pass the privacy scanner.
 - The prebuilt TUI matches `VERSION`, its frontend source and binary checksums.
 - Pinned editor assets match their recorded fingerprints.
-- Python and Go checks pass using temporary homes and fixtures.
+- Python sources parse and the Go frontend compiles.
 
 Successful push or manual runs then synchronize Git branches and tags to
 [Fi3w0/Fiw-Gentoo-Dots on GitHub](https://github.com/Fi3w0/Fiw-Gentoo-Dots).

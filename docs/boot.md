@@ -74,11 +74,5 @@ roots and unsigned boot. Encrypted, UKI-only, BIOS and signing workflows can
 keep their existing loader. Secure Boot being active stops unsigned deployment
 before changes. Full boot execution on a fresh installation remains unverified.
 
-## Retained helpers
-
-`optional/fiw-limine-splice` is the earlier helper for Fiw's marker/snippet
-layout. It is retained for manual use and is not installed by this deployment
-or by the GRUB variant. The new refresh helper manages its own separate config.
-
 `optional/fiw-cachy-patch` refreshes the custom kernel patch; it does not select
-a bootloader. See the [helper list](scripts.md) before using legacy helpers.
+a bootloader. See the [helper list](scripts.md) before using it.

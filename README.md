@@ -9,178 +9,109 @@
 ![Gentoo](https://img.shields.io/badge/Gentoo-54487A?logo=gentoo&logoColor=white)
 ![KDE Plasma](https://img.shields.io/badge/KDE_Plasma-1D99F3?logo=kde&logoColor=white)
 ![License](https://img.shields.io/badge/license-MIT-purple)
-![Status](https://img.shields.io/badge/status-work_in_progress-yellow)
 
-[KDE styling](docs/kde-style.md) · [Shortcuts](docs/shortcuts.md) · [Packages](#package-sections) · [Setup](docs/setup.md)
+[Setup](docs/setup.md) · [Shortcuts](docs/shortcuts.md) · [Styling](docs/kde-style.md) · [Packages](#packages)
 
 </div>
 
----
+## About
 
-## Overview
+My personal Gentoo restoration kit, mainly for my own devices:
 
-A personal Gentoo rice and restoration kit: my Plasma styling, current
-shortcuts, package lists and the app preferences I use every day. Built
-mainly for my own devices, with deliberate updates and a preview before
-anything is applied.
+- KDE colours, fonts, cursor, window styling and my exact keybinds.
+- Separate package lists and individually optional app configs.
+- Fish, Kitty and Neovim preferences that work across compositors.
+- Binaries preferred, with a small deliberate source-build list.
+- A Bubble Tea chooser with a final preview, conflict prompts and backups.
 
-- **KDE first:** colours, fonts, cursor, window styling and current keybinds.
-- **Pick what you want:** package sections and individually optional app configs.
-- **Portable terminals:** Fish, Kitty and Neovim work across compositors.
-- **Binaries preferred:** a small source list, with a choice before extra builds.
-- **Keep your edits:** conflict prompts, backups and `.new` proposals on updates.
+Package and boot actions still need a first run on a fresh Gentoo installation.
 
-**Work in progress:** configuration restoration and the TUI are ready for review.
-Package and boot execution need a supervised first run on a fresh Gentoo system.
-The existing installation has not been changed by creating this repo.
+## Screenshots
+
+### Desktop
+
+![Fiw's Gentoo desktop](assets/Screenshots/Main-screen.png)
+
+My running desktop. Wallpapers and panels stay local; the saved Fastfetch
+preset uses the built-in Gentoo logo.
+
+### Installer
+
+![Terminal installer options](assets/Screenshots/Install-script.png)
 
 ## Start
 
 ```sh
-git clone --branch v0.1.2 https://git.fiwlabs.dev/fiwdev/Fiw-Gentoo-Dots.git
+git clone https://git.fiwlabs.dev/fiwdev/Fiw-Gentoo-Dots.git
 cd Fiw-Gentoo-Dots
 ./install
 ```
 
-The Bubble Tea interface offers a preset, package sections, individual app
-configs, kernel/bootloader choices, individual Flatpaks, optional services and
-a final preview. Enter saves without applying. `r` runs the full restore;
-`a` restores configs, `i` installs Portage packages, `f` installs Flatpaks,
-`v` enables selected services and `b` deploys the selected bootloader.
-`e` updates configs while preserving local edits; `p` opens pending changes
-for a diff and individual acceptance. `u` opens config backups for preview
-and restoration. `n` saves a [named device selection](docs/devices.md), available
-alongside Stock and Fiw's Ryzen on the preset screen. Apply actions finish
-with a [combined report](docs/reports.md) of outcomes and remaining setup.
-Linux amd64 includes a verified prebuilt TUI; Git and Python 3.11+ are enough.
-Go 1.24+ is the source fallback for changed frontend code or other platforms.
-Saved selections are reused on subsequent launches. See the
-[snapshot and build instructions](docs/releases.md).
+Start from an installed Gentoo system. Linux amd64 includes a prebuilt TUI;
+Git and Python 3.11+ are enough. Go 1.24+ is needed only for source builds.
+Choose your packages/configs, review the plan, then select an action.
+Enter saves your choices without applying them.
 
-Forgejo is the primary repository; [GitHub](https://github.com/Fi3w0/Fiw-Gentoo-Dots)
-receives branches and tags through the [CI mirror workflow](docs/ci.md) after
-the checks pass.
-
-For a preview without building the TUI:
-
-```sh
-./install --plan --profile stock
-./install --plan --profile fiw-ryzen
-```
-
-See [setup](docs/setup.md) for installation steps and draft limitations.
+See [setup and TUI keys](docs/setup.md), [tagged snapshots](docs/releases.md),
+[saved devices](docs/devices.md), [config updates](docs/updates.md) and
+[backup restoration](docs/backups.md).
 
 ## Presets
 
 | Preset | Build settings | Kernel |
 |---|---|---|
-| Stock | Portable compiler settings; binary packages preferred | Generic Gentoo binary kernel |
-| Fiw's Ryzen | Current Ryzen 9900X/Zen 5 tuning and NVIDIA configuration | Tested custom kernel plus generic binary fallback |
+| Stock | Portable settings, binaries preferred | Generic Gentoo binary kernel |
+| Fiw's Ryzen | Ryzen 9900X / Zen 5 tuning and NVIDIA | Custom kernel + binary fallback |
 
-Both deliberately compile Fastfetch, jq and zip. Custom kernels and their
-matching external modules compile when selected. Other packages prefer
-Portage binaries or upstream `-bin` packages. Additional source builds
-require a compile-or-skip choice, with compilation recommended; skipped
-dependencies also cause dependent requested applications to be skipped.
+Both compile Fastfetch, jq and zip. Selected custom kernels and modules also
+compile. Other source builds require a compile-or-skip choice; missing/skipped
+packages appear in the [final report](docs/reports.md).
 
-The custom kernel snapshot currently targets 7.2.8 with the tested
-CachyOS 7.2.7-1 patch. Refresh it explicitly when updating the snapshot.
-
-## Package sections
+## Packages
 
 | List | Contents |
 |---|---|
-| [kde](packages/kde.list) | Plasma, Plasma Login Manager, desktop components and supporting fonts |
-| [fiw-apps](packages/fiw-apps.list) | Everyday apps including Dolphin, Ark, Gwenview and Spectacle |
-| [cli](packages/cli.list) | Shell, terminal utilities and FFmpeg |
+| [kde](packages/kde.list) | Plasma, Plasma Login Manager and desktop components |
+| [fiw-apps](packages/fiw-apps.list) | Everyday apps, including Dolphin, Ark, Gwenview and Spectacle |
+| [cli](packages/cli.list) | Shell and terminal utilities |
 | [dev](packages/dev.list) | Languages and development tools |
-| [gaming](packages/gaming.list) | Steam, Proton, Prism, MangoHud and r2modman; Sober is in flatpaks/gaming.list |
-| [system](packages/system.list) | System utilities; the selected kernels are added by the installer |
-| [fiw-tools](packages/fiw-tools.list) | FiwNode binary release, Apdatifier Gentoo, OpenDeck and Music Presence |
-| [tidewm](packages/tidewm.list) | Optional compositor and supporting utilities |
+| [gaming](packages/gaming.list) | Steam, Proton, Prism, MangoHud and r2modman |
+| [system](packages/system.list) | System utilities; kernels follow your selection |
+| [fiw-tools](packages/fiw-tools.list) | FiwNode, Apdatifier Gentoo, OpenDeck and Music Presence |
+| [tidewm](packages/tidewm.list) | Optional compositor and supporting tools |
 
-Filelight, NVIDIA drivers and Btrfs tools are separate extras. Ext4 does not
-require Btrfs tools. LocalSend and Sober are individually optional Flatpaks
-in the TUI, grouped with apps and gaming respectively.
-Limine and GRUB are optional alternatives; retaining the current loader is
-the default. Kernel choice is independent of bootloader choice. Deployment
-previews the target ESP and firmware choices; see [boot setup](docs/boot.md).
-The [package audit](docs/package-audit.md) accounts for all current explicit
-selections. [TideWM](docs/tidewm.md) remains an optional source build.
+Filelight, NVIDIA and Btrfs tools are separate extras. Sober and LocalSend are
+individually optional Flatpaks. Limine and GRUB are optional; keeping the
+existing bootloader is the default. See [boot setup](docs/boot.md).
 
 ## Configs
 
-Every config is independently selectable, even when its package section is
-unchecked—for example, to configure apps already installed. KDE appearance covers
-colours, fonts, cursor and window decorations, with matching GTK preferences.
-Dolphin styling has its own checkbox. Panels, widgets and
-wallpapers are excluded. All portable current shortcut assignments,
-including disabled defaults, are captured with their launchers and helpers;
-unused machine-specific activity IDs are omitted.
+Every [app config](docs/app-configs.md) is independently optional. KDE styling
+includes matching GTK preferences; autostart has its own checkbox.
+Neovim's Catppuccin theme, VS Code's ayu MiDas theme, fonts and cursor assets
+are bundled with their licences. Accounts and sessions stay local.
 
-Fish, Kitty and Neovim are usable without KDE or KWin. Fastfetch keeps the
-tree layout and purple colours with the built-in Gentoo logo. MangoHud and
-Vesktop preferences are included; browser profiles, chat sessions and account
-data are excluded. App autostart is a separate optional selection.
-Neovim's Catppuccin and VS Code's ayu MiDas themes are bundled with their
-respective optional configs, so their styling is available on fresh devices.
-Ark, Gwenview and Prism preferences are individually optional too; see
-[app configs and requirements](docs/app-configs.md). Each config's required
-packages appear in the final preview without changing package selections.
-
-Spotify is stock by default. The existing customization scripts remain an
-[explicit optional step](docs/spotify.md). [Firefox-Privacy](docs/firefox.md)
-is also optional.
-
-Existing differences prompt apply-or-keep and get backups when replaced.
-Updates leave locally edited configs intact and write the proposal to `.new`.
-The TUI can [review and accept each proposal](docs/updates.md), backing up the
-current file and refusing proposals whose target changed since creation.
-KConfig patches preserve unrelated keys and groups; JSON patches preserve
-unrelated preferences and login data already on the target device.
-The TUI can [restore user config backups](docs/backups.md), with a preview,
-confirmation and a new backup of the replaced current files.
-
-## Project layout
-
-```text
-cmd/dots/     Bubble Tea selection interface
-configs/      Optional KDE and app configs
-packages/     Categorized Portage package lists
-presets/      Stock and Fiw's Ryzen defaults
-portage/      Build settings and binary preferences
-overlay/      Selected additional packages
-optional/     Kernel, boot and app helpers
-flatpaks/     Separate optional Flatpak lists
-docs/         Setup, decisions and asset credits
-```
+Local edits are preserved on updates, with proposed changes saved as `.new`
+for review. Replaced files get backups. Spotify stays stock;
+[customization](docs/spotify.md) and [Firefox-Privacy](docs/firefox.md) are
+explicit optional steps.
 
 ## Maintenance
 
 ```sh
-python3 tools/capture.py       # recapture only the explicit allowlist
-python3 tools/capture.py --config kde-shortcuts  # refresh only shortcuts
-python3 tools/capture.py --config kitty neovim  # refresh only these apps
+python3 tools/capture.py --config kde-shortcuts
+python3 tools/capture.py --config kitty neovim
 python3 tools/check-private.py
-python3 -m unittest discover -s tests
-go test ./...
 ```
 
-Missing selected overlays are staged before package resolution. Optional
-service presets enable audio, networking, Bluetooth and power profiles for
-the next boot/login. See [setup](docs/setup.md) and the [helper list](docs/scripts.md).
-
-Review captures before committing. `local/` and built binaries are ignored.
-See [selective recapture](docs/capture.md) for supported selections and pinned assets.
-This repo starts with fresh history. Third-party theme/cursor assets retain
-their licence notices; overlay ebuilds retain their original notices.
+Review `git diff` before committing. See [capture options](docs/capture.md)
+and [helper commands](docs/scripts.md). Device choices and local files are
+gitignored. Forgejo is primary; [GitHub](https://github.com/Fi3w0/Fiw-Gentoo-Dots)
+receives branches and tags automatically after [CI checks](docs/ci.md).
 
 ## License
 
-Original code and configuration contributions are licensed under [MIT](LICENSE).
-Bundled third-party assets, fonts, patches and ebuilds keep their own licences
-and attribution; see [asset credits](docs/assets.md).
-
----
+Original code and configs: [MIT](LICENSE). Bundled third-party assets keep
+their own licences; see [credits](docs/assets.md).
 
 <div align="center">A personal Gentoo setup by Fiw.</div>
