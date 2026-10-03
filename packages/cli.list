@@ -1,0 +1,19 @@
+# cli — explicit selections; Portage resolves dependencies.
+app-shells/fish
+app-misc/fastfetch
+app-editors/neovim
+sys-process/btop
+sys-fs/duf
+sys-apps/ripgrep
+net-misc/yt-dlp
+app-arch/7zip
+app-arch/zip
+sys-apps/smartmontools
+net-misc/openssh
+app-misc/jq
+sys-apps/eza
+sys-apps/bat
+app-portage/portage-utils
+sys-apps/usbutils
+sys-apps/hdparm
+media-video/ffmpeg

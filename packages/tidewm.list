@@ -1,0 +1,5 @@
+# tidewm — explicit selections; Portage resolves dependencies.
+gui-wm/tidewm::fiw-dots
+gui-apps/xwayland-satellite::guru
+gui-apps/wlr-randr::guru
+gui-apps/grim

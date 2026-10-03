@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+# fiw-cachy-patch <kernel-version>
+# Regenerates the CachyOS patch for gentoo-kernel: diff of CachyOS's released
+# source tree (github.com/CachyOS/linux, tag cachyos-<ver>-<n>) against vanilla
+# kernel.org <ver>. Installs it and unlocks that version in the build guard.
+set -euo pipefail
+
+ver=${1:?usage: fiw-cachy-patch <kernel-version, e.g. 7.2.8>}
+major=${ver%%.*}
+patchdir=/etc/portage/patches/sys-kernel/gentoo-kernel
+guard=/etc/portage/env/sys-kernel/gentoo-kernel
+name_cfg=/etc/kernel/config.d/99-name.config
+work=$(mktemp -d /var/tmp/fiw-cachy.XXXXXX)
+trap 'rm -rf "$work"' EXIT
+cd "$work"
+
+# Newest CachyOS release for this kernel version (cachyos-7.2.8-1, -2, ...)
+tag=$(curl -fsSL "https://api.github.com/repos/CachyOS/linux/releases?per_page=50" |
+	grep -oE "\"tag_name\": *\"cachyos-${ver//./\\.}-[0-9]+\"" |
+	grep -oE "cachyos-[0-9.]+-[0-9]+" | sort -V | tail -1)
+[[ -n $tag ]] || { echo "CachyOS has no release for $ver yet" >&2; exit 1; }
+echo "Using $tag"
+
+curl -fsSLO "https://cdn.kernel.org/pub/linux/kernel/v${major}.x/linux-${ver}.tar.xz"
+curl -fsSLO "https://cdn.kernel.org/pub/linux/kernel/v${major}.x/sha256sums.asc"
+grep " linux-${ver}.tar.xz\$" sha256sums.asc | sha256sum -c -
+curl -fsSLO "https://github.com/CachyOS/linux/releases/download/${tag}/${tag}.tar.gz"
+
+mkdir a b
+tar -xf "linux-${ver}.tar.xz" -C a --strip-components=1
+tar -xf "${tag}.tar.gz" -C b --strip-components=1
+grep -qx "SUBLEVEL = ${ver##*.}" b/Makefile || { echo "$tag is not $ver" >&2; exit 1; }
+
+rc=0
+diff -ruN --no-dereference -x .git a b >"${tag}.patch" || rc=$?
+((rc <= 1)) || { echo "diff failed" >&2; exit 1; }
+
+mkdir -p "$patchdir"
+rm -f "$patchdir"/0100-cachyos-*.patch
+install -m644 "${tag}.patch" "$patchdir/0100-${tag}.patch"
+sed -i "s/^FIW_CACHY_PV=.*/FIW_CACHY_PV=${ver}/" "$guard"
+# kernel name: <ver>-<cachyos release>-<rest>, only the release number changes
+sed -i -E "s/^CONFIG_LOCALVERSION=\"-[0-9]+-/CONFIG_LOCALVERSION=\"-${tag##*-}-/" "$name_cfg"
+grep ^CONFIG_LOCALVERSION "$name_cfg"
+echo "Installed $patchdir/0100-${tag}.patch; guard now allows ${ver}."
+echo "Next: emerge -1 =sys-kernel/gentoo-kernel-${ver}"

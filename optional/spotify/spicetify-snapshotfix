@@ -1,0 +1,38 @@
+#!/usr/bin/env python3
+# Spotify 1.2.96 runs its UI from xpui-snapshot.js, but spicetify 2.45.1 injects
+# the custom-app code (Marketplace) only into xpui-modules.js:
+#   - Spicetify._renderNavLinks(...)          top-bar buttons
+#   - spicetifyAppN=X.lazy(...)               the app's page component
+#   - (0,y.jsx)(R,{path:"/app/*",...})        the app's route
+# Copy each missing fragment into the snapshot after the same preceding code.
+# Run after every `spicetify apply`. Idempotent.
+import re, sys
+
+xpui = "/opt/spotify/spotify-client/Apps/xpui"
+mod_path, snap_path = f"{xpui}/xpui-modules.js", f"{xpui}/xpui-snapshot.js"
+mod, snap = open(mod_path).read(), open(snap_path).read()
+
+patterns = [
+    r",Spicetify\._renderNavLinks\(\[[^\]]*\], *(?:true|false)\)",
+    r",spicetifyApp\d+=\w+\.lazy\(\(\(\)=>\w+\.e\(\"spicetify-routes-[^\"]+\"\)\.then\(\w+\.bind\(\w+,\"spicetify-routes-[^\"]+\"\)\)\)\)",
+    r",\(0,\w+\.jsx\)\([\w.]+,\{path:\"/[^\"]+/\*\",pathV6:\"/[^\"]+/\*\",element:\(0,\w+\.jsx\)\(spicetifyApp\d+,\{\}\)\}\)",
+]
+
+added = 0
+for pat in patterns:
+    for m in re.finditer(pat, mod):
+        frag = m.group(0)
+        if frag in snap:
+            continue
+        anchor = mod[m.start() - 120:m.start()]
+        if snap.count(anchor) != 1:
+            sys.exit(f"snapshotfix: no unique anchor for {frag[:60]}..., Spotify changed; fix by hand")
+        i = snap.index(anchor) + len(anchor)
+        snap = snap[:i] + frag + snap[i:]
+        print("snapshotfix: added", frag.lstrip(",")[:90])
+        added += 1
+
+if added:
+    open(snap_path, "w").write(snap)
+else:
+    print("snapshotfix: xpui-snapshot.js already has all spicetify custom-app hooks")

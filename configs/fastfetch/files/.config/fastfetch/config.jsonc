@@ -1,0 +1,139 @@
+{
+  "$schema": "https://github.com/fastfetch-cli/fastfetch/raw/dev/doc/json_schema.json",
+  "logo": {
+    "source": "gentoo",
+    "type": "builtin",
+    "padding": {
+      "top": 1,
+      "right": 3
+    }
+  },
+  "display": {
+    "separator": " ",
+    "color": {
+      "keys": "#9D8FD9",
+      "title": "#DDDAEC"
+    }
+  },
+  "modules": [
+    {
+      "type": "title",
+      "format": "{user-name}@{host-name}"
+    },
+    "break",
+    {
+      "type": "custom",
+      "format": "\u001b[1;38;2;157;143;217m  system"
+    },
+    {
+      "type": "os",
+      "key": "  \u251c \uf30d os      ",
+      "keyColor": "#9D8FD9"
+    },
+    {
+      "type": "kernel",
+      "key": "  \u251c \uf013 kernel  ",
+      "keyColor": "#9D8FD9"
+    },
+    {
+      "type": "command",
+      "key": "  \u251c \udb82\udce8 profile ",
+      "keyColor": "#9D8FD9",
+      "text": "readlink /etc/portage/make.profile | sed 's#.*/profiles/default/linux/amd64/##'"
+    },
+    {
+      "type": "packages",
+      "key": "  \u251c \udb80\udfd6 pkgs    ",
+      "keyColor": "#9D8FD9"
+    },
+    {
+      "type": "de",
+      "key": "  \u251c \uf488 desktop ",
+      "keyColor": "#9D8FD9"
+    },
+    {
+      "type": "wm",
+      "key": "  \u251c \udb81\uddb2 session ",
+      "keyColor": "#9D8FD9"
+    },
+    {
+      "type": "terminal",
+      "key": "  \u251c \uf489 term    ",
+      "keyColor": "#9D8FD9"
+    },
+    {
+      "type": "shell",
+      "key": "  \u2514 \uf120 shell   ",
+      "keyColor": "#9D8FD9"
+    },
+    "break",
+    {
+      "type": "custom",
+      "format": "\u001b[1;38;2;185;174;230m  hardware"
+    },
+    {
+      "type": "host",
+      "key": "  \u251c \udb80\udf22 board   ",
+      "keyColor": "#B9AEE6"
+    },
+    {
+      "type": "cpu",
+      "key": "  \u251c \uf4bc cpu     ",
+      "keyColor": "#B9AEE6",
+      "format": "{1}"
+    },
+    {
+      "type": "gpu",
+      "key": "  \u251c \udb82\udcae gpu     ",
+      "keyColor": "#B9AEE6",
+      "format": "{2}",
+      "hideType": "integrated"
+    },
+    {
+      "type": "memory",
+      "key": "  \u251c \udb80\udf5b mem     ",
+      "keyColor": "#B9AEE6"
+    },
+    {
+      "type": "disk",
+      "key": "  \u251c \udb80\udeca disk    ",
+      "keyColor": "#B9AEE6",
+      "folders": "/",
+      "showReadOnly": false
+    },
+    {
+      "type": "display",
+      "key": "  \u2514 \udb80\udf79 display ",
+      "keyColor": "#B9AEE6",
+      "compactType": "original-with-refresh-rate"
+    },
+    "break",
+    {
+      "type": "custom",
+      "format": "\u001b[1;38;2;221;218;236m  uptime"
+    },
+    {
+      "type": "command",
+      "key": "  \u251c \udb86\udd9f os age  ",
+      "keyColor": "#DDDAEC",
+      "text": "birth=$(stat -c %W /); now=$(date +%s); echo $(( (now - birth) / 86400 )) days"
+    },
+    {
+      "type": "uptime",
+      "key": "  \u251c \udb81\udd1b uptime  ",
+      "keyColor": "#DDDAEC"
+    },
+    {
+      "type": "command",
+      "key": "  \u2514 \udb82\udd54 time    ",
+      "keyColor": "#DDDAEC",
+      "text": "date '+%I:%M %p \u00b7 %Y-%m-%d'"
+    },
+    "break",
+    {
+      "type": "colors",
+      "paddingLeft": 2,
+      "symbol": "circle"
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+llvm-core/llvm          heavy.conf notmpfs.conf
+llvm-core/clang         heavy.conf notmpfs.conf
+dev-qt/qtwebengine      heavy.conf notmpfs.conf
+net-libs/nodejs         heavy.conf
+dev-lang/spidermonkey   heavy.conf
+media-libs/embree       heavy.conf notmpfs.conf
+media-gfx/blender       heavy.conf notmpfs.conf
+media-gfx/openvdb       heavy.conf notmpfs.conf

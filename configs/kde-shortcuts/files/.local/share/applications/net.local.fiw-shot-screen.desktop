@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Screenshot (monitor)
+Exec="{{HOME}}/.local/bin/fiw-shot" screen
+Icon=spectacle
+NoDisplay=true
+StartupNotify=false
+X-KDE-GlobalAccel-CommandShortcut=true

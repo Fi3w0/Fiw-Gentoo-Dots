@@ -1,0 +1,3 @@
+games-util/steam-launcher wayland -trayicon
+# Breaks the gpm <-> ncurses[abi_x86_32] dependency cycle
+sys-libs/ncurses -gpm

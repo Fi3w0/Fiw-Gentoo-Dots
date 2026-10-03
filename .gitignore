@@ -1,0 +1,7 @@
+/local/
+/build/
+__pycache__/
+*.pyc
+.DS_Store
+AGENTS.md
+agents.md

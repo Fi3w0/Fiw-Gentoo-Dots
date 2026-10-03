@@ -1,0 +1,2 @@
+# No dial-up support. ModemManager stays: required by USE=bluetooth.
+net-misc/networkmanager -ppp

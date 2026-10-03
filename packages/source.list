@@ -1,0 +1,4 @@
+# Deliberately compile these small tools. Kernel/modules are added when selected.
+app-misc/fastfetch
+app-misc/jq
+app-arch/zip

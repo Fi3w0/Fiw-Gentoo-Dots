@@ -1,0 +1,59 @@
+{
+  "kde-style": {
+    "label": "KDE colours, fonts, cursor and decorations",
+    "group": "kde",
+    "kde": true
+  },
+  "kde-shortcuts": {
+    "label": "All KDE shortcuts + keyboard layouts + screenshot helpers",
+    "group": "kde",
+    "kde": true
+  },
+  "dolphin": {
+    "label": "Dolphin toolbar, sidebar and transparency",
+    "group": "fiw-apps",
+    "kde": true
+  },
+  "spectacle": {
+    "label": "Spectacle capture preferences",
+    "group": "fiw-apps",
+    "kde": true
+  },
+  "fish": {
+    "label": "Fish aliases, greeting and notification settings",
+    "group": "cli"
+  },
+  "kitty": {
+    "label": "Kitty lavender profiles",
+    "group": "fiw-apps"
+  },
+  "neovim": {
+    "label": "Neovim transparent purple style",
+    "group": "cli"
+  },
+  "fastfetch": {
+    "label": "Fastfetch tree layout with Gentoo logo",
+    "group": "cli"
+  },
+  "mangohud": {
+    "label": "MangoHud appearance and detail presets",
+    "group": "gaming"
+  },
+  "vesktop": {
+    "label": "Vesktop preferences (no account data)",
+    "group": "fiw-apps"
+  },
+  "vscode": {
+    "label": "VS Code preferences",
+    "group": "fiw-apps"
+  },
+  "autostart": {
+    "label": "Optional application autostart",
+    "group": null,
+    "kde": true
+  },
+  "fonts": {
+    "label": "JetBrainsMono Nerd Font Mono (four styles)",
+    "group": null
+  }
+}

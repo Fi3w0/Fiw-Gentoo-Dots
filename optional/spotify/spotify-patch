@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+# SpotX-Bash + spicetify (Marketplace) on Gentoo's media-sound/spotify.
+# Run as your regular user after the first setup and after every Spotify update.
+# Write access comes from an ACL (/etc/portage/env/media-sound/spotify).
+set -euo pipefail
+
+client=/opt/spotify/spotify-client
+spotx_url=https://raw.githubusercontent.com/SpotX-Official/SpotX-Bash/main/spotx.sh
+spicetify=$HOME/.spicetify/spicetify
+
+[[ -w $client/Apps/xpui.spa && -w $client/spotify ]] || {
+	echo "No write access to $client. Run once as root: the optional Spotify ACL setup described in docs/spotify.md" >&2
+	exit 1
+}
+
+echo "Closing Spotify..."
+pkill -TERM -x spotify 2>/dev/null || true
+for _ in {1..40}; do pgrep -x spotify >/dev/null || break; sleep 0.25; done
+pgrep -x spotify >/dev/null && { echo "Spotify is still running, close it and retry." >&2; exit 1; }
+
+# Undo spicetify first, so xpui.spa is stock or SpotX-only again.
+"$spicetify" restore >/dev/null 2>&1 || true
+
+# SpotX backups left over from an older Spotify build (Portage replaced the
+# client but not the unowned *.bak files) must not be restored by --force.
+bak=$client/spotify.bak xbak=$client/Apps/xpui.bak
+if [[ -e $bak || -e $xbak ]]; then
+	cur=$("$client/spotify" --version 2>/dev/null | awk '{print $3}')
+	old=$("$bak" --version 2>/dev/null | awk '{print $3}' || true)
+	if [[ ! -f $bak || ! -f $xbak || $cur != "$old" ]]; then
+		arch=${XDG_STATE_HOME:-$HOME/.local/state}/spotify-patch/stale-$(date +%Y%m%d-%H%M%S)
+		mkdir -p "$arch"
+		mv -f -- "$bak" "$xbak" "$arch/" 2>/dev/null || true
+		echo "Moved stale SpotX backups to $arch"
+	fi
+fi
+
+tmp=$(mktemp --tmpdir spotx.XXXXXXXX.sh)
+trap 'rm -f -- "$tmp"' EXIT
+curl --proto '=https' --tlsv1.2 -fsSL "$spotx_url" -o "$tmp"
+echo "SpotX-Bash sha256: $(sha256sum "$tmp" | cut -d' ' -f1)"
+bash "$tmp" -f -P "$client" "$@"
+
+# Fresh spicetify backup of the SpotX-patched client, then apply.
+"$spicetify" clear >/dev/null 2>&1 || true
+"$spicetify" backup apply --no-restart
+# spicetify 2.45.1 patches custom apps (Marketplace) into xpui-modules.js only
+"$HOME/.local/bin/spicetify-snapshotfix"
+
+nohup spotify --enable-features=UseOzonePlatform --ozone-platform=wayland >/dev/null 2>&1 &
+echo "Done."

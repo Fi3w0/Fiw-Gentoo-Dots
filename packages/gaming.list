@@ -1,0 +1,9 @@
+# gaming — explicit selections; Portage resolves dependencies.
+games-util/gamemode
+games-action/prismlauncher
+games-util/mangohud
+games-util/steam-launcher
+games-util/game-device-udev-rules
+games-util/r2modman-bin::guru
+games-util/ge-proton-bin::fiw-dots
+games-util/proton-cachyos-slr-bin::fiw-dots

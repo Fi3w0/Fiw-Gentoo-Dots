@@ -1,0 +1,19 @@
+# fiw-apps — explicit selections; Portage resolves dependencies.
+app-editors/vscode
+net-im/telegram-desktop-bin
+media-sound/spotify
+media-video/obs-studio
+x11-terms/kitty
+media-video/mpv
+www-client/firefox-bin
+media-sound/cava
+net-im/vesktop-bin::guru
+kde-apps/dolphin
+kde-apps/gwenview
+kde-apps/ark
+kde-plasma/spectacle
+kde-plasma/plasma-systemmonitor
+kde-plasma/kinfocenter
+sys-block/partitionmanager
+gui-apps/wl-clipboard
+x11-libs/libnotify

@@ -1,0 +1,3 @@
+# fiw-tools — explicit selections; Portage resolves dependencies.
+app-misc/opendeck-bin::fiw-dots
+media-sound/music-presence-bin::fiw-dots

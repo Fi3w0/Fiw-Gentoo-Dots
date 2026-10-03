@@ -1,0 +1,16 @@
+# Installed as /etc/portage/env/sys-kernel/gentoo-kernel
+# /proc/version → "... (fiw@gentoo) ..."
+export KBUILD_BUILD_USER=fiw
+export KBUILD_BUILD_HOST=gentoo
+
+# The CachyOS patch is a diff against exactly one kernel version. Refuse to build
+# any other version until scripts/fiw-cachy-patch has regenerated it.
+# Versions the current patch is known to apply to (space separated).
+# 2026-09-26: CachyOS has no 7.2.8 yet; the 7.2.7-1 patch applies to 7.2.8 (3 hunks
+# with fuzz, checked by hand: only context shifted by 7.2.8's APX lines).
+FIW_CACHY_PV="7.2.7 7.2.8"
+pre_src_prepare() {
+	if [[ " ${FIW_CACHY_PV} " != *" ${PV} "* ]]; then
+		die "CachyOS patch is for ${FIW_CACHY_PV}, not ${PV}. Run: fiw-cachy-patch ${PV}"
+	fi
+}

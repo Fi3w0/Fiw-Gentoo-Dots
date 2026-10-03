@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Application
+Name=Spotify
+Exec=spotify --enable-features=UseOzonePlatform --ozone-platform=wayland
+X-GNOME-Autostart-enabled=true
+X-KDE-autostart-after=panel

@@ -1,0 +1,2 @@
+# Whole Plasma moves together; mixing 6.6/6.7 breaks. Drop once 6.7 is stable.
+kde-plasma/* ~amd64

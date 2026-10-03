@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+# fiw-shot: Spectacle in background mode (never opens the app window).
+# The shot goes straight to the clipboard, then a notification shows the
+# thumbnail (drag it into any app) with Save / Edit buttons.
+#
+#   fiw-shot region   Alt+S  select area (adjust with handles, Enter = take)
+#   fiw-shot screen   Alt+D  monitor under the cursor
+set -u
+
+mode=${1:-region}
+tmp_dir="${XDG_RUNTIME_DIR:-/tmp}/fiw-shot"   # tmpfs, gone at logout
+save_dir="$HOME/Pictures/Screenshots"
+
+case $mode in
+    region) flag=-r ;;
+    screen) flag=-m ;;
+    *) echo "usage: fiw-shot region|screen" >&2; exit 2 ;;
+esac
+
+mkdir -p "$tmp_dir"
+# keep the last 20 unsaved shots, drop older ones
+ls -1t "$tmp_dir"/*.png 2>/dev/null | tail -n +21 | xargs -r rm -f --
+
+name="Screenshot_$(date +%Y%m%d_%H%M%S).png"
+shot="$tmp_dir/$name"
+
+spectacle --background --nonotify $flag --output "$shot" 2>/dev/null
+[[ -s $shot ]] || exit 0    # Esc during selection: nothing to do
+
+wl-copy --type image/png < "$shot"
+
+action=$(notify-send --app-name=Screenshot --icon="$shot" \
+    --hint="variant:x-kde-urls:@as ['file://$shot']" \
+    --action=save=Save --action=edit=Edit \
+    "Copied to clipboard" "$name")
+
+case $action in
+    save)
+        mkdir -p "$save_dir"
+        cp -- "$shot" "$save_dir/$name"
+        notify-send --transient --app-name=Screenshot --icon="$save_dir/$name" \
+            --hint="variant:x-kde-urls:@as ['file://$save_dir/$name']" \
+            "Saved" "$save_dir/$name"
+        ;;
+    edit)
+        # Spectacle's editor; copy/save from there when done
+        spectacle --edit-existing "$shot"
+        ;;
+esac

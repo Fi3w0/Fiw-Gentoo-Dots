@@ -1,0 +1,15 @@
+# system — explicit selections; Portage resolves dependencies.
+sys-kernel/installkernel
+sys-kernel/linux-firmware
+sys-fs/dosfstools
+sys-apps/zram-generator
+net-misc/networkmanager
+app-admin/sudo
+app-portage/gentoolkit
+net-firewall/ufw
+sys-boot/efibootmgr
+net-wireless/bluez
+sys-power/power-profiles-daemon
+sys-apps/fwupd
+sys-apps/flatpak
+sys-fs/e2fsprogs

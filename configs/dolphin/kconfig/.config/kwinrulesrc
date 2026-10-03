@@ -1,0 +1,13 @@
+[General]
+rules=fiw-dolphin-opacity
+count=1
+
+[fiw-dolphin-opacity]
+Description=Dolphin transparency
+opacityactive=96
+opacityactiverule=2
+opacityinactive=92
+opacityinactiverule=2
+types=1
+wmclass=org.kde.dolphin
+wmclassmatch=1

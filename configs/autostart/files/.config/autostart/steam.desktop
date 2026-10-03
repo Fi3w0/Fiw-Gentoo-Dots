@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Application
+Name=Steam
+Exec=steam -silent
+X-GNOME-Autostart-enabled=true
+X-KDE-autostart-after=panel

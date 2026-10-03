@@ -1,0 +1,6 @@
+[org.kde.kdecoration2]
+BorderSize=NoSides
+BorderSizeAuto=false
+ShowToolTips=false
+library=org.kde.kwin.aurorae.v2
+theme=__aurorae__svg__Utterly-Round-Dark

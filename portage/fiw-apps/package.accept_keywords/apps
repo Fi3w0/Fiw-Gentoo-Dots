@@ -1,0 +1,19 @@
+media-video/obs-studio      ~amd64
+games-util/gamemode         ~amd64
+gui-wm/gamescope            ~amd64
+net-im/telegram-desktop-bin ~amd64
+dev-util/rustup             ~amd64
+sys-fs/duf                  ~amd64
+app-editors/micro           ~amd64
+games-util/mangohud ~amd64
+games-util/r2modman-bin ~amd64
+media-libs/imgui ~amd64
+media-libs/implot ~amd64
+games-util/game-device-udev-rules ~amd64
+
+games-util/steam-launcher ~amd64
+sys-libs/libudev-compat ~amd64
+net-im/vesktop-bin ~amd64
+gui-apps/xwayland-satellite ~amd64
+gui-apps/wlr-randr ~amd64
+

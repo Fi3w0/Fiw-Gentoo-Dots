@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Version=1.0
+Name=opendeck
+Comment=opendeckstartup script
+Exec=/usr/bin/opendeck --hide
+StartupNotify=false
+Terminal=false

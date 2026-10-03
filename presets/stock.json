@@ -1,0 +1,30 @@
+{
+  "name": "Stock",
+  "profile": "stock",
+  "groups": [
+    "system",
+    "kde",
+    "fiw-apps",
+    "cli",
+    "gaming"
+  ],
+  "configs": [
+    "kde-style",
+    "kde-shortcuts",
+    "dolphin",
+    "spectacle",
+    "fish",
+    "kitty",
+    "neovim",
+    "fastfetch",
+    "mangohud",
+    "vesktop",
+    "vscode",
+    "fonts"
+  ],
+  "kernel": "binary",
+  "bootloader": "keep",
+  "extras": [],
+  "firefox_privacy": false,
+  "spotify_custom": false
+}

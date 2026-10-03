@@ -1,0 +1,27 @@
+[General]
+rules=fiw-autostart-minimized-discord,fiw-autostart-minimized-opendeck,fiw-autostart-minimized-spotify
+count=3
+
+[fiw-autostart-minimized-discord]
+Description=Start Discord minimized
+minimize=true
+minimizerule=3
+types=1
+wmclass=discord
+wmclassmatch=1
+
+[fiw-autostart-minimized-opendeck]
+Description=Start OpenDeck minimized
+minimize=true
+minimizerule=3
+types=1
+wmclass=opendeck
+wmclassmatch=1
+
+[fiw-autostart-minimized-spotify]
+Description=Start Spotify minimized
+minimize=true
+minimizerule=3
+types=1
+wmclass=spotify
+wmclassmatch=1

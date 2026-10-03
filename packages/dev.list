@@ -1,0 +1,16 @@
+# dev — explicit selections; Portage resolves dependencies.
+dev-java/openjdk-bin:17
+dev-java/openjdk-bin:21
+dev-java/openjdk-bin:25
+dev-lang/go
+net-libs/nodejs
+dev-util/rustup
+app-containers/docker
+app-containers/docker-compose
+dev-vcs/git
+dev-util/github-cli
+dev-qt/qtbase
+dev-qt/qtdeclarative
+media-video/pipewire
+dev-db/sqlite
+llvm-core/clang
