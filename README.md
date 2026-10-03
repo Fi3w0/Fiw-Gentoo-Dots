@@ -1,5 +1,7 @@
 <div align="center">
 
+<img src="assets/images/Gentoo.png" alt="Gentoo logo" width="110" />
+
 # Fiw-Gentoo-Dots
 
 **My Gentoo setup, ready to make home feel like home again.**
@@ -29,7 +31,7 @@ anything is applied.
 - **Keep your edits:** conflict prompts, backups and `.new` proposals on updates.
 
 **Work in progress:** configuration restoration and the TUI are ready for review.
-Package installation needs a supervised first run on a fresh Gentoo system.
+Package and boot execution need a supervised first run on a fresh Gentoo system.
 The existing installation has not been changed by creating this repo.
 
 ## Start
@@ -41,10 +43,12 @@ cd Fiw-Gentoo-Dots
 ```
 
 The Bubble Tea interface offers a preset, package sections, individual app
-configs, kernel/bootloader choices, extras, and a final preview. Enter at the
-preview saves a selection without applying it. `a` restores configs; `i`
-starts the package installation workflow with sudo. Go 1.24+ builds the TUI;
-Python 3.11+ runs the backend. Go dependencies are recorded in go.mod/go.sum.
+configs, kernel/bootloader choices, individual Flatpaks, optional services and
+a final preview. Enter saves without applying. `r` runs the full restore;
+`a` restores configs, `i` installs Portage packages, `f` installs Flatpaks,
+`v` enables selected services and `b` deploys the selected bootloader.
+Go 1.24+ builds the TUI; Python 3.11+ runs the backend. Go dependencies are
+recorded in go.mod/go.sum. Saved selections are reused on subsequent launches.
 
 For a preview without building the TUI:
 
@@ -85,9 +89,11 @@ CachyOS 7.2.7-1 patch. Refresh it explicitly when updating the snapshot.
 | [tidewm](packages/tidewm.list) | Optional compositor and supporting utilities |
 
 Filelight, NVIDIA drivers and Btrfs tools are separate extras. Ext4 does not
-require Btrfs tools. LocalSend is an optional Flatpak in the apps section.
+require Btrfs tools. LocalSend and Sober are individually optional Flatpaks
+in the TUI, grouped with apps and gaming respectively.
 Limine and GRUB are optional alternatives; retaining the current loader is
-the default. Kernel choice is independent of bootloader choice.
+the default. Kernel choice is independent of bootloader choice. Deployment
+previews the target ESP and firmware choices; see [boot setup](docs/boot.md).
 
 ## Configs
 
@@ -135,6 +141,10 @@ python3 tools/check-private.py
 python3 -m unittest discover -s tests
 go test ./...
 ```
+
+Missing selected overlays are staged before package resolution. Optional
+service presets enable audio, networking, Bluetooth and power profiles for
+the next boot/login. See [setup](docs/setup.md) and the [helper list](docs/scripts.md).
 
 Review captures before committing. `local/` and built binaries are ignored.
 This repo starts with fresh history. Third-party theme/cursor assets retain

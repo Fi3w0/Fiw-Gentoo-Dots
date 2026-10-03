@@ -14,7 +14,11 @@ from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO / 'tools'))
+sys.path.insert(0, str(REPO / 'lib'))
 from capture import sections
+from setup import (FLATPAKS, SERVICES, required_repositories,
+                   existing_repository, repository_config, stage_repositories,
+                   publish_repositories, install_flatpaks, enable_services)
 
 GROUPS = ['system', 'kde', 'fiw-apps', 'cli', 'dev', 'gaming', 'fiw-tools', 'tidewm']
 EXTRAS = {'filelight': 'Filelight', 'btrfs': 'Btrfs tools', 'nvidia': 'NVIDIA drivers'}
@@ -29,8 +33,14 @@ def load_selection(path=None, profile='stock'):
     selection = json.loads((Path(path) if path else REPO / 'presets' / (profile + '.json')).read_text())
     if selection.get('profile') not in ('stock', 'fiw-ryzen'):
         raise ValueError('Unknown preset')
-    for field, allowed in [('groups', GROUPS), ('configs', CATALOG), ('extras', EXTRAS)]:
-        if any(x not in allowed for x in selection.get(field, [])):
+    for field in ('flatpaks', 'services'):
+        if selection.get(field) is None:
+            selection[field] = []
+    for field, allowed in [('groups', GROUPS), ('configs', CATALOG), ('extras', EXTRAS),
+                           ('flatpaks', FLATPAKS), ('services', SERVICES)]:
+        if not isinstance(selection.get(field, []), list):
+            raise ValueError('Selection must be a list: ' + field)
+        if any(not isinstance(x, str) or x not in allowed for x in selection.get(field, [])):
             raise ValueError('Unknown selection in ' + field)
     if selection.get('kernel') not in ('binary', 'custom'):
         raise ValueError('Unknown kernel choice')
@@ -54,6 +64,17 @@ def package_map(selection):
         result[extra] = atoms(REPO / 'packages/optional' / (extra + '.list'))
     if selection['bootloader'] != 'keep':
         result['boot-' + selection['bootloader']] = atoms(REPO / 'packages/optional' / (selection['bootloader'] + '.list'))
+    support = []
+    if selection.get('flatpaks'):
+        support.append('sys-apps/flatpak')
+    for key in selection.get('services', []):
+        support += SERVICES[key]['packages']
+    if selection['bootloader'] != 'keep':
+        support += ['sys-kernel/installkernel', 'sys-kernel/dracut', 'sys-boot/efibootmgr']
+    selected = {atom.split('::')[0] for packages in result.values() for atom in packages}
+    support = [atom for atom in dict.fromkeys(support) if atom not in selected]
+    if support:
+        result['setup'] = support
     return result
 
 
@@ -153,11 +174,16 @@ def active_plasma(home):
     return result.returncode == 0
 
 
+def check_configs(selection, home):
+    entries = list(config_entries(selection))
+    if any(CATALOG[name].get('kde') for name, _, _, _ in entries) and active_plasma(home.resolve()):
+        raise RuntimeError('Log out of Plasma and apply from a TTY to prevent KDE overwriting restored settings. Portable app configs can be applied separately.')
+
+
 def apply_configs(selection, home, update=False, conflict='ask'):
     home = home.resolve()
     entries = list(config_entries(selection))
-    if any(CATALOG[name].get('kde') for name, _, _, _ in entries) and active_plasma(home):
-        raise RuntimeError('Log out of Plasma and apply from a TTY to prevent KDE overwriting restored settings. Portable app configs can be applied separately.')
+    check_configs(selection, home)
     state_dir = home / '.local/state/Fiw-Gentoo-Dots'
     index_path = state_dir / 'managed.json'
     index = json.loads(index_path.read_text()) if index_path.is_file() else {}
@@ -255,8 +281,9 @@ def root_files(selection, repo_location=None):
     result['etc/portage/fiw-dots.conf'] += '\n# Persist the selected binary/source policy for later emerge operations.\n'
     result['etc/portage/fiw-dots.conf'] += 'EMERGE_DEFAULT_OPTS="${EMERGE_DEFAULT_OPTS} --getbinpkg ' + ' '.join('--usepkg-exclude=' + atom for atom in source_policy(selection)) + '"\n'
     result['etc/portage/repos.conf/fiw-dots.conf'] = '[fiw-dots]\nlocation = ' + str(repo_location or REPO / 'overlay') + '\npriority = 40\nauto-sync = no\n'
-    for name, uri in [('guru', 'https://github.com/gentoo-mirror/guru.git'), ('steam-overlay', 'https://github.com/anyc/steam-overlay.git')]:
-        result['etc/portage/repos.conf/fiw-dots-' + name + '.conf'] = '[' + name + ']\nlocation = /var/db/repos/' + name + '\nsync-type = git\nsync-uri = ' + uri + '\nsync-depth = 1\npriority = 10\n'
+    for name in required_repositories(selection):
+        if not existing_repository(name):
+            result['etc/portage/repos.conf/fiw-dots-' + name + '.conf'] = repository_config(name, '/var/db/repos/' + name)
     arch = 'x86-64-v3' if selection['profile'] == 'fiw-ryzen' else 'x86-64'
     result['etc/portage/binrepos.conf/fiw-dots.conf'] = '[gentoo]\npriority = 1\nsync-uri = https://distfiles.gentoo.org/releases/amd64/binpackages/23.0/' + arch + '/\nlocation = /var/cache/binhost/gentoo\nverify-signature = true\n'
     if selection['kernel'] == 'custom' and 'system' in selection['groups']:
@@ -265,6 +292,14 @@ def root_files(selection, repo_location=None):
         result['etc/portage/package.accept_keywords/fiw-dots-kernel'] = 'sys-kernel/gentoo-kernel ~amd64\nsys-kernel/gentoo-kernel-bin ~amd64\nvirtual/dist-kernel ~amd64\n'
         result['etc/portage/env/sys-kernel/gentoo-kernel'] = (REPO / 'optional/kernel/guard').read_text()
         result['etc/portage/package.mask/fiw-dots-custom-kernel'] = '# Tested custom-kernel snapshot; update snapshot and patch explicitly.\n>sys-kernel/gentoo-kernel-7.2.8\n'
+    if selection['bootloader'] != 'keep':
+        result['etc/portage/package.use/fiw-dots-boot'] = ('sys-kernel/installkernel systemd dracut -grub -uki -ukify -ugrd -efistub -refind -systemd-boot\n')
+        if selection['bootloader'] == 'grub':
+            result['etc/portage/env/fiw-dots-grub.conf'] = 'GRUB_PLATFORMS="efi-64"\n'
+            result['etc/portage/package.env/fiw-dots-grub'] = 'sys-boot/grub fiw-dots-grub.conf\n'
+        else:
+            result['etc/portage/package.accept_keywords/fiw-dots-limine'] = 'sys-boot/limine ~amd64\n'
+            result['etc/portage/package.use/fiw-dots-limine'] = 'sys-boot/limine uefi-x86-64 -bios -bios-cd -bios-pxe -uefi-cd -uefi-ia32 -uefi-aarch64 -uefi-riscv64 -uefi-loongarch64\n'
     if 'tidewm' in selection['groups']:
         result['etc/portage/package.accept_keywords/fiw-dots-tidewm'] = 'gui-wm/tidewm::fiw-dots **\n'
     return result
@@ -275,7 +310,11 @@ def preview(selection):
     lines = ["Fiw-Gentoo-Dots — " + selection['name'], '']
     for group, values in packages.items():
         lines += [group + ' (' + str(len(values)) + ')', '  ' + ', '.join(values)]
-    lines += ['', 'Compile deliberately: ' + ', '.join(source_policy(selection)),
+    lines += ['', 'Repositories: ' + (', '.join(required_repositories(selection)) or 'Gentoo + fiw-dots only'),
+              'Missing selected overlays are staged before resolution and adopted after confirmation.',
+              'Flatpaks (user): ' + (', '.join(selection.get('flatpaks', [])) or 'none'),
+              'Optional services: ' + (', '.join(selection.get('services', [])) or 'none'),
+              'Compile deliberately: ' + ', '.join(source_policy(selection)),
               'Other packages: prefer binaries; ask compile/skip for additional source builds.',
               'Kernel: ' + selection['kernel'] + (' + binary fallback' if selection['kernel'] == 'custom' else ''),
               'Bootloader: ' + selection['bootloader'], '', 'Selected configs:']
@@ -286,7 +325,7 @@ def preview(selection):
               'Existing config conflicts: ask; updates preserve edits as .new.']
 
     if selection['bootloader'] != 'keep':
-        lines.append('Bootloader package selected; ESP/firmware deployment is a separate explicit setup step (docs/boot.md).')
+        lines.append('Boot deployment: target ESP and boot files are previewed before applying; firmware changes are separately selectable (docs/boot.md).')
     if selection.get('firefox_privacy'):
         lines.append('Optional manual setup: Firefox-Privacy (docs/firefox.md).')
     if selection.get('spotify_custom'):
@@ -354,6 +393,7 @@ def install_packages(selection):
         profile.unlink()
         profile.symlink_to(Path('/etc/portage/make.profile').resolve())
         export(selection, stage)
+        fetched = stage_repositories(selection, stage)
         make_conf = stage / 'etc/portage/make.conf'
         make_conf.write_text(make_conf.read_text() + '\nsource "' + str(stage / 'etc/portage/fiw-dots.conf') + '"\n')
         # Repository checkout is local and read-only for resolution. No live
@@ -392,6 +432,7 @@ def install_packages(selection):
             return
         if ask('Apply the previewed Portage files and install the accepted packages?', ['apply', 'cancel'], 'cancel') != 'apply':
             return
+        publish_repositories(fetched)
         # Back up each existing managed destination before replacing it.
         stamp = datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%S.%fZ')
         backup_root = Path('/var/lib/Fiw-Gentoo-Dots/backups') / stamp
@@ -456,7 +497,7 @@ def install_packages(selection):
             raise RuntimeError('Some packages did not install; consult the package report and emerge output.')
         if 'kde' in selection['groups'] and 'kde-plasma/plasma-login-manager' not in missing:
             subprocess.run(['systemctl', 'enable', '--force', 'plasmalogin.service'], check=True)
-        print('Portage installation finished. Plasma Login Manager is enabled for selected KDE installs; no running greeter was restarted. Flatpaks and boot deployment are explicit follow-up steps; see docs/setup.md.')
+        print('Portage installation finished. Plasma Login Manager is enabled for selected KDE installs; no running greeter was restarted. Use the selected Flatpak, service and boot actions or the full restore workflow to finish setup.')
 
 
 def check_packages(selection):
@@ -470,6 +511,7 @@ def check_packages(selection):
         profile.unlink()
         profile.symlink_to(Path('/etc/portage/make.profile').resolve())
         export(selection, stage)
+        fetched = stage_repositories(selection, stage)
         make_conf = stage / 'etc/portage/make.conf'
         make_conf.write_text(make_conf.read_text() + '\nsource "' + str(stage / 'etc/portage/fiw-dots.conf') + '"\n')
         result = resolve(stage, selection, requested)
@@ -489,18 +531,28 @@ def main():
     parser.add_argument('--catalog', action='store_true')
     parser.add_argument('--export', type=Path)
     parser.add_argument('--apply-configs', action='store_true')
+    parser.add_argument('--check-configs', action='store_true')
     parser.add_argument('--install-packages', action='store_true')
     parser.add_argument('--check-packages', action='store_true')
+    parser.add_argument('--install-flatpaks', action='store_true')
+    parser.add_argument('--enable-services', action='store_true')
+    parser.add_argument('--deploy-bootloader', action='store_true')
+    parser.add_argument('--boot-plan', action='store_true')
+    parser.add_argument('--esp', type=Path)
     parser.add_argument('--update', action='store_true')
     parser.add_argument('--conflict', choices=['ask', 'keep', 'apply'], default='ask')
     args = parser.parse_args()
     if args.catalog:
         print(json.dumps({'groups': GROUPS, 'configs': CATALOG, 'extras': EXTRAS,
+                          'flatpaks': FLATPAKS, 'services': SERVICES,
                           'stock': load_selection(profile='stock'), 'ryzen': load_selection(profile='fiw-ryzen')}))
         return
     selection = load_selection(args.selection, args.profile)
     if args.export:
         export(selection, args.export)
+    elif args.check_configs:
+        check_configs(selection, args.home)
+        print('Config restoration preflight passed.')
     elif args.apply_configs:
         if os.geteuid() == 0:
             raise RuntimeError('Apply user configs as the target user, not as root.')
@@ -509,6 +561,16 @@ def main():
         install_packages(selection)
     elif args.check_packages:
         check_packages(selection)
+    elif args.install_flatpaks:
+        install_flatpaks(selection, ask)
+    elif args.enable_services:
+        enable_services(selection, ask)
+    elif args.deploy_bootloader or args.boot_plan:
+        from boot import deploy, plan
+        if args.boot_plan:
+            print(json.dumps(plan(selection['bootloader'], args.esp), indent=2))
+        else:
+            deploy(selection['bootloader'], args.esp, ask)
     else:
         print(preview(selection))
 

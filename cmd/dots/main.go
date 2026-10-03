@@ -22,17 +22,27 @@ type selection struct {
 	Extras     []string `json:"extras"`
 	Firefox    bool     `json:"firefox_privacy"`
 	Spotify    bool     `json:"spotify_custom"`
+	Flatpaks   []string `json:"flatpaks"`
+	Services   []string `json:"services"`
 }
 type config struct {
 	Label string `json:"label"`
 	Group string `json:"group"`
 }
+type setupOption struct {
+	Label string `json:"label"`
+	Group string `json:"group"`
+	Scope string `json:"scope"`
+}
+
 type catalog struct {
-	Groups  []string          `json:"groups"`
-	Configs map[string]config `json:"configs"`
-	Extras  map[string]string `json:"extras"`
-	Stock   selection         `json:"stock"`
-	Ryzen   selection         `json:"ryzen"`
+	Groups   []string               `json:"groups"`
+	Configs  map[string]config      `json:"configs"`
+	Extras   map[string]string      `json:"extras"`
+	Flatpaks map[string]setupOption `json:"flatpaks"`
+	Services map[string]setupOption `json:"services"`
+	Stock    selection              `json:"stock"`
+	Ryzen    selection              `json:"ryzen"`
 }
 type row struct {
 	id, label string
@@ -102,6 +112,21 @@ func (m *model) prepare() {
 			m.rows = append(m.rows, row{id, m.catalog.Extras[id], contains(m.selection.Extras, id)})
 		}
 		m.rows = append(m.rows, row{"autostart", "Optional app autostart", contains(m.selection.Configs, "autostart")}, row{"firefox", "Optional Firefox-Privacy setup", m.selection.Firefox}, row{"spotify", "Optional Spotify customization script (stock by default)", m.selection.Spotify})
+	case 4:
+		flatpaks := make([]string, 0, len(m.catalog.Flatpaks))
+		for id := range m.catalog.Flatpaks {
+			flatpaks = append(flatpaks, id)
+		}
+		sort.Strings(flatpaks)
+		for _, id := range flatpaks {
+			option := m.catalog.Flatpaks[id]
+			m.rows = append(m.rows, row{"flatpak:" + id, "Flatpak: " + option.Label + " (" + option.Group + ")", contains(m.selection.Flatpaks, id)})
+		}
+		for _, id := range []string{"audio", "network", "bluetooth", "power"} {
+			if option, ok := m.catalog.Services[id]; ok {
+				m.rows = append(m.rows, row{"service:" + id, option.Label, contains(m.selection.Services, id)})
+			}
+		}
 	}
 }
 func (m *model) remember() {
@@ -155,6 +180,19 @@ func (m *model) remember() {
 			}
 		}
 		m.selection.Configs = configNames
+	case 4:
+		m.selection.Flatpaks, m.selection.Services = []string{}, []string{}
+		for _, r := range m.rows {
+			if !r.checked {
+				continue
+			}
+			if strings.HasPrefix(r.id, "flatpak:") {
+				m.selection.Flatpaks = append(m.selection.Flatpaks, strings.TrimPrefix(r.id, "flatpak:"))
+			}
+			if strings.HasPrefix(r.id, "service:") {
+				m.selection.Services = append(m.selection.Services, strings.TrimPrefix(r.id, "service:"))
+			}
+		}
 	}
 }
 func (m model) makePreview() tea.Cmd {
@@ -195,7 +233,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		if m.loading {
 			return m, nil
 		}
-		if m.stage == 4 {
+		if m.stage == 5 {
 			switch key {
 			case "up", "k":
 				if m.scroll > 0 {
@@ -208,7 +246,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			case "esc":
 				m.stage--
 				m.prepare()
-			case "enter", "s", "a", "i":
+			case "enter", "s", "a", "i", "f", "v", "b", "r":
 				if m.errorText == "" {
 					m.done = true
 					m.action = key
@@ -267,7 +305,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 			m.remember()
 			m.stage++
-			if m.stage == 4 {
+			if m.stage == 5 {
 				m.loading = true
 				m.errorText = ""
 				return m, m.makePreview()
@@ -287,13 +325,13 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 func (m model) View() string {
 	const purple = "\033[38;2;157;143;217m"
 	const reset = "\033[0m"
-	titles := []string{"Preset", "Package sections", "Optional app configs", "Kernel, bootloader and extras", "Final preview"}
+	titles := []string{"Preset", "Package sections", "Optional app configs", "Kernel, bootloader and extras", "Flatpaks and optional services", "Final preview"}
 	text := purple + "  Fiw-Gentoo-Dots\n" + reset + "  " + titles[m.stage] + "  ·  " + m.selection.Name + "\n\n"
 	budget := m.height - 10
 	if budget < 5 {
 		budget = 5
 	}
-	if m.stage == 4 {
+	if m.stage == 5 {
 		if m.loading {
 			return text + "  Preparing preview…\n"
 		}
@@ -305,7 +343,7 @@ func (m model) View() string {
 		for _, line := range lines[m.scroll:end] {
 			text += "  " + line + "\n"
 		}
-		text += "\n  ↑/↓ scroll · Esc back · Enter save plan · a restore configs · i install packages\n  q cancel\n"
+		text += "\n  ↑/↓ scroll · Esc back · Enter save · r full restore · a configs · i packages\n  f Flatpaks · v services · b bootloader · q cancel\n"
 		if m.errorText != "" {
 			text += "  " + m.errorText + "\n"
 		}
@@ -355,6 +393,14 @@ func main() {
 		os.Exit(1)
 	}
 	m := model{repo: repo, catalog: c, selection: c.Stock, height: 28}
+	savedPath := filepath.Join(repo, "local", "selection.json")
+	if saved, readErr := os.ReadFile(savedPath); readErr == nil {
+		var previous selection
+		if json.Unmarshal(saved, &previous) == nil && (previous.Profile == "stock" || previous.Profile == "fiw-ryzen") {
+			m.selection = previous
+			m.stage = 1
+		}
+	}
 	m.prepare()
 	result, err := tea.NewProgram(m, tea.WithAltScreen()).Run()
 	if err != nil {
@@ -377,27 +423,75 @@ func main() {
 	}
 	fmt.Println(final.preview)
 	fmt.Println("\nSaved selection:", path)
-	args := []string{filepath.Join(repo, "lib", "rice.py"), "--selection", path}
+	run := func(action string, root bool) error {
+		args := []string{filepath.Join(repo, "lib", "rice.py"), "--selection", path, action}
+		program := "python3"
+		if root {
+			program = "sudo"
+			args = append([]string{"python3"}, args...)
+		}
+		cmd := exec.Command(program, args...)
+		cmd.Stdin, cmd.Stdout, cmd.Stderr = os.Stdin, os.Stdout, os.Stderr
+		return cmd.Run()
+	}
+	services := func() error {
+		system, user := false, false
+		for _, id := range final.selection.Services {
+			if c.Services[id].Scope == "system" {
+				system = true
+			}
+			if c.Services[id].Scope == "user" {
+				user = true
+			}
+		}
+		if system {
+			if err := run("--enable-services", true); err != nil {
+				return err
+			}
+		}
+		if user {
+			return run("--enable-services", false)
+		}
+		if !system {
+			fmt.Println("No services selected.")
+		}
+		return nil
+	}
+	var actionErr error
 	switch final.action {
 	case "a":
-		args = append(args, "--apply-configs")
+		actionErr = run("--apply-configs", false)
 	case "i":
-		args = append([]string{"python3"}, args...)
-		args = append(args, "--install-packages")
+		actionErr = run("--install-packages", true)
+	case "f":
+		actionErr = run("--install-flatpaks", false)
+	case "v":
+		actionErr = services()
+	case "b":
+		actionErr = run("--deploy-bootloader", true)
+	case "r":
+		actionErr = run("--check-configs", false)
+		if actionErr == nil && (len(final.selection.Groups) > 0 || len(final.selection.Extras) > 0 || final.selection.Bootloader != "keep" || len(final.selection.Flatpaks) > 0 || len(final.selection.Services) > 0) {
+			actionErr = run("--install-packages", true)
+		}
+		if actionErr == nil && len(final.selection.Flatpaks) > 0 {
+			actionErr = run("--install-flatpaks", false)
+		}
+		if actionErr == nil && len(final.selection.Services) > 0 {
+			actionErr = services()
+		}
+		if actionErr == nil && len(final.selection.Configs) > 0 {
+			actionErr = run("--apply-configs", false)
+		}
+		if actionErr == nil && final.selection.Bootloader != "keep" {
+			actionErr = run("--deploy-bootloader", true)
+		}
 	default:
-		fmt.Println("Review the setup notes in docs/setup.md before applying.")
+		fmt.Println("Saved. Choose an action in the TUI or use the commands in docs/setup.md.")
 		return
 	}
-	program := "python3"
-	if final.action == "i" {
-		program = "sudo"
-	}
-	cmd := exec.Command(program, args...)
-	cmd.Stdin = os.Stdin
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-	if err := cmd.Run(); err != nil {
-		fmt.Fprintln(os.Stderr, err)
+	if actionErr != nil {
+		fmt.Fprintln(os.Stderr, actionErr)
 		os.Exit(1)
 	}
 }

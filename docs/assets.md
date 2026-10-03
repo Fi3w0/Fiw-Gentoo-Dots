@@ -21,3 +21,13 @@ theme metadata and colour-scheme notices. It still scans those files for
 other private-data patterns. A changed fingerprint requires review before
 updating tools/public-attribution.json. The fingerprinted upstream kernel
 patch similarly retains public source/test data rather than being rewritten.
+
+## Distribution logos
+
+The user-supplied Gentoo and Arch images are kept in `assets/images`. The
+Gentoo image is used in the README; the Arch image is retained as supplied.
+These distribution marks are separate from this project's original MIT code.
+Upstream references: [Gentoo artwork](https://www.gentoo.org/inside-gentoo/artwork/)
+and [name/logo guidelines](https://www.gentoo.org/inside-gentoo/foundation/name-logo-guidelines.html);
+[Arch artwork](https://archlinux.org/art/) and
+[trademark policy](https://terms.archlinux.org/docs/trademark-policy/).

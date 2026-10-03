@@ -50,3 +50,19 @@ func TestConfigsSelectableWithoutPackageGroups(t *testing.T) {
 		t.Fatal("configs were hidden or deselected by package choices")
 	}
 }
+
+func TestSetupCheckboxesSurviveFinalPreview(t *testing.T) {
+	m := model{stage: 4, catalog: catalog{
+		Flatpaks: map[string]setupOption{"org.vinegarhq.Sober": {Label: "Sober", Group: "gaming"}},
+		Services: map[string]setupOption{"audio": {Label: "Audio", Scope: "user"}},
+	}, selection: selection{}}
+	m.prepare()
+	for i := range m.rows {
+		m.rows[i].checked = true
+	}
+	next, command := m.Update(tea.KeyMsg{Type: tea.KeyEnter})
+	result := next.(model)
+	if result.stage != 5 || command == nil || !contains(result.selection.Flatpaks, "org.vinegarhq.Sober") || !contains(result.selection.Services, "audio") {
+		t.Fatalf("setup selections lost before preview: %+v", result.selection)
+	}
+}

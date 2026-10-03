@@ -26,5 +26,7 @@
   "bootloader": "keep",
   "extras": [],
   "firefox_privacy": false,
-  "spotify_custom": false
+  "spotify_custom": false,
+  "flatpaks": [],
+  "services": []
 }

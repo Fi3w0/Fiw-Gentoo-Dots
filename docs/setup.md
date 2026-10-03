@@ -1,83 +1,131 @@
-# Setup and current draft boundaries
+# Restore the setup
 
 Start with an installed amd64 Gentoo system using systemd and a multilib
-Plasma profile. This repo does not partition disks or install the stage3.
-Plasma Login Manager currently requires systemd. It is the default greeter
-when installing the KDE section.
+Plasma profile, with Git and Python 3.11+ available. Go 1.24+ builds the TUI.
+This repo does not partition disks or install a stage3.
 
-1. Run `./install`, make selections and review the final preview.
-2. Save the selection. It lives in the ignored `local/selection.json`.
-3. Export for inspection if desired:
-   `./install --selection local/selection.json --export local/stage`.
-4. Install packages via the TUI or
-   `sudo ./install --selection local/selection.json --install-packages`.
-   Resolution happens in a temporary Portage config before live files change.
-   Missing binaries prompt compile/skip; final installation requires confirmation.
-5. Apply user configs as the target user:
-   `./install --selection local/selection.json --apply-configs`.
-   Log out of Plasma and use a TTY for KDE configs; running KDE can overwrite
-   edited config files. Portable app configs can be restored separately.
+## Terminal interface
 
-For updates, review the Git changes, then use the saved selection with
-`--apply-configs --update`. There is no automatic git pull or upstream upgrade.
-Backups and reports live under `~/.local/state/Fiw-Gentoo-Dots`. Package reports
-and system backups live under `/var/lib/Fiw-Gentoo-Dots`.
+Run `./install`. Choose a preset, package sections, individual configs,
+kernel/bootloader options, Flatpaks and optional services. Previous selections
+are loaded from the ignored `local/selection.json`; press Esc to return to
+preset selection when you want to change profiles.
 
-## Explicit setup steps
+At the final preview:
 
-Root package installation enables `plasmalogin.service` for selected KDE
-installs without restarting the running greeter. After the desired packages
-are installed, enable the services you use:
+| Key | Action |
+|---|---|
+| Enter / s | Save the selection without applying it |
+| r | Full restore: packages, Flatpaks, services, configs, selected bootloader |
+| i | Install Portage packages |
+| f | Install selected user Flatpaks |
+| v | Enable selected services |
+| a | Restore selected user configs |
+| b | Preview and deploy the selected bootloader |
+
+Full restore checks the KDE session before making package changes. Log out of
+Plasma and run from a TTY when KDE configs are selected. Each operation also
+has a command for resuming a saved selection:
 
 ```sh
-sudo systemctl enable NetworkManager bluetooth power-profiles-daemon
-systemctl --user enable pipewire.socket pipewire-pulse.socket wireplumber.service
+./install --selection local/selection.json --plan
+sudo ./install --selection local/selection.json --install-packages
+./install --selection local/selection.json --install-flatpaks
+sudo ./install --selection local/selection.json --enable-services
+./install --selection local/selection.json --enable-services
+./install --selection local/selection.json --apply-configs
+sudo ./install --selection local/selection.json --deploy-bootloader
 ```
 
-Docker stays disabled until needed. The installer does not reboot or power off.
+The root service command handles system services; the regular-user command
+handles PipeWire units. User Flatpaks and user configs are never applied as root.
 
-Flatpak apps are listed separately. Add Flathub if absent, then install only
-the selected categories' apps explicitly, for example:
+## Packages and repositories
+
+Existing GURU and steam-overlay checkouts are reused. Missing overlays needed
+by the selected package sections are cloned into temporary storage before
+Portage resolves the plan. Their identity is checked, and they are adopted
+under `/var/db/repos` only after confirmation. Existing repository checkouts
+are not automatically synced or replaced.
+
+Additional source builds prompt **compile or skip**, with compilation
+recommended. Skipping a dependency also skips requested packages needing it.
+A package report records requested, skipped and missing packages. There is a
+final package confirmation before live Portage configuration changes.
+
+Read-only resolution and an export are available separately:
 
 ```sh
-flatpak remote-add --user --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
-flatpak install --user flathub org.localsend.localsend_app
-flatpak install --user flathub org.vinegarhq.Sober
+./install --selection local/selection.json --check-packages
+./install --selection local/selection.json --export local/stage
 ```
 
-The independently selectable `fonts` config includes the four used styles of
-JetBrainsMono Nerd Font Mono from the official Nerd Fonts v3.5.1 release,
-with its OFL licence. It works with KDE and portable apps alike. The entire
-personal font collection is not included. Neovim uses its built-in theme as
-a fallback when Catppuccin is not installed. Vesktop's selected Midnight
-theme CSS is captured with a fixed upstream snapshot and its MIT licence.
+The check may download a missing overlay into its temporary root; it does not
+register that checkout or change the live Portage configuration. The export
+contains proposed files and a plan, not a ready-to-merge repository checkout.
+
+Plasma Login Manager is enabled for selected KDE installs. The installer does
+not restart the running greeter, reboot or power off.
+
+## Flatpaks and services
+
+LocalSend (`fiw-apps`) and Sober (`gaming`) have individual Flatpak checkboxes.
+Both start unchecked. Selecting them ensures Flatpak is in the package plan;
+the separate Flatpak action adds Flathub for the user if absent and installs
+only missing selected apps. Existing user installations are kept. Failures
+and skips are reported.
+
+Audio, NetworkManager, Bluetooth and power profiles have independent service
+checkboxes, also initially unchecked. Their required packages are added when
+needed. Enabling a service schedules it for the next boot or user login; the
+workflow does not start, stop or restart services. Missing units are reported.
+Docker remains a separate choice outside this service preset.
+
+## Configs and updates
+
+Every config is optional and independent of package installation groups.
+The separate fonts config includes four JetBrainsMono Nerd Font Mono styles.
+Vesktop's Midnight CSS is included with a fixed upstream snapshot. See the
+[KDE styling reference](kde-style.md) and [shortcut list](shortcuts.md).
+
+Review Git changes before pulling updates, then restore your saved selection:
+
+```sh
+./install --selection local/selection.json --apply-configs --update
+```
+
+Locally edited configs remain intact; proposed changes are written to `.new`
+files. Replacements receive backups. Root Portage file conflicts ask before
+replacement and receive backups too. Reports and user backups live under
+`~/.local/state/Fiw-Gentoo-Dots`; system reports and backups live under
+`/var/lib/Fiw-Gentoo-Dots`.
 
 ## Fiw tools
 
-The `fiw-tools` section includes FiwNode's x86-64 binary release and the
-released Apdatifier Gentoo widget, alongside OpenDeck and Music Presence.
-Apdatifier installs QML/scripts without compilation; any dependencies needing
-source builds still go through the normal compile/skip prompt.
+The `fiw-tools` section includes FiwNode's binary release and the released
+Apdatifier Gentoo widget, alongside OpenDeck and Music Presence. Apdatifier
+installs QML/scripts without compilation; source-only dependencies still
+require the normal compile/skip choice.
 
-FiwNode uses its default configuration. The installer does not copy sound
-libraries, microphone/output selections or personal app state. Older copies
-in `~/.local/bin` can shadow the Portage-installed binaries in `/usr/bin`;
-remove those manually when ready to switch. The daemon starts on demand.
+FiwNode uses its default config. Sound libraries and audio device selections
+stay local. Copies in `~/.local/bin` can shadow `/usr/bin`; manage old copies
+manually when switching to the package. Its daemon starts on demand.
 
-Apdatifier is available through Plasma's **Add Widgets** menu. Installing it
-does not alter panels. An existing user-installed widget can override the
-system copy; use `kpackagetool6` to manage it. Its preferences remain local.
+Add Apdatifier through Plasma's **Add Widgets** menu. Installation does not
+alter panels. An existing user-installed widget can override the system copy;
+manage it with `kpackagetool6`. Its preferences stay local.
 
-## Remaining work before declaring a fresh install verified
+## Current scope
 
-- Run both presets on a fresh Gentoo test installation. Root package execution
-  has not been exercised on the working desktop.
-- Implement target-specific Limine/GRUB deployment after reviewing the target
-  ESP and boot layout. Current variants select packages and provide setup notes.
-- Refresh the optional TideWM live ebuild branch/dependency recipe against the
-  upstream development version before building it on a new machine.
-- Repository sync is an explicit prerequisite when GURU or steam-overlay is
-  absent; the draft aborts cleanly on resolution failure rather than guessing.
+Automatic boot deployment supports amd64 UEFI, a mounted GPT ESP, plain ext4
+or Btrfs roots, and unsigned boot. See [boot setup](boot.md) for previews,
+firmware choices and kernel update integration. Other layouts can keep their
+existing loader.
 
-Do not publish the private original fiw-gentoo repository. It is the working
-archive and has different history and host-specific files.
+The optional TideWM live recipe still needs a refresh against its upstream
+development branch. End-to-end package and boot execution on a fresh Gentoo
+installation remains unverified; development checks used temporary homes,
+staged Portage configuration and mocked system commands.
+
+Do not publish the private original fiw-gentoo archive. It has different
+history and host-specific files.
