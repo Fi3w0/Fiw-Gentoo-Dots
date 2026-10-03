@@ -61,7 +61,7 @@ def main():
         for path in (REPO / directory).rglob('*.py'):
             compile(path.read_bytes(), path.relative_to(REPO).as_posix(), 'exec')
     print('Python sources parse.', flush=True)
-    subprocess.run(['go', 'build', '-o', os.devnull, './cmd/dots'], cwd=REPO, check=True)
+    subprocess.run(['go', 'build', '-buildvcs=false', '-o', os.devnull, './cmd/dots'], cwd=REPO, check=True)
     print('Portable CI checks passed; no installer actions were applied.', flush=True)
 
 
