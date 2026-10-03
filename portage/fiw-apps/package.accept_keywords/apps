@@ -16,4 +16,3 @@ sys-libs/libudev-compat ~amd64
 net-im/vesktop-bin ~amd64
 gui-apps/xwayland-satellite ~amd64
 gui-apps/wlr-randr ~amd64
-
