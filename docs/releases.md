@@ -1,5 +1,25 @@
 # Release snapshots
 
+## v0.1.1 — Config update review
+
+Adds **e** for config updates and **p** for pending changes in the final TUI
+preview. Each pending file has a diff and an acceptance prompt. Accepting
+backs up the current file and rechecks that it has not changed since the
+proposal was created. Manually edited proposals remain local preferences
+on future updates. Selected patches for shared KDE files produce one combined
+proposal containing both styling and shortcut adjustments.
+
+```sh
+git clone --branch v0.1.1 https://git.fiwlabs.dev/fiwdev/Fiw-Gentoo-Dots.git
+cd Fiw-Gentoo-Dots
+./install
+```
+
+The matching prebuilt Linux amd64 TUI is included in the
+[tag](https://git.fiwlabs.dev/fiwdev/Fiw-Gentoo-Dots/src/tag/v0.1.1) and
+[source archive](https://git.fiwlabs.dev/fiwdev/Fiw-Gentoo-Dots/archive/v0.1.1.tar.gz).
+See [config updates](updates.md) for the review flow and CLI commands.
+
 ## v0.1.0 — First restoration snapshot
 
 This tag captures the current KDE shortcuts and appearance, categorized

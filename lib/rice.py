@@ -18,6 +18,7 @@ sys.path.insert(0, str(REPO / 'lib'))
 from capture import sections
 import backups
 import reporting
+import proposals
 from setup import (FLATPAKS, SERVICES, required_repositories,
                    existing_repository, repository_config, stage_repositories,
                    publish_repositories, install_flatpaks, enable_services)
@@ -228,7 +229,14 @@ def apply_configs(selection, home, update=False, conflict='ask'):
     index = json.loads(index_path.read_text()) if index_path.is_file() else {}
     stamp = datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%S.%fZ')
     report = {'applied': [], 'unchanged': [], 'kept': [], 'review': [], 'missing': []}
-    for name, kind, src, relative in entries:
+    jobs = {}
+    for entry in entries:
+        name, kind, src, relative = entry
+        if relative in jobs and (kind not in ('kconfig', 'json') or jobs[relative][0][1] != kind):
+            raise RuntimeError('Conflicting config sources for ' + str(relative))
+        jobs.setdefault(relative, []).append(entry)
+    for relative, parts in jobs.items():
+        name, kind, src, _ = parts[-1]
         dest = home / relative
         # Keep writes inside the requested home, including through parent symlinks.
         if not dest.parent.resolve().is_relative_to(home):
@@ -248,7 +256,10 @@ def apply_configs(selection, home, update=False, conflict='ask'):
                 content = content.decode().replace('{{HOME}}', str(home)).encode()
             if kind in ('kconfig', 'json'):
                 old_text = dest.read_text() if dest.is_file() else ''
-                content = (merge_kconfig if kind == 'kconfig' else merge_json)(old_text, content.decode()).encode()
+                merge = merge_kconfig if kind == 'kconfig' else merge_json
+                for _, _, patch, _ in parts:
+                    old_text = merge(old_text, patch.read_text().replace('{{HOME}}', str(home)))
+                content = old_text.encode()
             new_hash = hashlib.sha256(content).hexdigest()
         key = str(relative)
         if old_hash == new_hash:
@@ -285,6 +296,8 @@ def apply_configs(selection, home, update=False, conflict='ask'):
         if target == dest:
             index[key] = new_hash
             report['applied'].append(key)
+        else:
+            proposals.record(home, target.relative_to(home), relative, old_hash, [part[0] for part in parts])
     state_dir.mkdir(parents=True, exist_ok=True)
     temporary = index_path.with_name('.managed-' + stamp)
     temporary.write_text(json.dumps(index, indent=2) + '\n')
@@ -597,10 +610,13 @@ def main():
     parser.add_argument('--list-backups', action='store_true')
     parser.add_argument('--backup-plan', metavar='ID')
     parser.add_argument('--restore-backup', metavar='ID')
+    parser.add_argument('--list-proposals', action='store_true')
+    parser.add_argument('--proposal-plan', metavar='ID')
+    parser.add_argument('--accept-proposal', metavar='ID')
     parser.add_argument('--summary', action='store_true')
     parser.add_argument('--run-id')
     parser.add_argument('--execution-error', help=argparse.SUPPRESS)
-    parser.add_argument('--workflow', choices=['restore', 'configs', 'packages', 'flatpaks', 'services', 'boot', 'backup'], default='restore')
+    parser.add_argument('--workflow', choices=['restore', 'configs', 'packages', 'flatpaks', 'services', 'boot', 'backup', 'proposal'], default='restore')
     parser.add_argument('--update', action='store_true')
     parser.add_argument('--conflict', choices=['ask', 'keep', 'apply'], default='ask')
     args = parser.parse_args()
@@ -613,6 +629,12 @@ def main():
     if args.run_id:
         reporting.validate_run(args.run_id)
     home = args.home.resolve()
+    if args.list_proposals:
+        print(json.dumps(proposals.list_proposals(home, backup_paths())))
+        return
+    if args.proposal_plan:
+        print(proposals.preview(home, args.proposal_plan, backup_paths()))
+        return
     if args.list_backups:
         print(json.dumps(backups.list_backups(home, backup_paths())))
         return
@@ -627,7 +649,7 @@ def main():
     action = ('configs' if args.apply_configs else 'packages' if args.install_packages else
               'flatpaks' if args.install_flatpaks else 'services-system' if args.enable_services and os.geteuid() == 0 else
               'services-user' if args.enable_services else 'boot' if args.deploy_bootloader else
-              'backup' if args.restore_backup else 'preflight' if args.check_configs and args.run_id else None)
+              'backup' if args.restore_backup else 'proposal' if args.accept_proposal else 'preflight' if args.check_configs and args.run_id else None)
     if action:
         run_id = args.run_id or datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%S.%fZ')
         details = {}
@@ -647,6 +669,8 @@ def main():
                 details = deploy(selection['bootloader'], args.esp, ask)
             elif action == 'backup':
                 details = backups.restore(home, args.restore_backup, backup_paths(), ask, active_plasma, args.conflict)
+            elif action == 'proposal':
+                details = proposals.accept(home, args.accept_proposal, backup_paths(), ask, active_plasma)
             else:
                 check_configs(selection, home)
                 print('Config restoration preflight passed.')

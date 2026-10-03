@@ -74,7 +74,7 @@ def launch(repo=REPO):
         except (KeyError, ValueError, OSError, RuntimeError) as error:
             print('Prebuilt TUI unavailable: ' + str(error), file=sys.stderr)
     if not shutil.which('go'):
-        raise RuntimeError('Use the v0.1.0 snapshot for its prebuilt Linux amd64 TUI, or install Go 1.24+ for source builds. Python CLI commands such as ./install --plan remain available.')
+        raise RuntimeError('Use a tagged snapshot for its prebuilt Linux amd64 TUI, or install Go 1.24+ for source builds. Python CLI commands such as ./install --plan remain available.')
     print('Building the TUI from source with Go.', file=sys.stderr)
     cache.parent.mkdir(parents=True, exist_ok=True)
     version = (repo / 'VERSION').read_text().strip()

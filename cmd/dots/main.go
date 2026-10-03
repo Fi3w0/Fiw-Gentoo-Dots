@@ -65,6 +65,15 @@ type backupsMsg struct {
 	choices []backupChoice
 	err     error
 }
+type proposalChoice struct {
+	ID     string `json:"id"`
+	Target string `json:"target"`
+	Status string `json:"status"`
+}
+type proposalsMsg struct {
+	choices []proposalChoice
+	err     error
+}
 type model struct {
 	repo                                 string
 	catalog                              catalog
@@ -73,6 +82,8 @@ type model struct {
 	stage, cursor, height, width, scroll int
 	preview, errorText, action, backupID string
 	done, loading                        bool
+	proposalID, proposalStatus           string
+	proposals                            []proposalChoice
 }
 
 func contains(values []string, target string) bool {
@@ -246,6 +257,24 @@ func (m model) backupPreview() tea.Cmd {
 		return previewMsg{string(output), err}
 	}
 }
+func (m model) loadProposals() tea.Cmd {
+	return func() tea.Msg {
+		output, err := exec.Command("python3", filepath.Join(m.repo, "lib", "rice.py"), "--list-proposals").CombinedOutput()
+		var choices []proposalChoice
+		if err == nil {
+			err = json.Unmarshal(output, &choices)
+		} else {
+			err = fmt.Errorf("%s", strings.TrimSpace(string(output)))
+		}
+		return proposalsMsg{choices, err}
+	}
+}
+func (m model) proposalPreview() tea.Cmd {
+	return func() tea.Msg {
+		output, err := exec.Command("python3", filepath.Join(m.repo, "lib", "rice.py"), "--proposal-plan", m.proposalID).CombinedOutput()
+		return previewMsg{string(output), err}
+	}
+}
 func (m model) previewLines() []string {
 	width := m.width
 	if width == 0 {
@@ -267,6 +296,13 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case previewMsg:
 		m.loading = false
 		m.preview = v.content
+		if m.stage == 9 && v.err == nil {
+			lines := strings.SplitN(v.content, "\n", 4)
+			m.proposalStatus = ""
+			if len(lines) > 2 {
+				m.proposalStatus = strings.TrimPrefix(lines[2], "Status: ")
+			}
+		}
 		if v.err != nil {
 			m.errorText = v.err.Error()
 		}
@@ -279,6 +315,16 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		for _, choice := range v.choices {
 			m.rows = append(m.rows, row{choice.ID, fmt.Sprintf("%s — %d files", choice.ID, choice.Count), false})
 		}
+	case proposalsMsg:
+		m.loading = false
+		m.rows = nil
+		m.proposals = v.choices
+		if v.err != nil {
+			m.errorText = v.err.Error()
+		}
+		for _, choice := range v.choices {
+			m.rows = append(m.rows, row{choice.ID, choice.ID + " [" + choice.Status + "]", false})
+		}
 	case tea.KeyMsg:
 		key := v.String()
 		if key == "ctrl+c" || key == "q" {
@@ -287,7 +333,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		if m.loading {
 			return m, nil
 		}
-		if m.stage == 5 || m.stage == 7 {
+		if m.stage == 5 || m.stage == 7 || m.stage == 9 {
 			switch key {
 			case "up", "k":
 				if m.scroll > 0 {
@@ -305,6 +351,11 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 					m.errorText = ""
 					return m, m.loadBackups()
 				}
+				if m.stage == 8 {
+					m.loading = true
+					m.errorText = ""
+					return m, m.loadProposals()
+				}
 			case "u":
 				if m.stage == 5 {
 					m.stage = 6
@@ -313,13 +364,27 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 					m.errorText = ""
 					return m, m.loadBackups()
 				}
-			case "enter", "s", "a", "i", "f", "v", "b", "r":
+			case "p":
+				if m.stage == 5 {
+					m.stage = 8
+					m.prepare()
+					m.loading = true
+					m.errorText = ""
+					return m, m.loadProposals()
+				}
+			case "enter", "s", "a", "e", "i", "f", "v", "b", "r":
 				if m.errorText == "" {
 					if m.stage == 7 {
 						if key != "enter" {
 							return m, nil
 						}
 						key = "u"
+					}
+					if m.stage == 9 {
+						if key != "enter" || (m.proposalStatus != "ready" && m.proposalStatus != "unchanged") {
+							return m, nil
+						}
+						key = "p"
 					}
 					m.done = true
 					m.action = key
@@ -328,7 +393,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 			return m, nil
 		}
-		if m.stage == 6 {
+		if m.stage == 6 || m.stage == 8 {
 			switch key {
 			case "up", "k":
 				if m.cursor > 0 {
@@ -340,6 +405,14 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				}
 			case "enter":
 				if len(m.rows) > 0 && m.errorText == "" {
+					if m.stage == 8 {
+						m.proposalID = m.rows[m.cursor].id
+						m.proposalStatus = m.proposals[m.cursor].Status
+						m.stage = 9
+						m.scroll = 0
+						m.loading = true
+						return m, m.proposalPreview()
+					}
 					m.backupID = m.rows[m.cursor].id
 					m.stage = 7
 					m.scroll = 0
@@ -425,13 +498,13 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 func (m model) View() string {
 	const purple = "\033[38;2;157;143;217m"
 	const reset = "\033[0m"
-	titles := []string{"Preset", "Package sections", "Optional app configs", "Kernel, bootloader and extras", "Flatpaks and optional services", "Final preview", "Config backups", "Restore backup preview"}
+	titles := []string{"Preset", "Package sections", "Optional app configs", "Kernel, bootloader and extras", "Flatpaks and optional services", "Final preview", "Config backups", "Restore backup preview", "Pending config updates", "Config update diff"}
 	text := purple + "  Fiw-Gentoo-Dots\n" + reset + "  " + titles[m.stage] + "  ·  " + m.selection.Name + "\n\n"
 	budget := m.height - 10
 	if budget < 5 {
 		budget = 5
 	}
-	if m.stage == 5 || m.stage == 7 {
+	if m.stage == 5 || m.stage == 7 || m.stage == 9 {
 		if m.loading {
 			return text + "  Preparing preview…\n"
 		}
@@ -445,18 +518,27 @@ func (m model) View() string {
 		}
 		if m.stage == 7 {
 			text += "\n  ↑/↓ scroll · Esc back · Enter restore with confirmation · q cancel\n"
+		} else if m.stage == 9 {
+			if m.proposalStatus == "stale" {
+				text += "\n  Target changed: update configs again to create a fresh proposal.\n  ↑/↓ scroll · Esc back · q cancel\n"
+			} else {
+				text += "\n  ↑/↓ scroll · Esc back · Enter accept with confirmation · q cancel\n"
+			}
 		} else {
-			text += "\n  ↑/↓ scroll · Esc back · Enter save · r full restore · a configs · i packages\n  f Flatpaks · v services · b bootloader · u config backups · q cancel\n"
+			text += "\n  ↑/↓ scroll · Esc back · Enter save · r full restore · a configs · e update configs\n  i packages · f Flatpaks · v services · b bootloader\n  p pending updates · u config backups · q cancel\n"
 		}
 		if m.errorText != "" {
 			text += "  " + m.errorText + "\n"
 		}
 		return text
 	}
-	if m.stage == 6 && (m.loading || len(m.rows) == 0 || m.errorText != "") {
+	if (m.stage == 6 || m.stage == 8) && (m.loading || len(m.rows) == 0 || m.errorText != "") {
 		message := "No config backups yet. Backups are created when existing configs are replaced."
+		if m.stage == 8 {
+			message = "No pending config updates. Use e from the final preview to update configs."
+		}
 		if m.loading {
-			message = "Loading config backups…"
+			message = "Loading files…"
 		}
 		if m.errorText != "" {
 			message = m.errorText
@@ -482,6 +564,9 @@ func (m model) View() string {
 			cursor = "› "
 		}
 		line := "  " + cursor + mark + " " + r.label
+		if m.stage == 8 && m.width > 10 {
+			line = ansi.Truncate(line, m.width-2, "…")
+		}
 		if m.cursor == i {
 			line = purple + line + reset
 		}
@@ -489,6 +574,9 @@ func (m model) View() string {
 	}
 	if m.stage == 6 {
 		return text + "\n  ↑/↓ move · Enter preview backup · Esc back · q cancel\n"
+	}
+	if m.stage == 8 {
+		return text + "\n  ↑/↓ move · Enter preview diff · Esc back · q cancel\n"
 	}
 	return text + "\n  ↑/↓ move · Space select · Enter next · Esc back · q cancel\n"
 }
@@ -586,6 +674,12 @@ func main() {
 	case "a":
 		workflow = "configs"
 		actionErr = run("--apply-configs", false)
+	case "e":
+		workflow = "configs"
+		actionErr = run("--apply-configs", false, "--update")
+	case "p":
+		workflow = "proposal"
+		actionErr = run("--accept-proposal", false, final.proposalID)
 	case "i":
 		workflow = "packages"
 		actionErr = run("--install-packages", true)

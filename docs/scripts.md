@@ -8,6 +8,7 @@
 | `lib/setup.py` | Stages missing overlays, installs selected user Flatpaks and enables selected service units | Called by the backend |
 | `lib/boot.py` | Detects the target ESP/root, previews/deploys Limine or GRUB, refreshes kernel menus | Boot action; copied as `fiw-dots-boot` on deployment |
 | `lib/backups.py` | Lists and previews user config backups, restores selected files and backs up their current versions | TUI backup action or backend commands |
+| `lib/proposals.py` | Lists pending config changes, previews diffs and accepts individual proposals after checking for newer edits | TUI pending updates action or backend commands |
 | `lib/reporting.py` | Correlates root/user steps, failures, skips and manual setup into one local summary | Runs after TUI apply actions; `--summary` for CLI use |
 | `fiw-shot` | Captures a region or monitor using Spectacle, copies it to the clipboard and offers Save/Edit through a notification | Installed with KDE shortcuts; `region` or `screen` argument |
 | `tools/capture.py` | Recaptures the explicit preference allowlist without copying full personal profiles | Maintenance command; review the diff |

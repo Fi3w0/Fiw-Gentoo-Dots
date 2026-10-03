@@ -37,7 +37,7 @@ The existing installation has not been changed by creating this repo.
 ## Start
 
 ```sh
-git clone --branch v0.1.0 https://git.fiwlabs.dev/fiwdev/Fiw-Gentoo-Dots.git
+git clone --branch v0.1.1 https://git.fiwlabs.dev/fiwdev/Fiw-Gentoo-Dots.git
 cd Fiw-Gentoo-Dots
 ./install
 ```
@@ -47,12 +47,14 @@ configs, kernel/bootloader choices, individual Flatpaks, optional services and
 a final preview. Enter saves without applying. `r` runs the full restore;
 `a` restores configs, `i` installs Portage packages, `f` installs Flatpaks,
 `v` enables selected services and `b` deploys the selected bootloader.
-`u` opens config backups for preview and restoration. Apply actions finish
+`e` updates configs while preserving local edits; `p` opens pending changes
+for a diff and individual acceptance. `u` opens config backups for preview
+and restoration. Apply actions finish
 with a [combined report](docs/reports.md) of outcomes and remaining setup.
 Linux amd64 includes a verified prebuilt TUI; Git and Python 3.11+ are enough.
 Go 1.24+ is the source fallback for changed frontend code or other platforms.
 Saved selections are reused on subsequent launches. See the
-[v0.1.0 snapshot and build instructions](docs/releases.md).
+[snapshot and build instructions](docs/releases.md).
 
 For a preview without building the TUI:
 
@@ -125,6 +127,8 @@ is also optional.
 
 Existing differences prompt apply-or-keep and get backups when replaced.
 Updates leave locally edited configs intact and write the proposal to `.new`.
+The TUI can [review and accept each proposal](docs/updates.md), backing up the
+current file and refusing proposals whose target changed since creation.
 KConfig patches preserve unrelated keys and groups; JSON patches preserve
 unrelated preferences and login data already on the target device.
 The TUI can [restore user config backups](docs/backups.md), with a preview,

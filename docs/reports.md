@@ -11,7 +11,7 @@ The report includes:
 - Installed, existing, skipped or failed user Flatpaks.
 - Enabled, missing or skipped service units.
 - Applied configs, preserved conflicts and pending `.new` proposals.
-- Boot deployment outcome or backup restoration outcome.
+- Boot deployment, backup restoration or config proposal acceptance outcome.
 - Missing config requirements and selected manual setup steps.
 
 A cancelled operation stops the full restore sequence. Completed earlier
@@ -37,6 +37,6 @@ sudo ./install --selection local/selection.json --run-id my-restore --install-pa
 ```
 
 Run the combined summary as your regular user. `--workflow configs`,
-`packages`, `flatpaks`, `services`, `boot` or `backup` limits the expected steps
+`packages`, `flatpaks`, `services`, `boot`, `backup` or `proposal` limits the expected steps
 when summarizing one action. Full restoration is the default. Without an
 explicit ID, separate CLI apply commands are separate runs.

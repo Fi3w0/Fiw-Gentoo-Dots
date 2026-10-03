@@ -115,3 +115,51 @@ func TestPreviewCanScrollThroughLongRequirementLines(t *testing.T) {
 		t.Fatal("wrapped requirements cannot be scrolled into view")
 	}
 }
+
+func TestProposalNeedsDiffAndExplicitAcceptance(t *testing.T) {
+	m := model{stage: 5}
+	next, command := m.Update(tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune{'p'}})
+	m = next.(model)
+	if m.stage != 8 || command == nil || m.done {
+		t.Fatal("proposal key did not open the chooser")
+	}
+	next, _ = m.Update(proposalsMsg{choices: []proposalChoice{{ID: ".config/app.new", Target: ".config/app", Status: "ready"}}})
+	m = next.(model)
+	next, command = m.Update(tea.KeyMsg{Type: tea.KeyEnter})
+	m = next.(model)
+	if m.stage != 9 || command == nil || m.done {
+		t.Fatal("choosing a proposal must only open its diff")
+	}
+	next, _ = m.Update(previewMsg{content: "Config update proposal: .config/app.new\nTarget: .config/app\nStatus: ready\n\n-preview\n+proposal"})
+	m = next.(model)
+	next, _ = m.Update(tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune{'a'}})
+	m = next.(model)
+	if m.done {
+		t.Fatal("application key accepted a proposal")
+	}
+	next, _ = m.Update(tea.KeyMsg{Type: tea.KeyEnter})
+	m = next.(model)
+	if !m.done || m.action != "p" || m.proposalID != ".config/app.new" {
+		t.Fatal("explicit proposal acceptance was lost")
+	}
+}
+
+func TestProposalThatBecameStaleCannotBeAcceptedFromPreview(t *testing.T) {
+	m := model{stage: 9, proposalStatus: "ready", loading: true}
+	next, _ := m.Update(previewMsg{content: "Config update proposal: .config/app.new\nTarget: .config/app\nStatus: stale\n"})
+	m = next.(model)
+	next, command := m.Update(tea.KeyMsg{Type: tea.KeyEnter})
+	m = next.(model)
+	if m.done || command != nil || !strings.Contains(m.View(), "Target changed") {
+		t.Fatal("stale proposal was offered for acceptance")
+	}
+}
+
+func TestConfigUpdateIsASeparateAction(t *testing.T) {
+	m := model{stage: 5}
+	next, _ := m.Update(tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune{'e'}})
+	m = next.(model)
+	if !m.done || m.action != "e" {
+		t.Fatal("config update action was lost")
+	}
+}

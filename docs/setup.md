@@ -96,7 +96,8 @@ Ark, Gwenview and Prism also have individually optional preferences. Their
 capture scope and the preview's package requirements are described in
 [app configs](app-configs.md). r2modman setup remains a manual step.
 
-Review Git changes before pulling updates, then restore your saved selection:
+Review Git changes before pulling updates, then open the TUI with your saved
+selection and press **e** at the final preview. The command-line equivalent is:
 
 ```sh
 ./install --selection local/selection.json --apply-configs --update
@@ -107,6 +108,7 @@ files. Replacements receive backups. Root Portage file conflicts ask before
 replacement and receive backups too. Reports and user backups live under
 `~/.local/state/Fiw-Gentoo-Dots`; system reports and backups live under
 `/var/lib/Fiw-Gentoo-Dots`.
+Use **p** to [review and accept pending config updates](updates.md) individually.
 Use the TUI's **u** action to [restore a user config backup](backups.md).
 
 ## Fiw tools
