@@ -16,6 +16,8 @@ REPO = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO / 'tools'))
 sys.path.insert(0, str(REPO / 'lib'))
 from capture import sections
+import backups
+import reporting
 from setup import (FLATPAKS, SERVICES, required_repositories,
                    existing_repository, repository_config, stage_repositories,
                    publish_repositories, install_flatpaks, enable_services)
@@ -85,6 +87,43 @@ def source_policy(selection):
         if 'nvidia' in selection.get('extras', []):
             result += ['x11-drivers/nvidia-drivers']
     return result
+
+
+def config_requirements(selection, planned=True):
+    selected = {cp_from_cpv(atom.split('::')[0].split(':')[0].lstrip('<>=~'))
+                for values in package_map(selection).values() for atom in values}
+    packages = {atom for name in selection['configs'] for atom in CATALOG[name].get('packages', [])}
+    installed = {}
+    query = shutil.which('portageq')
+    for atom in sorted(packages):
+        installed[atom] = subprocess.run([query, 'has_version', '/', atom], stdout=subprocess.DEVNULL,
+                                        stderr=subprocess.DEVNULL).returncode == 0 if query else None
+    return {name: [{'package': atom,
+                    'status': 'installed' if installed[atom] else 'selected' if planned and atom in selected else 'unverified' if installed[atom] is None else 'missing'}
+                   for atom in CATALOG[name].get('packages', [])] for name in selection['configs']}
+
+
+def backup_paths():
+    selection = {'configs': list(CATALOG), 'groups': GROUPS}
+    return {str(relative): {'name': name, 'kde': CATALOG[name].get('kde', False)}
+            for name, _, _, relative in config_entries(selection)}
+
+
+def manual_steps(selection):
+    steps = []
+    if selection.get('firefox_privacy'):
+        steps.append('Apply Firefox-Privacy after reviewing docs/firefox.md.')
+    if selection.get('spotify_custom'):
+        steps.append('Optional Spotify customization requires the manual setup in docs/spotify.md.')
+    if 'fiw-tools' in selection['groups']:
+        steps.append('Add Apdatifier through Plasma Add Widgets; FiwNode uses its default config.')
+    if 'gaming' in selection['groups']:
+        steps.append('Choose r2modman appearance in its settings and import any wanted profiles through the app (docs/app-configs.md).')
+    if 'prism' in selection['configs']:
+        steps.append('Set up Prism accounts, Java and Minecraft instances on this device; see docs/app-configs.md.')
+    if 'tidewm' in selection['groups']:
+        steps.append('The optional TideWM live recipe needs an upstream refresh before use.')
+    return steps
 
 
 def merge_kconfig(old, patch):
@@ -184,7 +223,7 @@ def apply_configs(selection, home, update=False, conflict='ask'):
     home = home.resolve()
     entries = list(config_entries(selection))
     check_configs(selection, home)
-    state_dir = home / '.local/state/Fiw-Gentoo-Dots'
+    state_dir = backups.user_state(home)
     index_path = state_dir / 'managed.json'
     index = json.loads(index_path.read_text()) if index_path.is_file() else {}
     stamp = datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%S.%fZ')
@@ -231,7 +270,10 @@ def apply_configs(selection, home, update=False, conflict='ask'):
             else:
                 backup = state_dir / 'backups' / stamp / relative
                 backup.parent.mkdir(parents=True, exist_ok=True)
-                shutil.copy2(dest, backup, follow_symlinks=False)
+                # Several selected presets may patch the same KConfig file.
+                # Keep its original version from before this entire operation.
+                if not backup.exists() and not backup.is_symlink():
+                    shutil.copy2(dest, backup, follow_symlinks=False)
         target.parent.mkdir(parents=True, exist_ok=True)
         tmp = target.parent / ('.' + target.name + '.fiw-dots-' + stamp)
         if src.is_symlink():
@@ -244,7 +286,9 @@ def apply_configs(selection, home, update=False, conflict='ask'):
             index[key] = new_hash
             report['applied'].append(key)
     state_dir.mkdir(parents=True, exist_ok=True)
-    index_path.write_text(json.dumps(index, indent=2) + '\n')
+    temporary = index_path.with_name('.managed-' + stamp)
+    temporary.write_text(json.dumps(index, indent=2) + '\n')
+    temporary.replace(index_path)
     (state_dir / 'selection.json').write_text(json.dumps(selection, indent=2) + '\n')
     (state_dir / ('report-' + stamp + '.json')).write_text(json.dumps(report, indent=2) + '\n')
     if 'fonts' in selection['configs'] and home == Path.home().resolve() and shutil.which('fc-cache'):
@@ -318,11 +362,17 @@ def preview(selection):
               'Other packages: prefer binaries; ask compile/skip for additional source builds.',
               'Kernel: ' + selection['kernel'] + (' + binary fallback' if selection['kernel'] == 'custom' else ''),
               'Bootloader: ' + selection['bootloader'], '', 'Selected configs:']
+    requirements = config_requirements(selection)
     for name in selection['configs']:
         lines.append('  ' + name + ': ' + CATALOG[name]['label'])
+        if requirements[name]:
+            lines.append('    Needs: ' + ', '.join(entry['package'] + ' [' + entry['status'] + ']' for entry in requirements[name]))
+        if CATALOG[name].get('note'):
+            lines.append('    ' + CATALOG[name]['note'])
     lines += ['', 'Config files: ' + str(len(list(config_entries(selection)))),
               'Root configuration files: ' + str(len(root_files(selection))),
               'Existing config conflicts: ask; updates preserve edits as .new.']
+    lines.append('Config requirements are informational; config choices do not automatically select package groups.')
 
     if selection['bootloader'] != 'keep':
         lines.append('Boot deployment: target ESP and boot files are previewed before applying; firmware changes are separately selectable (docs/boot.md).')
@@ -429,9 +479,9 @@ def install_packages(selection):
         print('Skipped: ' + (', '.join(skipped) or 'none'))
         if not accepted:
             print('All requested packages were skipped; no live configuration applied.')
-            return
+            return {'status': 'skipped', 'requested': requested, 'skipped': skipped, 'missing': requested}
         if ask('Apply the previewed Portage files and install the accepted packages?', ['apply', 'cancel'], 'cancel') != 'apply':
-            return
+            return {'status': 'cancelled', 'requested': requested, 'skipped': skipped}
         publish_repositories(fetched)
         # Back up each existing managed destination before replacing it.
         stamp = datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%S.%fZ')
@@ -485,7 +535,8 @@ def install_packages(selection):
         missing = [atom for atom in requested if subprocess.run(
             ['portageq', 'has_version', '/', atom], stdout=subprocess.DEVNULL,
             stderr=subprocess.DEVNULL).returncode != 0]
-        report = {'requested': requested, 'skipped': skipped, 'emerge_exit_code': result.returncode,
+        report = {'requested': requested, 'present': [atom for atom in accepted if atom not in missing],
+                  'skipped': skipped, 'emerge_exit_code': result.returncode,
                   'missing': missing,
                   'pending': []}
         state = Path('/var/lib/Fiw-Gentoo-Dots')
@@ -494,10 +545,13 @@ def install_packages(selection):
         print('Package report: ' + str(state / ('packages-' + stamp + '.json')))
         print('Missing packages: ' + (', '.join(missing) or 'none'))
         if result.returncode:
-            raise RuntimeError('Some packages did not install; consult the package report and emerge output.')
+            error = RuntimeError('Some packages did not install; consult the package report and emerge output.')
+            error.report = report
+            raise error
         if 'kde' in selection['groups'] and 'kde-plasma/plasma-login-manager' not in missing:
             subprocess.run(['systemctl', 'enable', '--force', 'plasmalogin.service'], check=True)
         print('Portage installation finished. Plasma Login Manager is enabled for selected KDE installs; no running greeter was restarted. Use the selected Flatpak, service and boot actions or the full restore workflow to finish setup.')
+        return report
 
 
 def check_packages(selection):
@@ -539,6 +593,13 @@ def main():
     parser.add_argument('--deploy-bootloader', action='store_true')
     parser.add_argument('--boot-plan', action='store_true')
     parser.add_argument('--esp', type=Path)
+    parser.add_argument('--list-backups', action='store_true')
+    parser.add_argument('--backup-plan', metavar='ID')
+    parser.add_argument('--restore-backup', metavar='ID')
+    parser.add_argument('--summary', action='store_true')
+    parser.add_argument('--run-id')
+    parser.add_argument('--execution-error', help=argparse.SUPPRESS)
+    parser.add_argument('--workflow', choices=['restore', 'configs', 'packages', 'flatpaks', 'services', 'boot', 'backup'], default='restore')
     parser.add_argument('--update', action='store_true')
     parser.add_argument('--conflict', choices=['ask', 'keep', 'apply'], default='ask')
     args = parser.parse_args()
@@ -548,29 +609,63 @@ def main():
                           'stock': load_selection(profile='stock'), 'ryzen': load_selection(profile='fiw-ryzen')}))
         return
     selection = load_selection(args.selection, args.profile)
+    if args.run_id:
+        reporting.validate_run(args.run_id)
+    home = args.home.resolve()
+    if args.list_backups:
+        print(json.dumps(backups.list_backups(home, backup_paths())))
+        return
+    if args.backup_plan:
+        print(json.dumps(backups.plan(home, args.backup_plan, backup_paths()), indent=2))
+        return
+    if args.summary:
+        if os.geteuid() == 0:
+            raise RuntimeError('Create the combined restoration summary as the target user.')
+        reporting.summarize(selection, home, config_requirements(selection, planned=False), manual_steps(selection), args.run_id, args.workflow, args.execution_error)
+        return
+    action = ('configs' if args.apply_configs else 'packages' if args.install_packages else
+              'flatpaks' if args.install_flatpaks else 'services-system' if args.enable_services and os.geteuid() == 0 else
+              'services-user' if args.enable_services else 'boot' if args.deploy_bootloader else
+              'backup' if args.restore_backup else 'preflight' if args.check_configs and args.run_id else None)
+    if action:
+        run_id = args.run_id or datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%S.%fZ')
+        details = {}
+        try:
+            if action == 'configs':
+                if os.geteuid() == 0:
+                    raise RuntimeError('Apply user configs as the target user, not as root.')
+                details = apply_configs(selection, home, args.update, args.conflict)
+            elif action == 'packages':
+                details = install_packages(selection)
+            elif action == 'flatpaks':
+                details = install_flatpaks(selection, ask)
+            elif action.startswith('services-'):
+                details = enable_services(selection, ask)
+            elif action == 'boot':
+                from boot import deploy
+                details = deploy(selection['bootloader'], args.esp, ask)
+            elif action == 'backup':
+                details = backups.restore(home, args.restore_backup, backup_paths(), ask, active_plasma, args.conflict)
+            else:
+                check_configs(selection, home)
+                print('Config restoration preflight passed.')
+        except (ValueError, OSError, RuntimeError, subprocess.CalledProcessError) as error:
+            reporting.record(selection, run_id, action, home, getattr(error, 'report', details) or {}, error)
+            raise
+        event = reporting.record(selection, run_id, action, home, details or {})
+        if event['status'] == 'cancelled':
+            raise SystemExit(130)
+        return
     if args.export:
         export(selection, args.export)
     elif args.check_configs:
         check_configs(selection, args.home)
         print('Config restoration preflight passed.')
-    elif args.apply_configs:
-        if os.geteuid() == 0:
-            raise RuntimeError('Apply user configs as the target user, not as root.')
-        apply_configs(selection, args.home, args.update, args.conflict)
-    elif args.install_packages:
-        install_packages(selection)
     elif args.check_packages:
         check_packages(selection)
-    elif args.install_flatpaks:
-        install_flatpaks(selection, ask)
-    elif args.enable_services:
-        enable_services(selection, ask)
-    elif args.deploy_bootloader or args.boot_plan:
-        from boot import deploy, plan
-        if args.boot_plan:
-            print(json.dumps(plan(selection['bootloader'], args.esp), indent=2))
-        else:
-            deploy(selection['bootloader'], args.esp, ask)
+    elif args.boot_plan:
+        from boot import plan
+        print(json.dumps(plan(selection['bootloader'], args.esp), indent=2))
     else:
         print(preview(selection))
 

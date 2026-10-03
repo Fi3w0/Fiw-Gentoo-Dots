@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Capture explicitly selected preferences, never whole application profiles."""
+import argparse
 import json
 import re
 import shutil
@@ -7,6 +8,18 @@ from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[1]
 HOME = Path.home()
+APP_KEYS = {
+    'ark': ('.config/arkrc', {
+        '[Extraction]': ['openDestinationFolderAfterExtraction'],
+        '[General]': ['LockSidebar', 'ShowSidebar'], '[MainWindow]': ['StatusBar']}),
+    'gwenview': ('.config/gwenviewrc', {
+        '[MainWindow]': ['MenuBar'], '[SideBar]': ['InformationSplitterSizes']}),
+    'prism': ('.local/share/PrismLauncher/prismlauncher.cfg', {'[General]': [
+        'ApplicationTheme', 'IconTheme', 'ConsoleFont', 'ConsoleFontSize',
+        'ConsoleMaxLines', 'ConsoleOverflowStop', 'ShowConsole', 'ShowConsoleOnError',
+        'AutoCloseConsole', 'CloseAfterLaunch', 'QuitAfterGameStop', 'RecordGameTime',
+        'ShowGameTime', 'ShowGameTimeWithoutDays', 'ShowGlobalGameTime',
+        'MenuBarInsteadOfToolBar', 'StatusBarVisible', 'ToolbarsLocked']})}
 
 
 def sections(text):
@@ -78,7 +91,13 @@ def copy_assets(source, destination):
             shutil.copy2(src, dest)
 
 
+def capture_apps():
+    for name, (relative, keys) in APP_KEYS.items():
+        kconfig(name, relative, keys=keys)
+
+
 def capture():
+    capture_apps()
     kconfig("kde-style", ".config/kdeglobals",
             groups=[g for g in sections((HOME / '.config/kdeglobals').read_text())
                     if g.startswith(('[Colors:', '[ColorEffects:'))]
@@ -183,4 +202,10 @@ def capture():
 
 
 if __name__ == '__main__':
-    capture()
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--apps-only', action='store_true', help='Recapture only Ark, Gwenview and Prism preferences')
+    args = parser.parse_args()
+    if args.apps_only:
+        capture_apps()
+    else:
+        capture()

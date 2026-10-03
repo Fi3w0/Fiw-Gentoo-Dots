@@ -47,6 +47,8 @@ configs, kernel/bootloader choices, individual Flatpaks, optional services and
 a final preview. Enter saves without applying. `r` runs the full restore;
 `a` restores configs, `i` installs Portage packages, `f` installs Flatpaks,
 `v` enables selected services and `b` deploys the selected bootloader.
+`u` opens config backups for preview and restoration. Apply actions finish
+with a [combined report](docs/reports.md) of outcomes and remaining setup.
 Go 1.24+ builds the TUI; Python 3.11+ runs the backend. Go dependencies are
 recorded in go.mod/go.sum. Saved selections are reused on subsequent launches.
 
@@ -109,6 +111,9 @@ Fish, Kitty and Neovim are usable without KDE or KWin. Fastfetch keeps the
 tree layout and purple colours with the built-in Gentoo logo. MangoHud and
 Vesktop preferences are included; browser profiles, chat sessions and account
 data are excluded. App autostart is a separate optional selection.
+Ark, Gwenview and Prism preferences are individually optional too; see
+[app configs and requirements](docs/app-configs.md). Each config's required
+packages appear in the final preview without changing package selections.
 
 Spotify is stock by default. The existing customization scripts remain an
 [explicit optional step](docs/spotify.md). [Firefox-Privacy](docs/firefox.md)
@@ -118,6 +123,8 @@ Existing differences prompt apply-or-keep and get backups when replaced.
 Updates leave locally edited configs intact and write the proposal to `.new`.
 KConfig patches preserve unrelated keys and groups; JSON patches preserve
 unrelated preferences and login data already on the target device.
+The TUI can [restore user config backups](docs/backups.md), with a preview,
+confirmation and a new backup of the replaced current files.
 
 ## Project layout
 

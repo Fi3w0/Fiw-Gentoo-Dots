@@ -2,6 +2,7 @@ package main
 
 import (
 	tea "github.com/charmbracelet/bubbletea"
+	"strings"
 	"testing"
 )
 
@@ -64,5 +65,53 @@ func TestSetupCheckboxesSurviveFinalPreview(t *testing.T) {
 	result := next.(model)
 	if result.stage != 5 || command == nil || !contains(result.selection.Flatpaks, "org.vinegarhq.Sober") || !contains(result.selection.Services, "audio") {
 		t.Fatalf("setup selections lost before preview: %+v", result.selection)
+	}
+}
+
+func TestBackupNeedsSelectionPreviewAndExplicitRestoreAction(t *testing.T) {
+	m := model{stage: 5}
+	next, command := m.Update(tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune{'u'}})
+	m = next.(model)
+	if m.stage != 6 || command == nil || m.done {
+		t.Fatal("backup key did not open the chooser")
+	}
+	next, _ = m.Update(backupsMsg{choices: []backupChoice{{ID: "20260101T000000Z", Count: 1}}})
+	m = next.(model)
+	next, command = m.Update(tea.KeyMsg{Type: tea.KeyEnter})
+	m = next.(model)
+	if m.stage != 7 || command == nil || m.done {
+		t.Fatal("choosing a backup must only open its preview")
+	}
+	next, _ = m.Update(previewMsg{content: "preview"})
+	m = next.(model)
+	next, _ = m.Update(tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune{'a'}})
+	m = next.(model)
+	if m.done {
+		t.Fatal("config application key triggered a restore from backup preview")
+	}
+	next, _ = m.Update(tea.KeyMsg{Type: tea.KeyEnter})
+	m = next.(model)
+	if !m.done || m.action != "u" || m.backupID != "20260101T000000Z" {
+		t.Fatal("explicit backup action was lost")
+	}
+}
+
+func TestEmptyBackupChooserDoesNotStartRestore(t *testing.T) {
+	m := model{stage: 6}
+	next, command := m.Update(tea.KeyMsg{Type: tea.KeyEnter})
+	m = next.(model)
+	if m.done || command != nil || m.stage != 6 {
+		t.Fatal("empty backup chooser started a restore")
+	}
+}
+
+func TestPreviewCanScrollThroughLongRequirementLines(t *testing.T) {
+	m := model{stage: 5, height: 20, width: 40, preview: strings.Repeat("package [missing] ", 20)}
+	for range 3 {
+		next, _ := m.Update(tea.KeyMsg{Type: tea.KeyDown})
+		m = next.(model)
+	}
+	if m.scroll != 3 {
+		t.Fatal("wrapped requirements cannot be scrolled into view")
 	}
 }

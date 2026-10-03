@@ -22,7 +22,10 @@
     "mangohud",
     "vesktop",
     "vscode",
-    "fonts"
+    "fonts",
+    "ark",
+    "gwenview",
+    "prism"
   ],
   "kernel": "custom",
   "bootloader": "keep",

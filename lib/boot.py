@@ -338,7 +338,7 @@ def firmware_commands(target, mode, loader_path, choice, listing):
 def deploy(mode, esp=None, ask=confirm):
     if mode == 'keep':
         print('Keeping the current bootloader.')
-        return
+        return {'status': 'skipped'}
     if os.geteuid() != 0:
         raise RuntimeError('Boot deployment needs root. Run sudo ./install --deploy-bootloader --selection <file>.')
     proposed = plan(mode, esp)
@@ -360,7 +360,7 @@ def deploy(mode, esp=None, ask=confirm):
     if commands:
         print('Proposed firmware commands: ' + json.dumps(commands))
     if ask('Deploy the previewed bootloader and kernel refresh hook?', ['deploy', 'cancel'], 'cancel') != 'deploy':
-        return
+        return {'status': 'cancelled'}
     stamp = datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%S.%fZ')
     backups = MANAGED / 'backups' / ('boot-' + stamp)
     folder = Path(proposed['esp']['path']) / EFI_DIRECTORY
@@ -403,6 +403,8 @@ def deploy(mode, esp=None, ask=confirm):
     report.write_text(json.dumps({'plan': proposed, 'firmware_choice': firmware,
                                   'backups': str(backups)}, indent=2) + '\n')
     print('Boot deployment finished. Report: ' + str(report))
+    return {'status': 'completed', 'mode': mode, 'firmware_choice': firmware,
+            'report': str(report), 'backups': str(backups)}
 
 
 def main():

@@ -2,58 +2,143 @@
   "kde-style": {
     "label": "KDE + GTK colours, fonts, cursor and decorations",
     "group": "kde",
-    "kde": true
+    "kde": true,
+    "packages": [
+      "kde-plasma/plasma-workspace",
+      "kde-plasma/kwin",
+      "kde-plasma/breeze",
+      "kde-plasma/breeze-gtk",
+      "kde-frameworks/breeze-icons",
+      "media-fonts/dejavu"
+    ],
+    "note": "Qogir cursors and Utterly Round decoration assets are bundled."
   },
   "kde-shortcuts": {
     "label": "All KDE shortcuts + keyboard layouts + screenshot helpers",
     "group": "kde",
-    "kde": true
+    "kde": true,
+    "packages": [
+      "kde-plasma/plasma-workspace",
+      "kde-plasma/kwin",
+      "kde-plasma/spectacle",
+      "x11-terms/kitty",
+      "gui-apps/wl-clipboard",
+      "x11-libs/libnotify"
+    ]
   },
   "dolphin": {
     "label": "Dolphin toolbar, sidebar and transparency",
     "group": "fiw-apps",
-    "kde": true
+    "kde": true,
+    "packages": [
+      "kde-apps/dolphin",
+      "kde-plasma/kwin"
+    ]
   },
   "spectacle": {
     "label": "Spectacle capture preferences",
     "group": "fiw-apps",
-    "kde": true
+    "kde": true,
+    "packages": [
+      "kde-plasma/spectacle"
+    ]
   },
   "fish": {
     "label": "Fish aliases, greeting and notification settings",
-    "group": "cli"
+    "group": "cli",
+    "packages": [
+      "app-shells/fish",
+      "app-misc/fastfetch",
+      "sys-apps/eza",
+      "sys-apps/bat",
+      "app-editors/neovim",
+      "app-portage/portage-utils",
+      "x11-libs/libnotify"
+    ],
+    "note": "The fiw-update alias is enabled only when that local helper exists. Font icons use the optional fonts preset."
   },
   "kitty": {
     "label": "Kitty lavender profiles",
-    "group": "fiw-apps"
+    "group": "fiw-apps",
+    "packages": [
+      "x11-terms/kitty"
+    ],
+    "note": "Select fonts separately for the bundled JetBrainsMono Nerd Font."
   },
   "neovim": {
     "label": "Neovim transparent purple style",
-    "group": "cli"
+    "group": "cli",
+    "packages": [
+      "app-editors/neovim"
+    ],
+    "note": "Catppuccin is optional; the captured purple highlights also work with the built-in fallback."
   },
   "fastfetch": {
     "label": "Fastfetch tree layout with Gentoo logo",
-    "group": "cli"
+    "group": "cli",
+    "packages": [
+      "app-misc/fastfetch"
+    ]
   },
   "mangohud": {
     "label": "MangoHud appearance and detail presets",
-    "group": "gaming"
+    "group": "gaming",
+    "packages": [
+      "games-util/mangohud"
+    ]
   },
   "vesktop": {
     "label": "Vesktop preferences (no account data)",
-    "group": "fiw-apps"
+    "group": "fiw-apps",
+    "packages": [
+      "net-im/vesktop-bin"
+    ]
   },
   "vscode": {
     "label": "VS Code preferences",
-    "group": "fiw-apps"
+    "group": "fiw-apps",
+    "packages": [
+      "app-editors/vscode"
+    ]
   },
   "autostart": {
     "label": "Optional application autostart",
     "group": null,
-    "kde": true
+    "kde": true,
+    "packages": [
+      "kde-plasma/kwin"
+    ],
+    "note": "Only apps from selected package groups with an installed launch command are started."
   },
   "fonts": {
     "label": "JetBrainsMono Nerd Font Mono (four styles)",
-    "group": null
+    "group": null,
+    "packages": [
+      "media-libs/fontconfig"
+    ]
+  },
+  "ark": {
+    "label": "Ark sidebar, status bar and extraction behaviour",
+    "group": "fiw-apps",
+    "packages": [
+      "kde-apps/ark"
+    ]
+  },
+  "gwenview": {
+    "label": "Gwenview menu bar and information sidebar",
+    "group": "fiw-apps",
+    "packages": [
+      "kde-apps/gwenview"
+    ]
+  },
+  "prism": {
+    "label": "Prism appearance, console and launcher behaviour",
+    "group": "gaming",
+    "packages": [
+      "games-action/prismlauncher",
+      "media-fonts/dejavu",
+      "kde-frameworks/breeze-icons"
+    ],
+    "note": "Native Gentoo path. Minecraft instances, accounts, Java locations and memory limits remain local."
   }
 }

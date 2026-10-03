@@ -2,14 +2,17 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"sort"
 	"strings"
+	"time"
 
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/charmbracelet/x/ansi"
 )
 
 type selection struct {
@@ -52,14 +55,22 @@ type previewMsg struct {
 	content string
 	err     error
 }
+type backupChoice struct {
+	ID    string `json:"id"`
+	Count int    `json:"count"`
+}
+type backupsMsg struct {
+	choices []backupChoice
+	err     error
+}
 type model struct {
-	repo                          string
-	catalog                       catalog
-	selection                     selection
-	rows                          []row
-	stage, cursor, height, scroll int
-	preview, errorText, action    string
-	done, loading                 bool
+	repo                                 string
+	catalog                              catalog
+	selection                            selection
+	rows                                 []row
+	stage, cursor, height, width, scroll int
+	preview, errorText, action, backupID string
+	done, loading                        bool
 }
 
 func contains(values []string, target string) bool {
@@ -215,15 +226,56 @@ func (m model) makePreview() tea.Cmd {
 		return previewMsg{string(output), err}
 	}
 }
+func (m model) loadBackups() tea.Cmd {
+	return func() tea.Msg {
+		output, err := exec.Command("python3", filepath.Join(m.repo, "lib", "rice.py"), "--list-backups").CombinedOutput()
+		var choices []backupChoice
+		if err == nil {
+			err = json.Unmarshal(output, &choices)
+		} else {
+			err = fmt.Errorf("%s", strings.TrimSpace(string(output)))
+		}
+		return backupsMsg{choices, err}
+	}
+}
+func (m model) backupPreview() tea.Cmd {
+	return func() tea.Msg {
+		output, err := exec.Command("python3", filepath.Join(m.repo, "lib", "rice.py"), "--backup-plan", m.backupID).CombinedOutput()
+		return previewMsg{string(output), err}
+	}
+}
+func (m model) previewLines() []string {
+	width := m.width
+	if width == 0 {
+		width = 80
+	}
+	if width < 10 {
+		width = 10
+	}
+	return strings.Split(ansi.Wrap(m.preview, width-4, ""), "\n")
+}
 func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch v := msg.(type) {
 	case tea.WindowSizeMsg:
 		m.height = v.Height
+		m.width = v.Width
+		if m.scroll >= len(m.previewLines()) {
+			m.scroll = len(m.previewLines()) - 1
+		}
 	case previewMsg:
 		m.loading = false
 		m.preview = v.content
 		if v.err != nil {
 			m.errorText = v.err.Error()
+		}
+	case backupsMsg:
+		m.loading = false
+		m.rows = nil
+		if v.err != nil {
+			m.errorText = v.err.Error()
+		}
+		for _, choice := range v.choices {
+			m.rows = append(m.rows, row{choice.ID, fmt.Sprintf("%s — %d files", choice.ID, choice.Count), false})
 		}
 	case tea.KeyMsg:
 		key := v.String()
@@ -233,25 +285,71 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		if m.loading {
 			return m, nil
 		}
-		if m.stage == 5 {
+		if m.stage == 5 || m.stage == 7 {
 			switch key {
 			case "up", "k":
 				if m.scroll > 0 {
 					m.scroll--
 				}
 			case "down", "j":
-				if m.scroll < len(strings.Split(m.preview, "\n"))-1 {
+				if m.scroll < len(m.previewLines())-1 {
 					m.scroll++
 				}
 			case "esc":
 				m.stage--
 				m.prepare()
+				if m.stage == 6 {
+					m.loading = true
+					m.errorText = ""
+					return m, m.loadBackups()
+				}
+			case "u":
+				if m.stage == 5 {
+					m.stage = 6
+					m.prepare()
+					m.loading = true
+					m.errorText = ""
+					return m, m.loadBackups()
+				}
 			case "enter", "s", "a", "i", "f", "v", "b", "r":
 				if m.errorText == "" {
+					if m.stage == 7 {
+						if key != "enter" {
+							return m, nil
+						}
+						key = "u"
+					}
 					m.done = true
 					m.action = key
 					return m, tea.Quit
 				}
+			}
+			return m, nil
+		}
+		if m.stage == 6 {
+			switch key {
+			case "up", "k":
+				if m.cursor > 0 {
+					m.cursor--
+				}
+			case "down", "j":
+				if m.cursor < len(m.rows)-1 {
+					m.cursor++
+				}
+			case "enter":
+				if len(m.rows) > 0 && m.errorText == "" {
+					m.backupID = m.rows[m.cursor].id
+					m.stage = 7
+					m.scroll = 0
+					m.loading = true
+					return m, m.backupPreview()
+				}
+			case "esc":
+				m.stage = 5
+				m.scroll = 0
+				m.errorText = ""
+				m.loading = true
+				return m, m.makePreview()
 			}
 			return m, nil
 		}
@@ -325,17 +423,17 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 func (m model) View() string {
 	const purple = "\033[38;2;157;143;217m"
 	const reset = "\033[0m"
-	titles := []string{"Preset", "Package sections", "Optional app configs", "Kernel, bootloader and extras", "Flatpaks and optional services", "Final preview"}
+	titles := []string{"Preset", "Package sections", "Optional app configs", "Kernel, bootloader and extras", "Flatpaks and optional services", "Final preview", "Config backups", "Restore backup preview"}
 	text := purple + "  Fiw-Gentoo-Dots\n" + reset + "  " + titles[m.stage] + "  ·  " + m.selection.Name + "\n\n"
 	budget := m.height - 10
 	if budget < 5 {
 		budget = 5
 	}
-	if m.stage == 5 {
+	if m.stage == 5 || m.stage == 7 {
 		if m.loading {
 			return text + "  Preparing preview…\n"
 		}
-		lines := strings.Split(m.preview, "\n")
+		lines := m.previewLines()
 		end := m.scroll + budget
 		if end > len(lines) {
 			end = len(lines)
@@ -343,11 +441,25 @@ func (m model) View() string {
 		for _, line := range lines[m.scroll:end] {
 			text += "  " + line + "\n"
 		}
-		text += "\n  ↑/↓ scroll · Esc back · Enter save · r full restore · a configs · i packages\n  f Flatpaks · v services · b bootloader · q cancel\n"
+		if m.stage == 7 {
+			text += "\n  ↑/↓ scroll · Esc back · Enter restore with confirmation · q cancel\n"
+		} else {
+			text += "\n  ↑/↓ scroll · Esc back · Enter save · r full restore · a configs · i packages\n  f Flatpaks · v services · b bootloader · u config backups · q cancel\n"
+		}
 		if m.errorText != "" {
 			text += "  " + m.errorText + "\n"
 		}
 		return text
+	}
+	if m.stage == 6 && (m.loading || len(m.rows) == 0 || m.errorText != "") {
+		message := "No config backups yet. Backups are created when existing configs are replaced."
+		if m.loading {
+			message = "Loading config backups…"
+		}
+		if m.errorText != "" {
+			message = m.errorText
+		}
+		return text + "  " + message + "\n\n  Esc back · q cancel\n"
 	}
 	start := 0
 	if m.cursor >= budget {
@@ -372,6 +484,9 @@ func (m model) View() string {
 			line = purple + line + reset
 		}
 		text += line + "\n"
+	}
+	if m.stage == 6 {
+		return text + "\n  ↑/↓ move · Enter preview backup · Esc back · q cancel\n"
 	}
 	return text + "\n  ↑/↓ move · Space select · Enter next · Esc back · q cancel\n"
 }
@@ -423,8 +538,10 @@ func main() {
 	}
 	fmt.Println(final.preview)
 	fmt.Println("\nSaved selection:", path)
-	run := func(action string, root bool) error {
-		args := []string{filepath.Join(repo, "lib", "rice.py"), "--selection", path, action}
+	runID := fmt.Sprintf("%s-%d", time.Now().UTC().Format("20060102T150405.000000000Z"), os.Getpid())
+	run := func(action string, root bool, extra ...string) error {
+		args := []string{filepath.Join(repo, "lib", "rice.py"), "--selection", path, "--run-id", runID, action}
+		args = append(args, extra...)
 		program := "python3"
 		if root {
 			program = "sudo"
@@ -458,17 +575,26 @@ func main() {
 		return nil
 	}
 	var actionErr error
+	workflow := "restore"
 	switch final.action {
 	case "a":
+		workflow = "configs"
 		actionErr = run("--apply-configs", false)
 	case "i":
+		workflow = "packages"
 		actionErr = run("--install-packages", true)
 	case "f":
+		workflow = "flatpaks"
 		actionErr = run("--install-flatpaks", false)
 	case "v":
+		workflow = "services"
 		actionErr = services()
 	case "b":
+		workflow = "boot"
 		actionErr = run("--deploy-bootloader", true)
+	case "u":
+		workflow = "backup"
+		actionErr = run("--restore-backup", false, final.backupID)
 	case "r":
 		actionErr = run("--check-configs", false)
 		if actionErr == nil && (len(final.selection.Groups) > 0 || len(final.selection.Extras) > 0 || final.selection.Bootloader != "keep" || len(final.selection.Flatpaks) > 0 || len(final.selection.Services) > 0) {
@@ -490,7 +616,19 @@ func main() {
 		fmt.Println("Saved. Choose an action in the TUI or use the commands in docs/setup.md.")
 		return
 	}
+	summaryArgs := []string{"--workflow", workflow}
 	if actionErr != nil {
+		summaryArgs = append(summaryArgs, "--execution-error", actionErr.Error())
+	}
+	if summaryErr := run("--summary", false, summaryArgs...); summaryErr != nil {
+		fmt.Fprintln(os.Stderr, "Cannot create the combined report:", summaryErr)
+	}
+	if actionErr != nil {
+		var exitError *exec.ExitError
+		if errors.As(actionErr, &exitError) && exitError.ExitCode() == 130 {
+			fmt.Println("Cancelled. Completed steps remain recorded in the summary.")
+			os.Exit(130)
+		}
 		fmt.Fprintln(os.Stderr, actionErr)
 		os.Exit(1)
 	}

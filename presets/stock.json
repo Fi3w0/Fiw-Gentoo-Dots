@@ -20,7 +20,10 @@
     "mangohud",
     "vesktop",
     "vscode",
-    "fonts"
+    "fonts",
+    "ark",
+    "gwenview",
+    "prism"
   ],
   "kernel": "binary",
   "bootloader": "keep",

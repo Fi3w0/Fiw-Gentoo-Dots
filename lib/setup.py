@@ -114,7 +114,7 @@ def install_flatpaks(selection, ask):
     apps = selection.get('flatpaks', [])
     if not apps:
         print('No Flatpaks selected.')
-        return
+        return {'status': 'skipped'}
     if not shutil.which('flatpak'):
         raise RuntimeError('Flatpak is missing. Install sys-apps/flatpak or select it through the package workflow.')
     missing = [app for app in apps if subprocess.run(
@@ -140,7 +140,10 @@ def install_flatpaks(selection, ask):
     write_report('flatpaks', report)
     print('Missing Flatpaks: ' + (', '.join(report['failed'] + report['skipped']) or 'none'))
     if report['failed']:
-        raise RuntimeError('Some Flatpaks did not install; see the report.')
+        error = RuntimeError('Some Flatpaks did not install; see the report.')
+        error.report = report
+        raise error
+    return report
 
 
 def enable_services(selection, ask):
@@ -150,7 +153,7 @@ def enable_services(selection, ask):
                               if SERVICES[key]['scope'] == scope for unit in SERVICES[key]['units']))
     if not units:
         print('No ' + scope + ' services selected.')
-        return
+        return {'status': 'skipped'}
     command = ['systemctl'] + ([] if system else ['--user'])
     report = {'scope': scope, 'selected': units, 'enabled': [], 'missing': [], 'failed': [], 'skipped': []}
     available = []
@@ -171,4 +174,7 @@ def enable_services(selection, ask):
     write_report('services', report, system)
     print('Missing service units: ' + (', '.join(report['missing']) or 'none'))
     if report['failed']:
-        raise RuntimeError('Some services could not be enabled; see the report.')
+        error = RuntimeError('Some services could not be enabled; see the report.')
+        error.report = report
+        raise error
+    return report
