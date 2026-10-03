@@ -9,7 +9,7 @@
 ![License](https://img.shields.io/badge/license-MIT-purple)
 ![Status](https://img.shields.io/badge/status-work_in_progress-yellow)
 
-[KDE & apps](#configs) · [Packages](#package-sections) · [Setup](docs/setup.md) · [Decisions](docs/DECISIONS.md)
+[KDE & apps](#configs) · [Packages](#package-sections) · [Setup](docs/setup.md)
 
 </div>
 
