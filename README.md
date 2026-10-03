@@ -24,7 +24,9 @@ My personal Gentoo restoration kit, mainly for my own devices:
 - Binaries preferred, with a small deliberate source-build list.
 - A Bubble Tea chooser with a final preview, conflict prompts and backups.
 
-Package and boot actions still need a first run on a fresh Gentoo installation.
+The Stock preset has been installed in a fresh Gentoo QEMU/KVM guest: packages,
+config restoration and Plasma Login Manager login passed. Custom kernels,
+automatic bootloader deployment and optional setups still need full runtime checks.
 
 ## Screenshots
 

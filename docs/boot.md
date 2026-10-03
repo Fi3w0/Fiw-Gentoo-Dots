@@ -72,7 +72,9 @@ live under `/var/lib/Fiw-Gentoo-Dots`. No existing disk partition is formatted.
 Automatic deployment currently supports amd64 UEFI, GPT ESPs, plain ext4/Btrfs
 roots and unsigned boot. Encrypted, UKI-only, BIOS and signing workflows can
 keep their existing loader. Secure Boot being active stops unsigned deployment
-before changes. Full boot execution on a fresh installation remains unverified.
+before changes. A fresh ext4 QEMU/KVM guest booted the binary kernel with a
+separately provisioned UEFI GRUB loader. The automatic deployment and kernel
+update hooks described here still need end-to-end boot checks.
 
 `optional/fiw-cachy-patch` refreshes the custom kernel patch; it does not select
 a bootloader. See the [helper list](scripts.md) before using it.

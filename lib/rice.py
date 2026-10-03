@@ -341,7 +341,7 @@ def root_files(selection, repo_location=None):
         result['etc/portage/sets/fiw-dots-' + group] = '\n'.join(packages) + '\n'
     result['etc/portage/sets/fiw-dots'] = '\n'.join('@fiw-dots-' + g for g in package_map(selection)) + '\n'
     result['etc/portage/fiw-dots.conf'] += '\n# Persist the selected binary/source policy for later emerge operations.\n'
-    result['etc/portage/fiw-dots.conf'] += 'EMERGE_DEFAULT_OPTS="${EMERGE_DEFAULT_OPTS} --getbinpkg ' + ' '.join('--usepkg-exclude=' + atom for atom in source_policy(selection)) + '"\n'
+    result['etc/portage/fiw-dots.conf'] += 'EMERGE_DEFAULT_OPTS="${EMERGE_DEFAULT_OPTS} --getbinpkg --usepkg --binpkg-respect-use=n --with-bdeps=n ' + ' '.join('--usepkg-exclude=' + atom for atom in source_policy(selection)) + '"\n'
     result['etc/portage/repos.conf/fiw-dots.conf'] = '[fiw-dots]\nlocation = ' + str(repo_location or REPO / 'overlay') + '\npriority = 40\nauto-sync = no\n'
     for name in required_repositories(selection):
         if not existing_repository(name):
@@ -425,16 +425,20 @@ def source_builds(output):
     values = set(re.findall(r'^\[ebuild[^\]]*\]\s+(?:\([^)]*\)\s+)?([^\s:]+)', output, re.M))
     # Dedicated -bin ebuilds install upstream binaries; these do not require
     # compiling the application just because Portage labels them "ebuild".
-    # This released Plasma widget installs QML/scripts without a compile phase.
-    no_compile = {'kde-misc/apdatifier-gentoo'}
+    # These install upstream binaries or QML rather than compile applications.
+    no_compile = {'app-editors/vscode', 'media-sound/spotify',
+                  'games-util/steam-launcher', 'kde-misc/apdatifier-gentoo'}
     return {value for value in values if not cp_from_cpv(value).endswith('-bin')
+            and not value.startswith(('acct-user/', 'acct-group/', 'virtual/'))
             and cp_from_cpv(value) not in no_compile}
 
 
 def resolve(stage, selection, packages, execute=False):
     exclusions = ' '.join(source_policy(selection))
     command = ['emerge', '--config-root=' + str(stage), '--color=n', '--getbinpkg', '--usepkg',
-               '--usepkg-exclude=' + exclusions, '--autounmask=n', '--noreplace']
+               '--binpkg-respect-use=n', '--with-bdeps=n',
+               '--usepkg-exclude=' + exclusions, '--autounmask=n',
+               '--update', '--deep', '--newuse', '--backtrack=100']
     if not execute:
         command += ['--pretend']
     env = dict(os.environ, EMERGE_DEFAULT_OPTS='')
@@ -455,6 +459,8 @@ def install_packages(selection):
         raise RuntimeError('No packages selected')
     with tempfile.TemporaryDirectory(prefix='fiw-dots-portage-') as temp:
         stage = Path(temp)
+        # Portage evaluates ebuild metadata as its unprivileged user.
+        stage.chmod(0o755)
         shutil.copytree('/etc/portage', stage / 'etc/portage', symlinks=True,
                         ignore=shutil.ignore_patterns('gnupg'))
         profile = stage / 'etc/portage/make.profile'
@@ -577,6 +583,7 @@ def check_packages(selection):
     requested = list(dict.fromkeys(p for values in package_map(selection).values() for p in values))
     with tempfile.TemporaryDirectory(prefix='fiw-dots-check-') as temp:
         stage = Path(temp)
+        stage.chmod(0o755)
         shutil.copytree('/etc/portage', stage / 'etc/portage', symlinks=True,
                         ignore=shutil.ignore_patterns('gnupg'))
         profile = stage / 'etc/portage/make.profile'

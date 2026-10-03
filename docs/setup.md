@@ -65,6 +65,10 @@ recommended. Skipping a dependency also skips requested packages needing it.
 A package report records requested, skipped and missing packages. There is a
 final package confirmation before live Portage configuration changes.
 
+Binary packages retain the binhost's USE settings; required dependency flags
+are still checked. The preview includes dependency updates and replacements,
+such as adding Steam's 32-bit libraries to a fresh multilib installation.
+
 Read-only resolution and an export are available separately:
 
 ```sh
@@ -141,10 +145,13 @@ firmware choices and kernel update integration. Other layouts can keep their
 existing loader.
 
 The optional [TideWM recipe](tidewm.md) follows the audited upstream master
-branch and uses the normal compile-or-skip prompt. End-to-end package and
-boot execution on a fresh Gentoo
-installation remains unverified; development checks used temporary homes,
-staged Portage configuration and mocked system commands.
+branch and uses the normal compile-or-skip prompt. The Stock package installation completed in a fresh ext4 Gentoo QEMU/KVM guest
+(539 package steps, no missing selected packages). Config restoration, conflict
+handling, backups, the bundled chooser and Plasma Login Manager login were
+checked there, along with portable terminal configs and optional service enabling.
+The guest booted a binary kernel using a separately provisioned UEFI GRUB loader.
+Automatic bootloader deployment, custom Ryzen kernel builds, Btrfs, TideWM,
+optional Flatpak installation and physical GPU behaviour remain unverified.
 
 Do not publish the private original fiw-gentoo archive. It has different
 history and host-specific files.
