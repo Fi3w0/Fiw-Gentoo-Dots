@@ -7,7 +7,7 @@ on:
 
 jobs:
   checks:
-    runs-on: ${{ vars.CI_RUNNER_LABEL || 'ubuntu-latest' }}
+    runs-on: ${{ vars.CI_RUNNER_LABEL || 'docker' }}
     container: node:22-bookworm
     timeout-minutes: 20
     steps:
@@ -30,7 +30,7 @@ jobs:
   github-mirror:
     needs: checks
     if: github.event_name != 'pull_request' && github.repository == 'fiwdev/Fiw-Gentoo-Dots'
-    runs-on: ${{ vars.CI_RUNNER_LABEL || 'ubuntu-latest' }}
+    runs-on: ${{ vars.CI_RUNNER_LABEL || 'docker' }}
     container: node:22-bookworm
     timeout-minutes: 10
     steps:

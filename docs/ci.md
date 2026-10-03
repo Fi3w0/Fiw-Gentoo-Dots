@@ -23,7 +23,7 @@ frontend source requires rebuilding and committing its matching bundle.
 ## Forgejo setup
 
 Repository Actions must be enabled and an available runner must match
-`ubuntu-latest`. If your runner has another label, set the Forgejo repository
+`docker`. If your runner has another label, set the Forgejo repository
 Actions variable `CI_RUNNER_LABEL` to that label. The runner needs Docker to
 execute the workflow's container jobs. See the
 [Forgejo 10 Actions guide](https://forgejo.org/docs/v10.0/user/actions/) for
