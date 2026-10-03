@@ -163,3 +163,45 @@ func TestConfigUpdateIsASeparateAction(t *testing.T) {
 		t.Fatal("config update action was lost")
 	}
 }
+
+func TestNamedDeviceKeepsItsSelections(t *testing.T) {
+	device := selection{Name: "portable", Profile: "stock", Groups: []string{"cli"}, Configs: []string{"neovim"}, Kernel: "binary", Bootloader: "keep"}
+	m := model{catalog: catalog{Stock: selection{Name: "Stock", Profile: "stock"}, Ryzen: selection{Name: "Ryzen", Profile: "fiw-ryzen"}, Devices: map[string]selection{"portable": device}}, selection: device}
+	m.prepare()
+	if m.cursor != 2 || !m.rows[2].checked || m.rows[0].checked {
+		t.Fatal("saved device is not selected in the preset chooser")
+	}
+	next, _ := m.Update(tea.KeyMsg{Type: tea.KeyEnter})
+	m = next.(model)
+	if m.stage != 1 || len(m.selection.Groups) != 1 || !contains(m.selection.Configs, "neovim") || m.selection.Name != "portable" {
+		t.Fatal("device choices were replaced by the stock preset")
+	}
+}
+
+func TestDeviceNameAcceptsQAndRequiresExplicitSave(t *testing.T) {
+	m := model{stage: 5}
+	next, _ := m.Update(tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune{'n'}})
+	m = next.(model)
+	if m.stage != 10 || m.done {
+		t.Fatal("n must open the name input without saving")
+	}
+	next, command := m.Update(tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune{'q'}})
+	m = next.(model)
+	if command != nil || m.deviceName != "q" {
+		t.Fatal("q should be accepted as part of a device name")
+	}
+	next, _ = m.Update(tea.KeyMsg{Type: tea.KeyEnter})
+	m = next.(model)
+	if !m.done || m.action != "n" || m.selection.Name != "q" {
+		t.Fatal("explicit named-device save was lost")
+	}
+}
+
+func TestDeviceNameEscapeDoesNotSave(t *testing.T) {
+	m := model{stage: 10, deviceName: "discard"}
+	next, command := m.Update(tea.KeyMsg{Type: tea.KeyEsc})
+	m = next.(model)
+	if m.stage != 5 || m.done || command != nil {
+		t.Fatal("cancelled device input saved a selection")
+	}
+}

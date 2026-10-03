@@ -1,6 +1,8 @@
 -- Colors
 vim.opt.termguicolors = true
--- catppuccin is a plugin (not bundled with Neovim); fall back to the built-in dark theme
+-- Load the bundled native theme package before applying the captured highlights.
+pcall(vim.cmd.packadd, "catppuccin")
+-- Keep a built-in fallback if the theme package is intentionally omitted.
 if not pcall(vim.cmd.colorscheme, "catppuccin-mocha") then
   vim.o.background = "dark"
   vim.cmd.colorscheme "default"

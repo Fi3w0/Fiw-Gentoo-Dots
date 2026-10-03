@@ -71,7 +71,7 @@
     "packages": [
       "app-editors/neovim"
     ],
-    "note": "Catppuccin is optional; the captured purple highlights also work with the built-in fallback."
+    "note": "Pinned Catppuccin runtime is bundled; no plugin manager, download or KDE dependency. Purple highlights retain a built-in fallback."
   },
   "fastfetch": {
     "label": "Fastfetch tree layout with Gentoo logo",
@@ -99,7 +99,8 @@
     "group": "fiw-apps",
     "packages": [
       "app-editors/vscode"
-    ]
+    ],
+    "note": "Pinned ayu MiDas colour theme is bundled as a user extension; no Marketplace download or compilation."
   },
   "autostart": {
     "label": "Optional application autostart",

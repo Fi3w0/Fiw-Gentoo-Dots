@@ -20,6 +20,17 @@ The captured styling uses a small subset of the original installed assets:
   refact0r/midnight-discord at commit 85dd67148cbbbfa027cb091e41a479a16ab16a65.
   Its MIT licence is included alongside the theme. Public image/font URLs
   within that upstream theme remain upstream references.
+- Neovim includes the runtime files from
+  [Catppuccin](https://github.com/catppuccin/nvim) at commit
+  `edefef779ab08ce1a4a404713e3012b0d202bd35`, matching the installed theme
+  captured from this device. Its original MIT licence is retained as
+  `LICENSE.md`; development files, docs, tests and Git history are omitted.
+- VS Code includes the original `ayu-midas.json` and MIT `LICENSE` from
+  [ayu MiDas](https://github.com/qyurila/ayu-midas-vscode/tree/8ce96d6002e7327be1aaf41a01f6106041517c8e),
+  version 1.1.0, with a manifest containing only the extension's runtime
+  metadata and theme contribution. No build dependencies or executable
+  extension entry points are included. Editor asset hashes and pins are in
+  `assets/editor-themes.json`.
 
 The privacy scanner permits email attribution only in fingerprinted original
 theme metadata and colour-scheme notices. It still scans those files for

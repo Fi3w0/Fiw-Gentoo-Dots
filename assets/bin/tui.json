@@ -1,12 +1,12 @@
 {
-  "version": "0.1.1",
-  "source_sha256": "92a1dc2a662d9ec71c0abec3b96078662268ab16f358be6d2617bbcc4baaf324",
+  "version": "0.1.2",
+  "source_sha256": "fec416b33a93e3de28faf388d69d6b86c39296715a1a87a6ed32d6fb51c4a36c",
   "binaries": {
     "linux-amd64": {
       "file": "fiw-dots-linux-amd64.gz",
-      "sha256": "6da013a88843912b105f1e2a956cd094b22cfa853b5d9eeed3b2430c7f7ec798",
-      "gzip_sha256": "a14492188be4cbf1bfdda2f793527b07c0168b2e0d36b7f268922a5cb7b0c08c",
-      "size": 3559586
+      "sha256": "c2856c93808c16c1d9003891beffd368e0c80b7ca965f4ca4e8849912fcfedaa",
+      "gzip_sha256": "98b963755ac7137176b07fa9a94cd340acd1f65d4de9f8d173aea7ea02862548",
+      "size": 3567778
     }
   }
 }

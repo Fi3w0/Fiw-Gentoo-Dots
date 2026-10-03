@@ -37,7 +37,7 @@ The existing installation has not been changed by creating this repo.
 ## Start
 
 ```sh
-git clone --branch v0.1.1 https://git.fiwlabs.dev/fiwdev/Fiw-Gentoo-Dots.git
+git clone --branch v0.1.2 https://git.fiwlabs.dev/fiwdev/Fiw-Gentoo-Dots.git
 cd Fiw-Gentoo-Dots
 ./install
 ```
@@ -49,7 +49,8 @@ a final preview. Enter saves without applying. `r` runs the full restore;
 `v` enables selected services and `b` deploys the selected bootloader.
 `e` updates configs while preserving local edits; `p` opens pending changes
 for a diff and individual acceptance. `u` opens config backups for preview
-and restoration. Apply actions finish
+and restoration. `n` saves a [named device selection](docs/devices.md), available
+alongside Stock and Fiw's Ryzen on the preset screen. Apply actions finish
 with a [combined report](docs/reports.md) of outcomes and remaining setup.
 Linux amd64 includes a verified prebuilt TUI; Git and Python 3.11+ are enough.
 Go 1.24+ is the source fallback for changed frontend code or other platforms.
@@ -117,6 +118,8 @@ Fish, Kitty and Neovim are usable without KDE or KWin. Fastfetch keeps the
 tree layout and purple colours with the built-in Gentoo logo. MangoHud and
 Vesktop preferences are included; browser profiles, chat sessions and account
 data are excluded. App autostart is a separate optional selection.
+Neovim's Catppuccin and VS Code's ayu MiDas themes are bundled with their
+respective optional configs, so their styling is available on fresh devices.
 Ark, Gwenview and Prism preferences are individually optional too; see
 [app configs and requirements](docs/app-configs.md). Each config's required
 packages appear in the final preview without changing package selections.
@@ -152,6 +155,8 @@ docs/         Setup, decisions and asset credits
 
 ```sh
 python3 tools/capture.py       # recapture only the explicit allowlist
+python3 tools/capture.py --config kde-shortcuts  # refresh only shortcuts
+python3 tools/capture.py --config kitty neovim  # refresh only these apps
 python3 tools/check-private.py
 python3 -m unittest discover -s tests
 go test ./...
@@ -162,6 +167,7 @@ service presets enable audio, networking, Bluetooth and power profiles for
 the next boot/login. See [setup](docs/setup.md) and the [helper list](docs/scripts.md).
 
 Review captures before committing. `local/` and built binaries are ignored.
+See [selective recapture](docs/capture.md) for supported selections and pinned assets.
 This repo starts with fresh history. Third-party theme/cursor assets retain
 their licence notices; overlay ebuilds retain their original notices.
 

@@ -48,6 +48,7 @@ type catalog struct {
 	Services map[string]setupOption `json:"services"`
 	Stock    selection              `json:"stock"`
 	Ryzen    selection              `json:"ryzen"`
+	Devices  map[string]selection   `json:"devices"`
 }
 type row struct {
 	id, label string
@@ -84,6 +85,7 @@ type model struct {
 	done, loading                        bool
 	proposalID, proposalStatus           string
 	proposals                            []proposalChoice
+	deviceName                           string
 }
 
 func contains(values []string, target string) bool {
@@ -103,6 +105,21 @@ func (m *model) prepare() {
 		m.rows = []row{{"stock", "Stock — binary kernel, portable build settings", m.selection.Profile == "stock"}, {"fiw-ryzen", "Fiw's Ryzen — current Zen 5 tuning, custom + binary fallback", m.selection.Profile == "fiw-ryzen"}}
 		if m.selection.Profile == "fiw-ryzen" {
 			m.cursor = 1
+		}
+		ids := make([]string, 0, len(m.catalog.Devices))
+		for id := range m.catalog.Devices {
+			ids = append(ids, id)
+		}
+		sort.Strings(ids)
+		for _, id := range ids {
+			selected := m.selection.Name == id
+			m.rows = append(m.rows, row{"device:" + id, "Device: " + id + " (" + m.catalog.Devices[id].Profile + ")", selected})
+			if selected {
+				for i := range m.rows[:len(m.rows)-1] {
+					m.rows[i].checked = false
+				}
+				m.cursor = len(m.rows) - 1
+			}
 		}
 	case 1:
 		for _, id := range m.catalog.Groups {
@@ -151,6 +168,17 @@ func (m *model) prepare() {
 				m.rows = append(m.rows, row{"service:" + id, option.Label, contains(m.selection.Services, id)})
 			}
 		}
+	}
+}
+func (m *model) choosePreset() {
+	id := m.rows[m.cursor].id
+	switch id {
+	case "stock":
+		m.selection = m.catalog.Stock
+	case "fiw-ryzen":
+		m.selection = m.catalog.Ryzen
+	default:
+		m.selection = m.catalog.Devices[strings.TrimPrefix(id, "device:")]
 	}
 }
 func (m *model) remember() {
@@ -327,10 +355,37 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 	case tea.KeyMsg:
 		key := v.String()
-		if key == "ctrl+c" || key == "q" {
+		if key == "ctrl+c" || (key == "q" && m.stage != 10) {
 			return m, tea.Quit
 		}
 		if m.loading {
+			return m, nil
+		}
+		if m.stage == 10 {
+			switch v.Type {
+			case tea.KeyEsc:
+				m.stage = 5
+				m.errorText = ""
+			case tea.KeyBackspace, tea.KeyDelete:
+				if len(m.deviceName) > 0 {
+					m.deviceName = m.deviceName[:len(m.deviceName)-1]
+				}
+			case tea.KeyRunes:
+				for _, character := range strings.ToLower(string(v.Runes)) {
+					if len(m.deviceName) < 48 && ((character >= 'a' && character <= 'z') || (character >= '0' && character <= '9') || (len(m.deviceName) > 0 && (character == '-' || character == '_'))) {
+						m.deviceName += string(character)
+					}
+				}
+				m.errorText = ""
+			case tea.KeyEnter:
+				if m.deviceName == "" {
+					m.errorText = "Enter a device preset name."
+					return m, nil
+				}
+				m.selection.Name = m.deviceName
+				m.action, m.done = "n", true
+				return m, tea.Quit
+			}
 			return m, nil
 		}
 		if m.stage == 5 || m.stage == 7 || m.stage == 9 {
@@ -371,6 +426,11 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 					m.loading = true
 					m.errorText = ""
 					return m, m.loadProposals()
+				}
+			case "n":
+				if m.stage == 5 && m.errorText == "" {
+					m.stage = 10
+					m.deviceName = ""
 				}
 			case "enter", "s", "a", "e", "i", "f", "v", "b", "r":
 				if m.errorText == "" {
@@ -442,11 +502,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				break
 			}
 			if m.stage == 0 {
-				if m.rows[m.cursor].id == "stock" {
-					m.selection = m.catalog.Stock
-				} else {
-					m.selection = m.catalog.Ryzen
-				}
+				m.choosePreset()
 				m.prepare()
 			} else {
 				id := m.rows[m.cursor].id
@@ -470,11 +526,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 		case "enter":
 			if m.stage == 0 {
-				if m.rows[m.cursor].id == "stock" {
-					m.selection = m.catalog.Stock
-				} else {
-					m.selection = m.catalog.Ryzen
-				}
+				m.choosePreset()
 			}
 			m.remember()
 			m.stage++
@@ -498,8 +550,11 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 func (m model) View() string {
 	const purple = "\033[38;2;157;143;217m"
 	const reset = "\033[0m"
-	titles := []string{"Preset", "Package sections", "Optional app configs", "Kernel, bootloader and extras", "Flatpaks and optional services", "Final preview", "Config backups", "Restore backup preview", "Pending config updates", "Config update diff"}
+	titles := []string{"Preset", "Package sections", "Optional app configs", "Kernel, bootloader and extras", "Flatpaks and optional services", "Final preview", "Config backups", "Restore backup preview", "Pending config updates", "Config update diff", "Save device preset"}
 	text := purple + "  Fiw-Gentoo-Dots\n" + reset + "  " + titles[m.stage] + "  ·  " + m.selection.Name + "\n\n"
+	if m.stage == 10 {
+		return text + "  Name: " + m.deviceName + "_\n\n  Up to 48 lowercase letters, digits, hyphens or underscores.\n  Saves your selection locally. Existing names ask before replacement.\n\n  Enter save · Esc back · Ctrl+C cancel\n  " + m.errorText + "\n"
+	}
 	budget := m.height - 10
 	if budget < 5 {
 		budget = 5
@@ -525,7 +580,7 @@ func (m model) View() string {
 				text += "\n  ↑/↓ scroll · Esc back · Enter accept with confirmation · q cancel\n"
 			}
 		} else {
-			text += "\n  ↑/↓ scroll · Esc back · Enter save · r full restore · a configs · e update configs\n  i packages · f Flatpaks · v services · b bootloader\n  p pending updates · u config backups · q cancel\n"
+			text += "\n  ↑/↓ scroll · Esc back · Enter save · n save device · r full restore\n  a configs · e update configs · i packages · f Flatpaks · v services\n  b bootloader · p pending updates · u config backups · q cancel\n"
 		}
 		if m.errorText != "" {
 			text += "  " + m.errorText + "\n"
@@ -671,6 +726,12 @@ func main() {
 	var actionErr error
 	workflow := "restore"
 	switch final.action {
+	case "n":
+		if err := run("--save-device", false, final.deviceName); err != nil {
+			fmt.Fprintln(os.Stderr, err)
+			os.Exit(1)
+		}
+		return
 	case "a":
 		workflow = "configs"
 		actionErr = run("--apply-configs", false)

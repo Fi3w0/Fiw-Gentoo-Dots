@@ -22,6 +22,16 @@ APP_KEYS = {
         'MenuBarInsteadOfToolBar', 'StatusBarVisible', 'ToolbarsLocked']})}
 
 
+def read_jsonc(text):
+    # Keep quoted strings intact while removing comments and trailing commas.
+    text = re.sub(r'"(?:[^"\\]|\\.)*"|//[^\r\n]*|/\*[\s\S]*?\*/',
+                  lambda match: match[0] if match[0].startswith('"') else
+                  re.sub(r'[^\r\n]', ' ', match[0]), text)
+    text = re.sub(r'"(?:[^"\\]|\\.)*"|,(?=\s*[}\]])',
+                  lambda match: match[0] if match[0].startswith('"') else '', text)
+    return json.loads(text)
+
+
 def sections(text):
     result, group = {}, None
     for line in text.splitlines():
@@ -91,21 +101,27 @@ def copy_assets(source, destination):
             shutil.copy2(src, dest)
 
 
-def capture_apps():
+CAPTURE_IDS = tuple(sorted(set(APP_KEYS) | {
+    'kde-style', 'kde-shortcuts', 'dolphin', 'spectacle', 'fish', 'kitty',
+    'neovim', 'fastfetch', 'mangohud', 'vscode', 'vesktop', 'autostart'}))
+
+
+def capture_apps(selected=None):
     for name, (relative, keys) in APP_KEYS.items():
-        kconfig(name, relative, keys=keys)
+        if selected is None or name in selected:
+            kconfig(name, relative, keys=keys)
 
 
-def capture():
-    capture_apps()
-    kconfig("kde-style", ".config/kdeglobals",
-            groups=[g for g in sections((HOME / '.config/kdeglobals').read_text())
-                    if g.startswith(('[Colors:', '[ColorEffects:'))]
-                   + ['[General]', '[Icons]', '[KDE]', '[WM]'])
-    p = REPO / 'configs/kde-style/kconfig/.config/kdeglobals'
-    p.write_text('\n'.join(line for line in p.read_text().splitlines()
-                           if not line.startswith(('ColorSchemeHash=', 'LastUsedCustomAccentColor=',
-                                                     'TerminalApplication=', 'TerminalService='))) + '\n')
+def capture_style():
+    if (HOME / ".config/kdeglobals").is_file():
+        kconfig("kde-style", ".config/kdeglobals",
+                groups=[g for g in sections((HOME / '.config/kdeglobals').read_text())
+                        if g.startswith(('[Colors:', '[ColorEffects:'))]
+                       + ['[General]', '[Icons]', '[KDE]', '[WM]'])
+        p = REPO / 'configs/kde-style/kconfig/.config/kdeglobals'
+        p.write_text('\n'.join(line for line in p.read_text().splitlines()
+                               if not line.startswith(('ColorSchemeHash=', 'LastUsedCustomAccentColor=',
+                                                         'TerminalApplication=', 'TerminalService='))) + '\n')
     gtk_keys = ['gtk-theme-name', 'gtk-icon-theme-name', 'gtk-font-name',
                 'gtk-cursor-theme-name', 'gtk-cursor-theme-size',
                 'gtk-application-prefer-dark-theme']
@@ -115,77 +131,12 @@ def capture():
         relative = f'.config/gtk-{version}/settings.ini'
         kconfig('kde-style', relative, keys={'[Settings]': gtk_keys})
         dest = REPO / 'configs/kde-style/kconfig' / relative
-        if dest.is_file():
+        if dest.is_file() and (HOME / relative).is_file():
             dest.write_text(dest.read_text().replace('gtk-cursor-theme-name=Qogir',
                                                      'gtk-cursor-theme-name=Fiw-Qogir'))
     kconfig('kde-style', '.config/kcminputrc', keys={'[Mouse]': ['cursorTheme']})
     kconfig('kde-style', '.config/kwinrc', groups=['[org.kde.kdecoration2]'])
-    kconfig('dolphin', '.config/dolphinrc', groups=['[KFileDialog Settings]', '[MainWindow]'])
-    kconfig('dolphin', '.local/state/dolphinstaterc', keys={'[FilterBar]': ['caseSensitive', 'filterMode'], '[State]': ['State']})
-    kconfig('dolphin', '.config/kwinrulesrc', groups=['[fiw-dolphin-opacity]'])
-    write('configs/dolphin/kconfig/.config/kwinrulesrc',
-          '[General]\nrules=fiw-dolphin-opacity\ncount=1\n\n' +
-          (REPO / 'configs/dolphin/kconfig/.config/kwinrulesrc').read_text())
-    copy('dolphin', '.local/share/kxmlgui5/dolphin/dolphinui.rc')
     copy('kde-style', '.local/share/color-schemes/GentooPurple.colors')
-    kconfig('kde-shortcuts', '.config/kglobalshortcutsrc')
-    kconfig('kde-shortcuts', '.config/kxkbrc', groups=['[Layout]'])
-    kconfig('kde-shortcuts', '.config/kwinrc', keys={'[Desktops]': ['Number', 'Rows']})
-    for name in ['net.local.kitty.desktop', 'net.local.fiw-shot-region.desktop', 'net.local.fiw-shot-screen.desktop']:
-        copy('kde-shortcuts', '.local/share/applications/' + name,
-             lambda t: t.replace('Exec=' + str(HOME) + '/.local/bin/fiw-shot', 'Exec="{{HOME}}/.local/bin/fiw-shot"'))
-    copy('kde-shortcuts', '.local/bin/fiw-shot')
-    kconfig('spectacle', '.config/spectaclerc', groups=['[General]', '[Annotations]'])
-    copy('fish', '.config/fish/conf.d/fiw.fish',
-         lambda t: t.replace("alias update='sudo fiw-update'",
-                             "if type -q fiw-update\n    alias update='sudo fiw-update'\nend"))
-    copy('fish', '.config/fish/conf.d/done.fish')
-    for name in ['kitty.conf', 'kitty-main.conf', 'kitty-bright.conf', 'kitty-common.conf']:
-        copy('kitty', '.config/kitty/' + name,
-             lambda t: re.sub(r'(?m)^linux_display_server\s+wayland\s*$',
-                              'linux_display_server auto', t))
-    copy('neovim', '.config/nvim/init.lua')
-    # Keep the layout; the built-in Gentoo logo also works outside Kitty.
-    data = json.loads((HOME / '.config/fastfetch/config.jsonc').read_text())
-    data['logo'] = {'source': 'gentoo', 'type': 'builtin',
-                    'padding': data.get('logo', {}).get('padding', {})}
-    for module in data.get('modules', []):
-        if isinstance(module, dict):
-            if isinstance(module.get('format'), str):
-                module['format'] = module['format'].replace('\\u001b', '\x1b')
-            if module.get('type') == 'os':
-                module['key'] = module.get('key', '').replace('', '')
-    write('configs/fastfetch/files/.config/fastfetch/config.jsonc', json.dumps(data, indent=2) + '\n')
-    for name in ['MangoHud.conf', 'presets.conf']:
-        copy('mangohud', '.config/MangoHud/' + name)
-    copy('vscode', '.config/Code/User/settings.json')
-    # Explicit preference fields: cloud credentials, sessions and caches excluded.
-    data = json.loads((HOME / '.config/vesktop/settings.json').read_text())
-    allowed = ['discordBranch', 'minimizeToTray', 'arRPC', 'splashColor', 'splashBackground',
-               'autoStartMinimized', 'customTitleBar', 'splashPixelated']
-    data = {k: data[k] for k in allowed if k in data}
-    if isinstance(data.get('splashBackground'), str) and '/home/' in data['splashBackground']:
-        data.pop('splashBackground')
-    write('configs/vesktop/json/.config/vesktop/settings.json', json.dumps(data, indent=2) + '\n')
-    data = json.loads((HOME / '.config/vesktop/settings/settings.json').read_text())
-    allowed = ['autoUpdate', 'autoUpdateNotification', 'useQuickCss', 'eagerPatches',
-               'frameless', 'transparent', 'winCtrlQ', 'disableMinSize', 'winNativeTitleBar']
-    prefs = {k: data[k] for k in allowed if k in data}
-    theme_root = REPO / 'configs/vesktop/files/.config/vesktop/themes'
-    prefs['enabledThemes'] = [name for name in data.get('enabledThemes', [])
-                              if Path(name).name == name and (theme_root / name).is_file()]
-    prefs['plugins'] = {name: {'enabled': plugin['enabled']}
-                        for name, plugin in data.get('plugins', {}).items()
-                        if isinstance(plugin, dict) and isinstance(plugin.get('enabled'), bool)}
-    write('configs/vesktop/json/.config/vesktop/settings/settings.json',
-          json.dumps(prefs, indent=2) + '\n')
-    for name in ['steam', 'spotify', 'vesktop', 'opendeck', 'musicpresence']:
-        copy('autostart', '.config/autostart/' + name + '.desktop')
-    kconfig('autostart', '.config/kwinrulesrc', groups=[
-        '[fiw-autostart-minimized-discord]', '[fiw-autostart-minimized-opendeck]',
-        '[fiw-autostart-minimized-spotify]'])
-    p = REPO / 'configs/autostart/kconfig/.config/kwinrulesrc'
-    p.write_text('[General]\nrules=fiw-autostart-minimized-discord,fiw-autostart-minimized-opendeck,fiw-autostart-minimized-spotify\ncount=3\n\n' + p.read_text())
     # These small upstream assets retain their original licence notices.
     theme = HOME / '.local/share/aurorae/themes/Utterly-Round-Dark'
     if theme.is_dir():
@@ -197,15 +148,154 @@ def capture():
         shutil.copy2(cursor / 'COPYING', dest / 'COPYING')
         (dest / 'index.theme').write_text('[Icon Theme]\nName=Fiw Qogir\nComment=Qogir cursors\nInherits=breeze_cursors\n')
         p = REPO / 'configs/kde-style/kconfig/.config/kcminputrc'
-        p.write_text(p.read_text().replace('cursorTheme=Qogir', 'cursorTheme=Fiw-Qogir'))
-    print('Captured selected preferences. Review the diff and run tools/check-private.py before committing.')
+        if p.is_file() and (HOME / '.config/kcminputrc').is_file():
+            p.write_text(p.read_text().replace('cursorTheme=Qogir', 'cursorTheme=Fiw-Qogir'))
+
+
+def capture_dolphin():
+    kconfig('dolphin', '.config/dolphinrc', groups=['[KFileDialog Settings]', '[MainWindow]'])
+    kconfig('dolphin', '.local/state/dolphinstaterc', keys={'[FilterBar]': ['caseSensitive', 'filterMode'], '[State]': ['State']})
+    kconfig('dolphin', '.config/kwinrulesrc', groups=['[fiw-dolphin-opacity]'])
+    if (HOME / '.config/kwinrulesrc').is_file():
+        write('configs/dolphin/kconfig/.config/kwinrulesrc',
+              '[General]\nrules=fiw-dolphin-opacity\ncount=1\n\n' +
+              (REPO / 'configs/dolphin/kconfig/.config/kwinrulesrc').read_text())
+    copy('dolphin', '.local/share/kxmlgui5/dolphin/dolphinui.rc')
+
+
+def capture_shortcuts():
+    kconfig('kde-shortcuts', '.config/kglobalshortcutsrc')
+    kconfig('kde-shortcuts', '.config/kxkbrc', groups=['[Layout]'])
+    kconfig('kde-shortcuts', '.config/kwinrc', keys={'[Desktops]': ['Number', 'Rows']})
+    for name in ['net.local.kitty.desktop', 'net.local.fiw-shot-region.desktop', 'net.local.fiw-shot-screen.desktop']:
+        copy('kde-shortcuts', '.local/share/applications/' + name,
+             lambda t: re.sub(r'(?m)^Exec=("?)' + re.escape(str(HOME)) + r'/.local/bin/fiw-shot\1',
+                              'Exec="{{HOME}}/.local/bin/fiw-shot"', t))
+    copy('kde-shortcuts', '.local/bin/fiw-shot')
+
+
+def capture_fish():
+    copy('fish', '.config/fish/conf.d/fiw.fish',
+         lambda t: t if 'if type -q fiw-update' in t else
+         t.replace("alias update='sudo fiw-update'",
+                   "if type -q fiw-update\n    alias update='sudo fiw-update'\nend"))
+    copy('fish', '.config/fish/conf.d/done.fish')
+
+
+def capture_kitty():
+    for name in ['kitty.conf', 'kitty-main.conf', 'kitty-bright.conf', 'kitty-common.conf']:
+        copy('kitty', '.config/kitty/' + name,
+             lambda t: re.sub(r'(?m)^linux_display_server\s+wayland\s*$',
+                              'linux_display_server auto', t))
+
+
+def capture_neovim():
+    def load_bundled_theme(text):
+        if 'vim.cmd.packadd' not in text:
+            text = '-- Load the bundled native theme package.\npcall(vim.cmd.packadd, "catppuccin")\n' + text
+        return text
+    copy('neovim', '.config/nvim/init.lua', load_bundled_theme)
+
+
+def capture_fastfetch():
+    if not (HOME / '.config/fastfetch/config.jsonc').is_file():
+        return
+    # Keep the layout; the built-in Gentoo logo also works outside Kitty.
+    data = read_jsonc((HOME / '.config/fastfetch/config.jsonc').read_text())
+    data['logo'] = {'source': 'gentoo', 'type': 'builtin',
+                    'padding': data.get('logo', {}).get('padding', {})}
+    for module in data.get('modules', []):
+        if isinstance(module, dict):
+            if isinstance(module.get('format'), str):
+                module['format'] = module['format'].replace('\\u001b', '\x1b')
+            if module.get('type') == 'os':
+                module['key'] = module.get('key', '').replace('', '')
+    write('configs/fastfetch/files/.config/fastfetch/config.jsonc', json.dumps(data, indent=2) + '\n')
+
+
+def capture_mangohud():
+    for name in ['MangoHud.conf', 'presets.conf']:
+        copy('mangohud', '.config/MangoHud/' + name)
+
+
+def capture_vscode():
+    source = HOME / '.config/Code/User/settings.json'
+    if not source.is_file():
+        return
+    data = read_jsonc(source.read_text())
+    keys = ['workbench.colorTheme', 'claudeCode.preferredLocation',
+            'redhat.telemetry.enabled', 'claudeCode.selectedModel',
+            'explorer.confirmDelete', 'python.languageServer', 'git.autofetch',
+            'explorer.confirmDragAndDrop', 'docker.extension.dockerEngineAvailabilityPrompt']
+    write('configs/vscode/json/.config/Code/User/settings.json',
+          json.dumps({key: data[key] for key in keys if key in data}, indent=2) + '\n')
+
+
+def capture_vesktop():
+    if (HOME / '.config/vesktop/settings.json').is_file():
+        # Explicit preference fields: cloud credentials, sessions and caches excluded.
+        data = json.loads((HOME / '.config/vesktop/settings.json').read_text())
+        allowed = ['discordBranch', 'minimizeToTray', 'arRPC', 'splashColor', 'splashBackground',
+                   'autoStartMinimized', 'customTitleBar', 'splashPixelated']
+        data = {k: data[k] for k in allowed if k in data}
+        if isinstance(data.get('splashBackground'), str) and '/home/' in data['splashBackground']:
+            data.pop('splashBackground')
+        write('configs/vesktop/json/.config/vesktop/settings.json', json.dumps(data, indent=2) + '\n')
+    if (HOME / '.config/vesktop/settings/settings.json').is_file():
+        data = json.loads((HOME / '.config/vesktop/settings/settings.json').read_text())
+        allowed = ['autoUpdate', 'autoUpdateNotification', 'useQuickCss', 'eagerPatches',
+                   'frameless', 'transparent', 'winCtrlQ', 'disableMinSize', 'winNativeTitleBar']
+        prefs = {k: data[k] for k in allowed if k in data}
+        theme_root = REPO / 'configs/vesktop/files/.config/vesktop/themes'
+        prefs['enabledThemes'] = [name for name in data.get('enabledThemes', [])
+                                  if Path(name).name == name and (theme_root / name).is_file()]
+        prefs['plugins'] = {name: {'enabled': plugin['enabled']}
+                            for name, plugin in data.get('plugins', {}).items()
+                            if isinstance(plugin, dict) and isinstance(plugin.get('enabled'), bool)}
+        write('configs/vesktop/json/.config/vesktop/settings/settings.json',
+              json.dumps(prefs, indent=2) + '\n')
+
+
+def capture_autostart():
+    for name in ['steam', 'spotify', 'vesktop', 'opendeck', 'musicpresence']:
+        copy('autostart', '.config/autostart/' + name + '.desktop')
+    kconfig('autostart', '.config/kwinrulesrc', groups=[
+        '[fiw-autostart-minimized-discord]', '[fiw-autostart-minimized-opendeck]',
+        '[fiw-autostart-minimized-spotify]'])
+    p = REPO / 'configs/autostart/kconfig/.config/kwinrulesrc'
+    if (HOME / '.config/kwinrulesrc').is_file():
+        p.write_text('[General]\nrules=fiw-autostart-minimized-discord,fiw-autostart-minimized-opendeck,fiw-autostart-minimized-spotify\ncount=3\n\n' + p.read_text())
+
+
+def capture(selected=None):
+    selected = set(CAPTURE_IDS if selected is None else selected)
+    if selected - set(CAPTURE_IDS):
+        raise ValueError('Unknown capture selection: ' + ', '.join(sorted(selected - set(CAPTURE_IDS))))
+    capture_apps(selected)
+    functions = {'kde-style': capture_style, 'kde-shortcuts': capture_shortcuts,
+                 'dolphin': capture_dolphin, 'fish': capture_fish, 'kitty': capture_kitty,
+                 'neovim': capture_neovim, 'fastfetch': capture_fastfetch,
+                 'mangohud': capture_mangohud, 'vscode': capture_vscode,
+                 'vesktop': capture_vesktop, 'autostart': capture_autostart}
+    for name in sorted(selected):
+        if name in functions:
+            functions[name]()
+        elif name == 'spectacle':
+            kconfig('spectacle', '.config/spectaclerc', groups=['[General]', '[Annotations]'])
+    print('Captured: ' + ', '.join(sorted(selected)))
+    print('Review the diff and run tools/check-private.py before committing.')
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--apps-only', action='store_true', help='Recapture only Ark, Gwenview and Prism preferences')
+    choice = parser.add_mutually_exclusive_group()
+    choice.add_argument('--apps-only', action='store_true', help='Recapture only Ark, Gwenview and Prism preferences')
+    choice.add_argument('--config', nargs='+', choices=CAPTURE_IDS, help='Recapture only these configs')
+    parser.add_argument('--list', action='store_true', help='List supported capture selections')
+    parser.add_argument('--home', type=Path, default=HOME, help='Read preferences from this home directory')
     args = parser.parse_args()
-    if args.apps_only:
-        capture_apps()
+    HOME = args.home.resolve()
+    if args.list:
+        print('\n'.join(CAPTURE_IDS))
     else:
-        capture()
+        capture(APP_KEYS if args.apps_only else args.config)

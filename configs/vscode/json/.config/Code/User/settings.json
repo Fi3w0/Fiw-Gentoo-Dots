@@ -1,0 +1,11 @@
+{
+  "workbench.colorTheme": "ayu MiDas",
+  "claudeCode.preferredLocation": "panel",
+  "redhat.telemetry.enabled": true,
+  "claudeCode.selectedModel": "default",
+  "explorer.confirmDelete": false,
+  "python.languageServer": "Default",
+  "git.autofetch": true,
+  "explorer.confirmDragAndDrop": false,
+  "docker.extension.dockerEngineAvailabilityPrompt": false
+}

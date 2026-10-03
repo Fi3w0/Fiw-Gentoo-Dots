@@ -1,5 +1,26 @@
 # Release snapshots
 
+## v0.1.2 — Editor themes and device selections
+
+Neovim's optional config now includes the pinned Catppuccin runtime, and
+VS Code includes the ayu MiDas 1.1.0 colour-theme extension. Both retain
+upstream licences and work without fetching their themes during installation.
+Neovim keeps the captured transparent purple highlights and its fallback.
+
+The final TUI preview adds **n** to save a named device selection. Saved
+devices appear on the preset screen, retaining their build profile and
+package/config choices. Files stay under ignored `local/devices`.
+CLI `--device`, `--save-device` and `--list-devices` support the same workflow.
+Selective capture now accepts `--config` for one or several presets, with
+`--list` showing supported selections. VS Code capture uses explicit
+preference keys and omits machine-specific Java runtimes.
+
+The matching prebuilt TUI is included in the
+[tag](https://git.fiwlabs.dev/fiwdev/Fiw-Gentoo-Dots/src/tag/v0.1.2) and
+[source archive](https://git.fiwlabs.dev/fiwdev/Fiw-Gentoo-Dots/archive/v0.1.2.tar.gz).
+See [device presets](devices.md), [recapture](capture.md) and
+[app config scope](app-configs.md).
+
 ## v0.1.1 — Config update review
 
 Adds **e** for config updates and **p** for pending changes in the final TUI

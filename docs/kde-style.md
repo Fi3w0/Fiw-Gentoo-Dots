@@ -78,8 +78,8 @@ Fish, Kitty, Neovim and Fastfetch stay separate from KDE settings:
 - **Kitty:** lavender palette, padding, 50% opacity in the main profile and
   62% in the brighter profile. Display selection is automatic for Wayland/X11;
   blur is used where the compositor supports it.
-- **Neovim:** transparent backgrounds and purple highlights; uses an existing
-  Catppuccin Mocha plugin when available, otherwise the built-in dark theme.
+- **Neovim:** transparent backgrounds and purple highlights over the bundled,
+  pinned Catppuccin Mocha theme, with a built-in fallback if omitted manually.
 - **Fastfetch:** the current tree layout and colours, with its built-in Gentoo logo.
 
 ## Applying the capture

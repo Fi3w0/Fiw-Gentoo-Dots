@@ -15,10 +15,11 @@ from pathlib import Path
 REPO = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO / 'tools'))
 sys.path.insert(0, str(REPO / 'lib'))
-from capture import sections
+from capture import sections, read_jsonc
 import backups
 import reporting
 import proposals
+import device_presets
 from setup import (FLATPAKS, SERVICES, required_repositories,
                    existing_repository, repository_config, stage_repositories,
                    publish_repositories, install_flatpaks, enable_services)
@@ -34,6 +35,10 @@ AUTOSTART_GROUPS = {'steam': 'gaming', 'spotify': 'fiw-apps', 'vesktop': 'fiw-ap
 
 def load_selection(path=None, profile='stock'):
     selection = json.loads((Path(path) if path else REPO / 'presets' / (profile + '.json')).read_text())
+    if not isinstance(selection, dict):
+        raise ValueError('Selection must be a JSON object.')
+    if not isinstance(selection.get('name'), str) or not selection['name'].strip():
+        raise ValueError('Selection needs a name.')
     if selection.get('profile') not in ('stock', 'fiw-ryzen'):
         raise ValueError('Unknown preset')
     for field in ('flatpaks', 'services'):
@@ -41,7 +46,7 @@ def load_selection(path=None, profile='stock'):
             selection[field] = []
     for field, allowed in [('groups', GROUPS), ('configs', CATALOG), ('extras', EXTRAS),
                            ('flatpaks', FLATPAKS), ('services', SERVICES)]:
-        if not isinstance(selection.get(field, []), list):
+        if not isinstance(selection.get(field), list):
             raise ValueError('Selection must be a list: ' + field)
         if any(not isinstance(x, str) or x not in allowed for x in selection.get(field, [])):
             raise ValueError('Unknown selection in ' + field)
@@ -165,7 +170,7 @@ def merge_kconfig(old, patch):
 
 
 def merge_json(old, patch):
-    existing = json.loads(old) if old.strip() else {}
+    existing = read_jsonc(old) if old.strip() else {}
     def merge(a, b):
         for key, value in b.items():
             if isinstance(value, dict) and isinstance(a.get(key), dict):
@@ -593,6 +598,9 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--version', action='version', version='Fiw-Gentoo-Dots ' + (REPO / 'VERSION').read_text().strip())
     parser.add_argument('--selection')
+    parser.add_argument('--device', metavar='NAME', help='Load a named selection from ignored local/devices')
+    parser.add_argument('--save-device', metavar='NAME', help='Save the current selection as a named device preset')
+    parser.add_argument('--list-devices', action='store_true')
     parser.add_argument('--profile', choices=['stock', 'fiw-ryzen'], default='stock')
     parser.add_argument('--home', type=Path, default=Path.home())
     parser.add_argument('--plan', action='store_true')
@@ -623,9 +631,18 @@ def main():
     if args.catalog:
         print(json.dumps({'groups': GROUPS, 'configs': CATALOG, 'extras': EXTRAS,
                           'flatpaks': FLATPAKS, 'services': SERVICES,
-                          'stock': load_selection(profile='stock'), 'ryzen': load_selection(profile='fiw-ryzen')}))
+                          'stock': load_selection(profile='stock'), 'ryzen': load_selection(profile='fiw-ryzen'),
+                          'devices': device_presets.list_presets(REPO, load_selection)}))
         return
-    selection = load_selection(args.selection, args.profile)
+    if args.selection is not None and args.device is not None:
+        raise ValueError('Choose either --selection or --device.')
+    selection = load_selection(device_presets.path(REPO, args.device) if args.device is not None else args.selection, args.profile)
+    if args.list_devices:
+        print(json.dumps(sorted(device_presets.list_presets(REPO, load_selection))))
+        return
+    if args.save_device is not None:
+        device_presets.save(REPO, args.save_device, selection, ask)
+        return
     if args.run_id:
         reporting.validate_run(args.run_id)
     home = args.home.resolve()

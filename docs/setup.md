@@ -17,13 +17,20 @@ At the final preview:
 | Key | Action |
 |---|---|
 | Enter / s | Save the selection without applying it |
+| n | Save a named local device preset |
 | r | Full restore: packages, Flatpaks, services, configs, selected bootloader |
 | i | Install Portage packages |
 | f | Install selected user Flatpaks |
 | v | Enable selected services |
 | a | Restore selected user configs |
+| e | Update selected configs, preserving local edits |
+| p | Browse pending config proposals and preview their diffs |
 | b | Preview and deploy the selected bootloader |
 | u | Browse, preview and restore a user config backup |
+
+Named [device selections](devices.md) appear on the preset screen alongside
+Stock and Fiw's Ryzen. They retain each device's package/config choices and
+build profile. Select a device explicitly on the CLI with `--device NAME`.
 
 Full restore checks the KDE session before making package changes. Log out of
 Plasma and run from a TTY when KDE configs are selected. Each operation also

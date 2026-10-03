@@ -43,7 +43,24 @@ packages again, including requirements of apps whose installation was skipped.
 
 Fish, Kitty, Neovim and Fastfetch have no Plasma or KWin requirements. Fonts
 have their own checkbox; Kitty can use its fallback font if those are omitted.
-The original Neovim config uses a built-in fallback when Catppuccin is absent.
+Neovim's config includes a pinned Catppuccin runtime in its native package
+directory and loads it before the captured purple highlights. It needs no
+plugin manager or runtime download. A built-in fallback remains available if
+the theme files are omitted manually.
+
+VS Code's optional config includes ayu MiDas 1.1.0 as a user colour-theme
+extension. Its original theme JSON is bundled with a minimal theme manifest;
+it has no JavaScript entry point or development dependencies. This uses the
+native VS Code default user and extension locations. Custom extension
+directories, named VS Code profiles and other Code variants need their own
+locations. Existing theme files use the normal conflict/backup/update flow.
+
+Both editors' theme versions and asset fingerprints are recorded in
+`assets/editor-themes.json`; [asset credits](assets.md) retain upstream licences.
+VS Code preferences merge selected keys and keep existing unrelated settings,
+including Java runtime choices. JSON comments and trailing commas are accepted
+when reading existing settings; an accepted merge writes ordinary formatted
+JSON. Backups retain the original file, including its comments.
 
 ## r2modman
 
