@@ -85,7 +85,20 @@ def capture():
                    + ['[General]', '[Icons]', '[KDE]', '[WM]'])
     p = REPO / 'configs/kde-style/kconfig/.config/kdeglobals'
     p.write_text('\n'.join(line for line in p.read_text().splitlines()
-                           if not line.startswith(('ColorSchemeHash=', 'LastUsedCustomAccentColor='))) + '\n')
+                           if not line.startswith(('ColorSchemeHash=', 'LastUsedCustomAccentColor=',
+                                                     'TerminalApplication=', 'TerminalService='))) + '\n')
+    gtk_keys = ['gtk-theme-name', 'gtk-icon-theme-name', 'gtk-font-name',
+                'gtk-cursor-theme-name', 'gtk-cursor-theme-size',
+                'gtk-application-prefer-dark-theme']
+    for version in ['3.0', '4.0']:
+        for name in ['gtk.css', 'colors.css']:
+            copy('kde-style', f'.config/gtk-{version}/{name}')
+        relative = f'.config/gtk-{version}/settings.ini'
+        kconfig('kde-style', relative, keys={'[Settings]': gtk_keys})
+        dest = REPO / 'configs/kde-style/kconfig' / relative
+        if dest.is_file():
+            dest.write_text(dest.read_text().replace('gtk-cursor-theme-name=Qogir',
+                                                     'gtk-cursor-theme-name=Fiw-Qogir'))
     kconfig('kde-style', '.config/kcminputrc', keys={'[Mouse]': ['cursorTheme']})
     kconfig('kde-style', '.config/kwinrc', groups=['[org.kde.kdecoration2]'])
     kconfig('dolphin', '.config/dolphinrc', groups=['[KFileDialog Settings]', '[MainWindow]'])
@@ -98,6 +111,7 @@ def capture():
     copy('kde-style', '.local/share/color-schemes/GentooPurple.colors')
     kconfig('kde-shortcuts', '.config/kglobalshortcutsrc')
     kconfig('kde-shortcuts', '.config/kxkbrc', groups=['[Layout]'])
+    kconfig('kde-shortcuts', '.config/kwinrc', keys={'[Desktops]': ['Number', 'Rows']})
     for name in ['net.local.kitty.desktop', 'net.local.fiw-shot-region.desktop', 'net.local.fiw-shot-screen.desktop']:
         copy('kde-shortcuts', '.local/share/applications/' + name,
              lambda t: t.replace('Exec=' + str(HOME) + '/.local/bin/fiw-shot', 'Exec="{{HOME}}/.local/bin/fiw-shot"'))
@@ -108,7 +122,9 @@ def capture():
                              "if type -q fiw-update\n    alias update='sudo fiw-update'\nend"))
     copy('fish', '.config/fish/conf.d/done.fish')
     for name in ['kitty.conf', 'kitty-main.conf', 'kitty-bright.conf', 'kitty-common.conf']:
-        copy('kitty', '.config/kitty/' + name)
+        copy('kitty', '.config/kitty/' + name,
+             lambda t: re.sub(r'(?m)^linux_display_server\s+wayland\s*$',
+                              'linux_display_server auto', t))
     copy('neovim', '.config/nvim/init.lua')
     # Keep the layout; the built-in Gentoo logo also works outside Kitty.
     data = json.loads((HOME / '.config/fastfetch/config.jsonc').read_text())

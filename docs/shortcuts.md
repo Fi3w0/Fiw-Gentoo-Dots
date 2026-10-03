@@ -42,8 +42,9 @@ The native Spectacle bindings are unassigned to avoid competing actions.
 The desktop-move bindings are stored as literal symbols (`!`, `@`, `#`).
 On a US layout these usually mean Shift+1/2/3; other layouts can differ.
 The keyboard-layout preset contains US English, Russian and Spanish;
-`Meta+Alt+Space` cycles through them. Shortcut restoration does not
-create three virtual desktops or activities on a new installation.
+`Meta+Alt+Space` cycles through them. The shortcut preset also restores
+the captured virtual-desktop count and rows. Device IDs are not copied;
+KWin creates IDs when needed and retains existing target IDs.
 
 ## Captured choices
 
@@ -55,6 +56,9 @@ in the default column), Minimize (`Meta+PgDown`), Restore
 (`Meta+Backspace`) and the window menu (`Alt+F3`). FiwNode’s four
 recorded global actions are unassigned. `Meta+1/2/3` are used for
 desktops, with the corresponding task-manager shortcuts disabled.
+
+Captured desktop layout: **1 desktop(s), 1 row(s)**.
+Bindings for desktops 1–3 are retained exactly as configured.
 
 ## All assigned actions
 

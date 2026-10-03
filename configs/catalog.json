@@ -1,6 +1,6 @@
 {
   "kde-style": {
-    "label": "KDE colours, fonts, cursor and decorations",
+    "label": "KDE + GTK colours, fonts, cursor and decorations",
     "group": "kde",
     "kde": true
   },

@@ -135,8 +135,6 @@ ForegroundVisited=157,143,217
 [General]
 AccentColor=110,86,175
 ColorScheme=GentooPurple
-TerminalApplication=kitty
-TerminalService=kitty.desktop
 XftAntialias=true
 XftHintStyle=hintslight
 XftSubPixel=rgb

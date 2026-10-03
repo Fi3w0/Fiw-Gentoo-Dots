@@ -9,7 +9,7 @@
 ![License](https://img.shields.io/badge/license-MIT-purple)
 ![Status](https://img.shields.io/badge/status-work_in_progress-yellow)
 
-[KDE & apps](#configs) · [Shortcuts](docs/shortcuts.md) · [Packages](#package-sections) · [Setup](docs/setup.md)
+[KDE styling](docs/kde-style.md) · [Shortcuts](docs/shortcuts.md) · [Packages](#package-sections) · [Setup](docs/setup.md)
 
 </div>
 
@@ -92,8 +92,9 @@ the default. Kernel choice is independent of bootloader choice.
 ## Configs
 
 Every config is independently selectable, even when its package section is
-unchecked—for example, to configure apps already installed. KDE appearance covers colours,
-fonts, cursor, window decorations and Dolphin styling. Panels, widgets and
+unchecked—for example, to configure apps already installed. KDE appearance covers
+colours, fonts, cursor and window decorations, with matching GTK preferences.
+Dolphin styling has its own checkbox. Panels, widgets and
 wallpapers are excluded. All portable current shortcut assignments,
 including disabled defaults, are captured with their launchers and helpers;
 unused machine-specific activity IDs are omitted.

@@ -64,8 +64,9 @@ def generate():
              'The desktop-move bindings are stored as literal symbols (`!`, `@`, `#`).',
              'On a US layout these usually mean Shift+1/2/3; other layouts can differ.',
              'The keyboard-layout preset contains US English, Russian and Spanish;',
-             '`Meta+Alt+Space` cycles through them. Shortcut restoration does not',
-             'create three virtual desktops or activities on a new installation.', '',
+             '`Meta+Alt+Space` cycles through them. The shortcut preset also restores',
+             'the captured virtual-desktop count and rows. Device IDs are not copied;',
+             'KWin creates IDs when needed and retains existing target IDs.', '',
              '## Captured choices', '']
     lookup = {(r[0], r[1]): r for r in entries}
     highlights = [
@@ -107,6 +108,10 @@ def generate():
         for key, owners in duplicates.items():
             lines.append('- ' + keys([key]) + ': ' + cell('; '.join(owners)))
         lines.append('')
+    desktop = sections((SOURCE.parent / 'kwinrc').read_text()).get('[Desktops]', {})
+    lines += ['Captured desktop layout: **' + desktop.get('Number', 'unspecified') +
+              ' desktop(s), ' + desktop.get('Rows', 'unspecified') + ' row(s)**.',
+              'Bindings for desktops 1–3 are retained exactly as configured.', '']
     lines += ['## All assigned actions', '']
     grouped = defaultdict(list)
     for record in entries:
