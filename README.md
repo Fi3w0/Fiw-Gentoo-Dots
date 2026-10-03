@@ -81,7 +81,7 @@ CachyOS 7.2.7-1 patch. Refresh it explicitly when updating the snapshot.
 | [dev](packages/dev.list) | Languages and development tools |
 | [gaming](packages/gaming.list) | Steam, Proton, Prism, MangoHud and r2modman; Sober is in flatpaks/gaming.list |
 | [system](packages/system.list) | System utilities; the selected kernels are added by the installer |
-| [fiw-tools](packages/fiw-tools.list) | OpenDeck and Music Presence; FiwNode and Apdatifier packaging is pending |
+| [fiw-tools](packages/fiw-tools.list) | FiwNode binary release, Apdatifier Gentoo, OpenDeck and Music Presence |
 | [tidewm](packages/tidewm.list) | Optional compositor and supporting utilities |
 
 Filelight, NVIDIA drivers and Btrfs tools are separate extras. Ext4 does not
@@ -91,7 +91,8 @@ the default. Kernel choice is independent of bootloader choice.
 
 ## Configs
 
-Every config is independently selectable. KDE appearance covers colours,
+Every config is independently selectable, even when its package section is
+unchecked—for example, to configure apps already installed. KDE appearance covers colours,
 fonts, cursor, window decorations and Dolphin styling. Panels, widgets and
 wallpapers are excluded. All portable current shortcut assignments,
 including disabled defaults, are captured with their launchers and helpers;

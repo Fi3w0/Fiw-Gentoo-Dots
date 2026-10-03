@@ -52,12 +52,26 @@ personal font collection is not included. Neovim uses its built-in theme as
 a fallback when Catppuccin is not installed. Vesktop's selected Midnight
 theme CSS is captured with a fixed upstream snapshot and its MIT licence.
 
+## Fiw tools
+
+The `fiw-tools` section includes FiwNode's x86-64 binary release and the
+released Apdatifier Gentoo widget, alongside OpenDeck and Music Presence.
+Apdatifier installs QML/scripts without compilation; any dependencies needing
+source builds still go through the normal compile/skip prompt.
+
+FiwNode uses its default configuration. The installer does not copy sound
+libraries, microphone/output selections or personal app state. Older copies
+in `~/.local/bin` can shadow the Portage-installed binaries in `/usr/bin`;
+remove those manually when ready to switch. The daemon starts on demand.
+
+Apdatifier is available through Plasma's **Add Widgets** menu. Installing it
+does not alter panels. An existing user-installed widget can override the
+system copy; use `kpackagetool6` to manage it. Its preferences remain local.
+
 ## Remaining work before declaring a fresh install verified
 
 - Run both presets on a fresh Gentoo test installation. Root package execution
   has not been exercised on the working desktop.
-- Package FiwNode and Apdatifier Gentoo. Their existing installs are preserved;
-  the preview reports their packaging as pending.
 - Implement target-specific Limine/GRUB deployment after reviewing the target
   ESP and boot layout. Current variants select packages and provide setup notes.
 - Refresh the optional TideWM live ebuild branch/dependency recipe against the

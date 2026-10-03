@@ -72,9 +72,24 @@ class ConfigTests(unittest.TestCase):
             self.assertEqual(list(home.iterdir()), [])
 
     def test_source_plan_distinguishes_binary_payloads_and_dependencies(self):
-        output = '[binary N ] app-misc/jq-1.8.2::gentoo\n[ebuild N ] dev-libs/foo-2.0::gentoo\n[ebuild N ] games-util/ge-proton-bin-11.7::fiw-dots\n'
+        output = '[binary N ] app-misc/jq-1.8.2::gentoo\n[ebuild N ] dev-libs/foo-2.0::gentoo\n[ebuild N ] games-util/ge-proton-bin-11.7::fiw-dots\n[ebuild N ] kde-misc/apdatifier-gentoo-1.0.0::fiw-dots\n'
         self.assertEqual(rice.source_builds(output), {'dev-libs/foo-2.0'})
         self.assertEqual(rice.cp_from_cpv('dev-libs/foo-2.0'), 'dev-libs/foo')
+
+    def test_configs_restore_without_installing_package_sections(self):
+        selection = rice.load_selection()
+        selection['groups'] = []
+        selection['configs'] = ['fish', 'kitty', 'neovim', 'fastfetch']
+        selection['extras'] = []
+        self.assertEqual(rice.package_map(selection), {})
+        with tempfile.TemporaryDirectory() as temp:
+            home = Path(temp)
+            report = rice.apply_configs(selection, home, conflict='apply')
+            self.assertTrue(report['applied'])
+            for relative in ['.config/fish/conf.d/fiw.fish', '.config/kitty/kitty.conf',
+                             '.config/nvim/init.lua', '.config/fastfetch/config.jsonc']:
+                self.assertTrue((home / relative).is_file(), relative)
+        self.assertNotIn('inactive', rice.preview(selection))
 
     def test_category_separation_and_stock_kernel(self):
         selection = rice.load_selection()

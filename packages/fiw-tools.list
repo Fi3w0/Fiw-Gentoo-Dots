@@ -1,3 +1,5 @@
 # fiw-tools — explicit selections; Portage resolves dependencies.
 app-misc/opendeck-bin::fiw-dots
 media-sound/music-presence-bin::fiw-dots
+media-sound/fiwnode-bin::fiw-dots
+kde-misc/apdatifier-gentoo::fiw-dots

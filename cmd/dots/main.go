@@ -88,9 +88,6 @@ func (m *model) prepare() {
 		sort.Strings(ids)
 		for _, id := range ids {
 			c := m.catalog.Configs[id]
-			if c.Group != "" && !contains(m.selection.Groups, c.Group) {
-				continue
-			}
 			m.rows = append(m.rows, row{id, c.Label, contains(m.selection.Configs, id)})
 		}
 	case 3:

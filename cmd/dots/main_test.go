@@ -39,3 +39,14 @@ func TestBootloaderChoicesAreExclusive(t *testing.T) {
 		t.Fatal("multiple bootloaders selected")
 	}
 }
+
+func TestConfigsSelectableWithoutPackageGroups(t *testing.T) {
+	m := model{stage: 2, catalog: catalog{Configs: map[string]config{
+		"fish":  {Label: "Fish", Group: "cli"},
+		"kitty": {Label: "Kitty", Group: "fiw-apps"},
+	}}, selection: selection{Configs: []string{"fish"}}}
+	m.prepare()
+	if len(m.rows) != 2 || !m.rows[0].checked {
+		t.Fatal("configs were hidden or deselected by package choices")
+	}
+}

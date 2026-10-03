@@ -117,9 +117,6 @@ def merge_json(old, patch):
 
 def config_entries(selection):
     for name in selection['configs']:
-        group = CATALOG[name].get('group')
-        if group and group not in selection['groups']:
-            continue
         for kind in ('files', 'kconfig', 'json'):
             root = REPO / 'configs' / name / kind
             if not root.is_dir():
@@ -283,15 +280,11 @@ def preview(selection):
               'Kernel: ' + selection['kernel'] + (' + binary fallback' if selection['kernel'] == 'custom' else ''),
               'Bootloader: ' + selection['bootloader'], '', 'Selected configs:']
     for name in selection['configs']:
-        if CATALOG[name].get('group') and CATALOG[name]['group'] not in selection['groups']:
-            lines.append('  ' + name + ' (inactive: owning package group is not selected)')
-        else:
-            lines.append('  ' + name + ': ' + CATALOG[name]['label'])
+        lines.append('  ' + name + ': ' + CATALOG[name]['label'])
     lines += ['', 'Config files: ' + str(len(list(config_entries(selection)))),
               'Root configuration files: ' + str(len(root_files(selection))),
               'Existing config conflicts: ask; updates preserve edits as .new.']
-    if 'fiw-tools' in selection['groups']:
-        lines += ['', 'Pending packaging: FiwNode and Apdatifier Gentoo. Existing installations are preserved.']
+
     if selection['bootloader'] != 'keep':
         lines.append('Bootloader package selected; ESP/firmware deployment is a separate explicit setup step (docs/boot.md).')
     if selection.get('firefox_privacy'):
@@ -325,7 +318,10 @@ def source_builds(output):
     values = set(re.findall(r'^\[ebuild[^\]]*\]\s+(?:\([^)]*\)\s+)?([^\s:]+)', output, re.M))
     # Dedicated -bin ebuilds install upstream binaries; these do not require
     # compiling the application just because Portage labels them "ebuild".
-    return {value for value in values if not cp_from_cpv(value).endswith('-bin')}
+    # This released Plasma widget installs QML/scripts without a compile phase.
+    no_compile = {'kde-misc/apdatifier-gentoo'}
+    return {value for value in values if not cp_from_cpv(value).endswith('-bin')
+            and cp_from_cpv(value) not in no_compile}
 
 
 def resolve(stage, selection, packages, execute=False):
@@ -450,7 +446,7 @@ def install_packages(selection):
             stderr=subprocess.DEVNULL).returncode != 0]
         report = {'requested': requested, 'skipped': skipped, 'emerge_exit_code': result.returncode,
                   'missing': missing,
-                  'pending': ['FiwNode and Apdatifier packaging'] if 'fiw-tools' in selection['groups'] else []}
+                  'pending': []}
         state = Path('/var/lib/Fiw-Gentoo-Dots')
         state.mkdir(parents=True, exist_ok=True)
         (state / ('packages-' + stamp + '.json')).write_text(json.dumps(report, indent=2) + '\n')
