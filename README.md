@@ -57,6 +57,10 @@ Go 1.24+ is the source fallback for changed frontend code or other platforms.
 Saved selections are reused on subsequent launches. See the
 [snapshot and build instructions](docs/releases.md).
 
+Forgejo is the primary repository; [GitHub](https://github.com/Fi3w0/Fiw-Gentoo-Dots)
+receives branches and tags through the [CI mirror workflow](docs/ci.md) after
+the checks pass.
+
 For a preview without building the TUI:
 
 ```sh

@@ -1,0 +1,50 @@
+name: Check and mirror to GitHub
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  checks:
+    runs-on: ${{ vars.CI_RUNNER_LABEL || 'ubuntu-latest' }}
+    container: node:22-bookworm
+    timeout-minutes: 20
+    steps:
+      - name: Prepare CI tools
+        run: |
+          apt-get update
+          apt-get install -y --no-install-recommends python3 git ca-certificates
+      - name: Checkout
+        uses: https://github.com/actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - name: Set up Go
+        uses: https://github.com/actions/setup-go@d35c59abb061a4a6fb18e82ac0862c26744d6ab5 # v5.5.0
+        with:
+          go-version: '1.26.7'
+          cache: false
+      - name: Check code and bundled assets
+        run: python3 tools/ci/check.py
+
+  github-mirror:
+    needs: checks
+    if: github.event_name != 'pull_request' && github.repository == 'fiwdev/Fiw-Gentoo-Dots'
+    runs-on: ${{ vars.CI_RUNNER_LABEL || 'ubuntu-latest' }}
+    container: node:22-bookworm
+    timeout-minutes: 10
+    steps:
+      - name: Prepare mirror tools
+        run: |
+          apt-get update
+          apt-get install -y --no-install-recommends python3 git openssh-client ca-certificates
+      - name: Checkout
+        uses: https://github.com/actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - name: Publish branches and tags to GitHub
+        env:
+          GH_MIRROR_SSH_KEY: ${{ secrets.GH_MIRROR_SSH_KEY }}
+          MIRROR_SOURCE_REF: ${{ github.ref }}
+          MIRROR_SOURCE_SHA: ${{ github.sha }}
+        run: python3 tools/ci/mirror.py

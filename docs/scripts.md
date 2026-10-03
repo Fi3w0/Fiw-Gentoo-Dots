@@ -17,6 +17,8 @@
 | `tools/check-private.py` | Scans publishable files for personal paths, identifiers and credentials; keeps fingerprinted upstream attribution | Run before committing |
 | `tools/audit-packages.py` | Compares explicit world/selected sets with main/optional package lists and documented helper exceptions | Read-only package audit |
 | `tools/build-release.py` | Builds the generic static amd64 TUI bundle, fingerprints and dependency licence notices | Maintainer command before tagging snapshots |
+| `tools/ci/check.py` | Checks privacy, bundle/theme fingerprints and portable Python/Go behaviour | Forgejo and GitHub CI; can also run locally |
+| `tools/ci/mirror.py` | Copies Forgejo branches/tags to GitHub with a repository deploy key | Forgejo CI after checks; explicit manual sync supported |
 | `optional/fiw-cachy-patch` | Downloads matching vanilla/CachyOS kernel sources, generates a patch and adjusts the installed guard/name config | Explicit manual root operation; not part of ordinary restoration |
 | `optional/fiw-limine-splice` | Replaces the old Gentoo snippet block in an existing Limine menu and orders its entries | Explicit manual use with an ESP argument; specific to the earlier snippet design |
 | `optional/spotify/spotify-patch` | Runs the retained SpotX/Spicetify customization workflow for the Gentoo Spotify client | Explicit optional user operation; stock Spotify is the default |
