@@ -1,7 +1,8 @@
 # Restore the setup
 
 Start with an installed amd64 Gentoo system using systemd and a multilib
-Plasma profile, with Git and Python 3.11+ available. Go 1.24+ builds the TUI.
+Plasma profile, with Git and Python 3.11+ available. The snapshot includes a
+prebuilt Linux amd64 TUI; Go 1.24+ is needed for its source fallback only.
 This repo does not partition disks or install a stage3.
 
 ## Terminal interface
@@ -130,8 +131,9 @@ or Btrfs roots, and unsigned boot. See [boot setup](boot.md) for previews,
 firmware choices and kernel update integration. Other layouts can keep their
 existing loader.
 
-The optional TideWM live recipe still needs a refresh against its upstream
-development branch. End-to-end package and boot execution on a fresh Gentoo
+The optional [TideWM recipe](tidewm.md) follows the audited upstream master
+branch and uses the normal compile-or-skip prompt. End-to-end package and
+boot execution on a fresh Gentoo
 installation remains unverified; development checks used temporary homes,
 staged Portage configuration and mocked system commands.
 

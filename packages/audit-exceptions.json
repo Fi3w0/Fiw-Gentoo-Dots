@@ -1,0 +1,3 @@
+{
+  "app-admin/fiw-scripts": "Its two legacy kernel/boot helpers are retained as optional/fiw-cachy-patch and optional/fiw-limine-splice for manual use. The current boot action has its own refresh helper."
+}

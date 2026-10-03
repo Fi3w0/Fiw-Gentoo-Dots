@@ -17,3 +17,4 @@ app-portage/portage-utils
 sys-apps/usbutils
 sys-apps/hdparm
 media-video/ffmpeg
+x11-misc/ydotool

@@ -2,7 +2,8 @@
 
 | Helper | Purpose | How it is used |
 |---|---|---|
-| `install` | Builds/opens the Bubble Tea chooser, or forwards CLI options to the Python backend | Main entry point |
+| `install` | Opens the verified prebuilt chooser with a Go source fallback, or forwards CLI options to the Python backend | Main entry point |
+| `lib/launcher.py` | Verifies frontend/binary fingerprints and extracts/caches the bundled TUI | Called by the entry point |
 | `lib/rice.py` | Validates selections, previews plans, restores configs and installs Portage packages | Called by the entry point/TUI |
 | `lib/setup.py` | Stages missing overlays, installs selected user Flatpaks and enables selected service units | Called by the backend |
 | `lib/boot.py` | Detects the target ESP/root, previews/deploys Limine or GRUB, refreshes kernel menus | Boot action; copied as `fiw-dots-boot` on deployment |
@@ -12,6 +13,8 @@
 | `tools/capture.py` | Recaptures the explicit preference allowlist without copying full personal profiles | Maintenance command; review the diff |
 | `tools/shortcuts.py` | Regenerates the readable shortcut reference from captured repo files | Run after changing/capturing shortcuts |
 | `tools/check-private.py` | Scans publishable files for personal paths, identifiers and credentials; keeps fingerprinted upstream attribution | Run before committing |
+| `tools/audit-packages.py` | Compares explicit world/selected sets with main/optional package lists and documented helper exceptions | Read-only package audit |
+| `tools/build-release.py` | Builds the generic static amd64 TUI bundle, fingerprints and dependency licence notices | Maintainer command before tagging snapshots |
 | `optional/fiw-cachy-patch` | Downloads matching vanilla/CachyOS kernel sources, generates a patch and adjusts the installed guard/name config | Explicit manual root operation; not part of ordinary restoration |
 | `optional/fiw-limine-splice` | Replaces the old Gentoo snippet block in an existing Limine menu and orders its entries | Explicit manual use with an ESP argument; specific to the earlier snippet design |
 | `optional/spotify/spotify-patch` | Runs the retained SpotX/Spicetify customization workflow for the Gentoo Spotify client | Explicit optional user operation; stock Spotify is the default |

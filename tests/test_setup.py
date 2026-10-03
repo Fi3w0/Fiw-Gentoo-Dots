@@ -23,6 +23,7 @@ boot = module('boot')
 class SetupTests(unittest.TestCase):
     def test_only_selected_overlays_are_staged_and_existing_ones_are_preserved(self):
         self.assertEqual(setup.required_repositories({'groups': ['kde']}), [])
+        self.assertEqual(setup.required_repositories({'groups': ['tidewm']}), ['guru'])
         self.assertEqual(setup.required_repositories({'groups': ['gaming']}), ['guru', 'steam-overlay'])
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)

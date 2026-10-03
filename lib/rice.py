@@ -122,7 +122,7 @@ def manual_steps(selection):
     if 'prism' in selection['configs']:
         steps.append('Set up Prism accounts, Java and Minecraft instances on this device; see docs/app-configs.md.')
     if 'tidewm' in selection['groups']:
-        steps.append('The optional TideWM live recipe needs an upstream refresh before use.')
+        steps.append('Choose TideWM at login after installation; it creates its own default config (docs/tidewm.md).')
     return steps
 
 
@@ -578,6 +578,7 @@ def check_packages(selection):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--version', action='version', version='Fiw-Gentoo-Dots ' + (REPO / 'VERSION').read_text().strip())
     parser.add_argument('--selection')
     parser.add_argument('--profile', choices=['stock', 'fiw-ryzen'], default='stock')
     parser.add_argument('--home', type=Path, default=Path.home())

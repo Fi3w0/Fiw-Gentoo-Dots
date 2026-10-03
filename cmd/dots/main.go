@@ -15,6 +15,8 @@ import (
 	"github.com/charmbracelet/x/ansi"
 )
 
+var tuiVersion = "source"
+
 type selection struct {
 	Name       string   `json:"name"`
 	Profile    string   `json:"profile"`
@@ -492,6 +494,10 @@ func (m model) View() string {
 }
 
 func main() {
+	if len(os.Args) == 2 && os.Args[1] == "--version" {
+		fmt.Println("Fiw-Gentoo-Dots TUI " + tuiVersion)
+		return
+	}
 	repo, err := os.Getwd()
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)

@@ -36,7 +36,7 @@ SERVICES = {
 
 def required_repositories(selection):
     names = []
-    if any(g in selection['groups'] for g in ('fiw-apps', 'gaming')):
+    if any(g in selection['groups'] for g in ('fiw-apps', 'gaming', 'tidewm')):
         names.append('guru')
     if 'gaming' in selection['groups']:
         names.append('steam-overlay')

@@ -1,0 +1,65 @@
+# Release snapshots
+
+## v0.1.0 — First restoration snapshot
+
+This tag captures the current KDE shortcuts and appearance, categorized
+packages, individually optional app preferences and restoration interface.
+Use the snapshot when restoring another device:
+
+```sh
+git clone --branch v0.1.0 https://git.fiwlabs.dev/fiwdev/Fiw-Gentoo-Dots.git
+cd Fiw-Gentoo-Dots
+./install
+```
+
+The repository includes a compressed, static Linux amd64 TUI binary. The
+launcher verifies its archive, executable and frontend source fingerprints
+before use, then caches the executable in ignored `build/`. Git and Python
+3.11+ are sufficient for the bundled TUI. The Python backend remains readable
+and runs directly for CLI commands.
+
+Downloads are available through the Forgejo
+[tag](https://git.fiwlabs.dev/fiwdev/Fiw-Gentoo-Dots/src/tag/v0.1.0) and
+[source archive](https://git.fiwlabs.dev/fiwdev/Fiw-Gentoo-Dots/archive/v0.1.0.tar.gz).
+The archive includes the binary, checksums and upstream licence notices.
+This is a Git-tagged snapshot; no separate Forgejo release attachment is needed.
+
+Included in this snapshot:
+
+- Exact personal KDE shortcut assignments and optional KDE/GTK styling.
+- Stock and Fiw's Ryzen presets with categorized packages and binary preference.
+- Independent app configs, user Flatpaks and optional service selections.
+- Config requirements, conflict prompts, backup restoration and combined reports.
+- Optional Limine/GRUB deployment with target preview and firmware choices.
+- A refreshed optional TideWM recipe and an audit covering all current explicit selections.
+
+The installer starts from an existing Gentoo system. Boot automation covers
+unsigned amd64 UEFI and plain ext4/Btrfs roots. A full fresh-system package and
+boot run remains unverified. TideWM is a live source package, separately
+optional and subject to the compile-or-skip prompt.
+
+## Source fallback and maintenance
+
+Go 1.24+ is needed when the binary is absent, unsupported on the current
+architecture, or does not match changed frontend source. To explicitly build:
+
+```sh
+FIW_DOTS_SOURCE=1 ./install
+```
+
+The source fallback does not download a newer Go toolchain automatically.
+Config-only changes retain the frontend fingerprint, so recapturing app
+preferences does not require rebuilding the binary.
+
+Before tagging a new snapshot, update `VERSION` and rebuild the bundle:
+
+```sh
+python3 tools/build-release.py
+python3 tools/check-private.py
+```
+
+The maintainer build uses `CGO_ENABLED=0`, generic amd64 instructions,
+`-trimpath` and no Git build metadata. It records archive/executable/source
+SHA256 fingerprints and retains notices for the Go dependencies used in
+that binary and for the Go runtime. Review and commit the generated
+`assets/bin/` files with the matching frontend source, then tag that commit.

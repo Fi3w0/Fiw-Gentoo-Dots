@@ -5,10 +5,4 @@ if (($#)); then
     exec python3 "$repo/lib/rice.py" "$@"
 fi
 cd "$repo"
-if ! command -v go >/dev/null; then
-    echo 'The TUI requires Go to build. Use ./install --plan for the Python preview.' >&2
-    exit 1
-fi
-mkdir -p build
-go build -o build/fiw-dots ./cmd/dots
-exec build/fiw-dots
+exec python3 "$repo/lib/launcher.py"

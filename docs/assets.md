@@ -1,5 +1,10 @@
 # Styling assets
 
+The bundled TUI at `assets/bin` is built from this project's MIT source.
+Its third-party Go dependency and runtime notices are retained in
+`assets/bin/LICENSES.txt`. Binary/archive fingerprints and the frontend
+source fingerprint are recorded in `assets/bin/tui.json`.
+
 The captured styling uses a small subset of the original installed assets:
 
 - Utterly-Round-Dark window decorations retain the original author metadata

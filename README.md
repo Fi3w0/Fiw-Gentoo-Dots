@@ -37,7 +37,7 @@ The existing installation has not been changed by creating this repo.
 ## Start
 
 ```sh
-git clone https://git.fiwlabs.dev/fiwdev/Fiw-Gentoo-Dots.git
+git clone --branch v0.1.0 https://git.fiwlabs.dev/fiwdev/Fiw-Gentoo-Dots.git
 cd Fiw-Gentoo-Dots
 ./install
 ```
@@ -49,8 +49,10 @@ a final preview. Enter saves without applying. `r` runs the full restore;
 `v` enables selected services and `b` deploys the selected bootloader.
 `u` opens config backups for preview and restoration. Apply actions finish
 with a [combined report](docs/reports.md) of outcomes and remaining setup.
-Go 1.24+ builds the TUI; Python 3.11+ runs the backend. Go dependencies are
-recorded in go.mod/go.sum. Saved selections are reused on subsequent launches.
+Linux amd64 includes a verified prebuilt TUI; Git and Python 3.11+ are enough.
+Go 1.24+ is the source fallback for changed frontend code or other platforms.
+Saved selections are reused on subsequent launches. See the
+[v0.1.0 snapshot and build instructions](docs/releases.md).
 
 For a preview without building the TUI:
 
@@ -96,6 +98,8 @@ in the TUI, grouped with apps and gaming respectively.
 Limine and GRUB are optional alternatives; retaining the current loader is
 the default. Kernel choice is independent of bootloader choice. Deployment
 previews the target ESP and firmware choices; see [boot setup](docs/boot.md).
+The [package audit](docs/package-audit.md) accounts for all current explicit
+selections. [TideWM](docs/tidewm.md) remains an optional source build.
 
 ## Configs
 
