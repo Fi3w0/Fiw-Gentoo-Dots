@@ -447,6 +447,37 @@ def resolve(stage, selection, packages, execute=False):
                           stderr=None if execute else subprocess.STDOUT)
 
 
+def nvidia_modules():
+    """Check both selected distribution kernels, not just /usr/src/linux."""
+    snapshot = json.loads((REPO / 'optional/kernel/snapshot.json').read_text())
+    driver = subprocess.check_output(['portageq', 'best_version', '/', 'x11-drivers/nvidia-drivers'], text=True).strip()
+    expected = re.sub(r'-r\d+$', '', driver.split('nvidia-drivers-', 1)[1])
+    result = {'checked': [], 'rebuilt': [], 'missing': []}
+    for atom in [snapshot['atom'], 'sys-kernel/gentoo-kernel-bin']:
+        cpv = subprocess.check_output(['portageq', 'best_version', '/', atom], text=True).strip()
+        contents = (Path('/var/db/pkg') / cpv / 'CONTENTS').read_text() if cpv else ''
+        versions = sorted(set(re.findall(r'/(?:usr/)?lib/modules/([^/ ]+)/', contents)))
+        if not versions:
+            result['missing'].append('NVIDIA kernel target: ' + atom)
+        for version in versions:
+            result['checked'].append(version)
+            def ready():
+                return all(subprocess.run(['modinfo', '-k', version, '-F', 'version', module],
+                           text=True, capture_output=True).stdout.strip() == expected
+                           for module in ['nvidia', 'nvidia_drm', 'nvidia_modeset', 'nvidia_uvm'])
+            if ready():
+                continue
+            build = Path('/lib/modules') / version / 'build'
+            print('Building NVIDIA modules for ' + version, flush=True)
+            command = ['emerge', '--oneshot', '--nodeps', '--usepkg=n', '--getbinpkg=n',
+                       '--autounmask=n', '=' + driver]
+            if build.is_dir() and subprocess.run(command, env=dict(os.environ, KERNEL_DIR=str(build))).returncode == 0 and ready():
+                result['rebuilt'].append(version)
+            else:
+                result['missing'].append('NVIDIA modules for ' + version)
+    return result
+
+
 def install_packages(selection):
     if os.geteuid() != 0:
         raise RuntimeError('Package installation requires root. Run sudo ./install --install-packages --selection <file>.')
@@ -504,6 +535,11 @@ def install_packages(selection):
         if not accepted:
             print('All requested packages were skipped; no live configuration applied.')
             return {'status': 'skipped', 'requested': requested, 'skipped': skipped, 'missing': requested}
+        build_modules = (selection['kernel'] == 'custom' and 'system' in selection['groups']
+                         and 'x11-drivers/nvidia-drivers' in accepted
+                         and any(atom.startswith('=sys-kernel/gentoo-kernel-') for atom in accepted))
+        if build_modules:
+            print('NVIDIA modules will be checked and compiled when needed for the selected custom kernel and binary fallback.')
         if ask('Apply the previewed Portage files and install the accepted packages?', ['apply', 'cancel'], 'cancel') != 'apply':
             return {'status': 'cancelled', 'requested': requested, 'skipped': skipped}
         publish_repositories(fetched)
@@ -556,20 +592,24 @@ def install_packages(selection):
         if final.returncode or ({cp_from_cpv(x) for x in source_builds(final.stdout)} - approved):
             raise RuntimeError('The final package plan changed. Review it before retrying; backups are at ' + str(backup_root))
         result = resolve(Path('/'), selection, ['@fiw-dots-selected'], execute=True)
+        modules = nvidia_modules() if result.returncode == 0 and build_modules else {}
         missing = [atom for atom in requested if subprocess.run(
             ['portageq', 'has_version', '/', atom], stdout=subprocess.DEVNULL,
             stderr=subprocess.DEVNULL).returncode != 0]
         report = {'requested': requested, 'present': [atom for atom in accepted if atom not in missing],
                   'skipped': skipped, 'emerge_exit_code': result.returncode,
                   'missing': missing,
+                  'modules': modules, 'failed': modules.get('missing', []),
                   'pending': []}
         state = Path('/var/lib/Fiw-Gentoo-Dots')
         state.mkdir(parents=True, exist_ok=True)
         (state / ('packages-' + stamp + '.json')).write_text(json.dumps(report, indent=2) + '\n')
         print('Package report: ' + str(state / ('packages-' + stamp + '.json')))
         print('Missing packages: ' + (', '.join(missing) or 'none'))
-        if result.returncode:
-            error = RuntimeError('Some packages did not install; consult the package report and emerge output.')
+        if build_modules and result.returncode == 0:
+            print('Missing NVIDIA modules: ' + (', '.join(modules.get('missing', [])) or 'none'))
+        if result.returncode or modules.get('missing'):
+            error = RuntimeError('Some packages or kernel modules did not install; consult the package report and emerge output.')
             error.report = report
             raise error
         if 'kde' in selection['groups'] and 'kde-plasma/plasma-login-manager' not in missing:

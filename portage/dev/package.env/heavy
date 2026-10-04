@@ -1,8 +1,8 @@
-llvm-core/llvm          heavy.conf notmpfs.conf
-llvm-core/clang         heavy.conf notmpfs.conf
-dev-qt/qtwebengine      heavy.conf notmpfs.conf
-net-libs/nodejs         heavy.conf
-dev-lang/spidermonkey   heavy.conf
-media-libs/embree       heavy.conf notmpfs.conf
-media-gfx/blender       heavy.conf notmpfs.conf
-media-gfx/openvdb       heavy.conf notmpfs.conf
+llvm-core/llvm          fiw-dots-heavy.conf fiw-dots-notmpfs.conf
+llvm-core/clang         fiw-dots-heavy.conf fiw-dots-notmpfs.conf
+dev-qt/qtwebengine      fiw-dots-heavy.conf fiw-dots-notmpfs.conf
+net-libs/nodejs         fiw-dots-heavy.conf
+dev-lang/spidermonkey   fiw-dots-heavy.conf
+media-libs/embree       fiw-dots-heavy.conf fiw-dots-notmpfs.conf
+media-gfx/blender       fiw-dots-heavy.conf fiw-dots-notmpfs.conf
+media-gfx/openvdb       fiw-dots-heavy.conf fiw-dots-notmpfs.conf

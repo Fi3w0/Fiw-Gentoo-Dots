@@ -43,6 +43,10 @@ packages again, including requirements of apps whose installation was skipped.
 
 Fish, Kitty, Neovim and Fastfetch have no Plasma or KWin requirements. Fonts
 have their own checkbox; Kitty can use its fallback font if those are omitted.
+Both Kitty profiles start Fish explicitly, so the Kitty preset requires Fish
+even when the optional Fish preferences are unchecked.
+For Fish in TTY and SSH logins too, run `chsh -s "$(command -v fish)"` as your
+regular user after installing Fish, then log in again.
 Neovim's config includes a pinned Catppuccin runtime in its native package
 directory and loads it before the captured purple highlights. It needs no
 plugin manager or runtime download. A built-in fallback remains available if

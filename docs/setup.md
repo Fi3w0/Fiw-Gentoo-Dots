@@ -69,6 +69,10 @@ Binary packages retain the binhost's USE settings; required dependency flags
 are still checked. The preview includes dependency updates and replacements,
 such as adding Steam's 32-bit libraries to a fresh multilib installation.
 
+Custom kernel installs with NVIDIA also check its modules against the selected
+custom kernel and binary fallback. Missing or outdated modules are compiled
+for each, and failures appear in the package report.
+
 Read-only resolution and an export are available separately:
 
 ```sh
@@ -144,14 +148,19 @@ or Btrfs roots, and unsigned boot. See [boot setup](boot.md) for previews,
 firmware choices and kernel update integration. Other layouts can keep their
 existing loader.
 
-The optional [TideWM recipe](tidewm.md) follows the audited upstream master
-branch and uses the normal compile-or-skip prompt. The Stock package installation completed in a fresh ext4 Gentoo QEMU/KVM guest
-(539 package steps, no missing selected packages). Config restoration, conflict
-handling, backups, the bundled chooser and Plasma Login Manager login were
-checked there, along with portable terminal configs and optional service enabling.
-The guest booted a binary kernel using a separately provisioned UEFI GRUB loader.
-Automatic bootloader deployment, custom Ryzen kernel builds, Btrfs, TideWM,
-optional Flatpak installation and physical GPU behaviour remain unverified.
+Gentoo QEMU/KVM checks covered a fresh Stock installation, Fiw's Ryzen custom
+kernel and binary fallback, all package sections, the complete TUI restore,
+all 16 config presets, capture filtering, preserved edits, proposals and backups.
+Plasma Login Manager, KDE/GTK styling, shortcuts, optional autostart, service
+enabling and both user Flatpaks were checked. GRUB and Limine booted ext4 and
+a Btrfs `@` root; kernel addition/removal hooks and menu conflicts were checked.
+The Btrfs guest used a converted copy of the installed ext4 guest.
+
+App checks cover launches and local configuration, including MangoHud,
+GameMode, FiwNode audio and Apdatifier. [TideWM](tidewm.md) compiled and ran
+with virtual graphics. NVIDIA modules were built and checked for both selected
+kernels. Physical NVIDIA rendering, Wi-Fi/Bluetooth devices, real audio hardware,
+account sign-ins and gameplay still need checks on the target device.
 
 Do not publish the private original fiw-gentoo archive. It has different
 history and host-specific files.

@@ -24,9 +24,9 @@ My personal Gentoo restoration kit, mainly for my own devices:
 - Binaries preferred, with a small deliberate source-build list.
 - A Bubble Tea chooser with a final preview, conflict prompts and backups.
 
-The Stock preset has been installed in a fresh Gentoo QEMU/KVM guest: packages,
-config restoration and Plasma Login Manager login passed. Custom kernels,
-automatic bootloader deployment and optional setups still need full runtime checks.
+Stock and Fiw's Ryzen have been installed and checked in Gentoo QEMU/KVM.
+The full TUI restore, KDE presets, optional apps, GRUB/Limine and ext4/Btrfs
+booting passed. See [tested scope and hardware limits](docs/setup.md#current-scope).
 
 ## Screenshots
 

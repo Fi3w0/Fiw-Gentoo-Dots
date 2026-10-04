@@ -8,6 +8,7 @@ The report includes:
 
 - Completed, partial, failed, cancelled and not attempted steps.
 - Confirmed present Portage packages and skipped or missing packages.
+- NVIDIA module checks/builds for a selected custom kernel and binary fallback.
 - Installed, existing, skipped or failed user Flatpaks.
 - Enabled, missing or skipped service units.
 - Applied configs, preserved conflicts and pending `.new` proposals.

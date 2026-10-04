@@ -19,8 +19,11 @@ is enabled by default, including the session-specific portal files.
 This is a source build. The main installer shows it as an additional
 compile-or-skip choice; it is not part of the deliberately small source list.
 A live recipe follows future upstream changes, while the current audit SHA
-documents the version reviewed for this snapshot. Compilation of the
-refreshed tree on a fresh device remains unverified.
+documents the version reviewed for this snapshot. That commit compiled and
+ran in the Gentoo QEMU/KVM guest, both nested inside Plasma and directly from
+a TTY with virtual graphics. Kitty started Fish with the restored terminal
+preferences in both sessions. Physical GPU and screencasting behaviour remain
+device-specific checks.
 
 After installation, choose **TideWM** at login. It creates its own default
 configuration on first launch. No existing TideWM settings are captured or

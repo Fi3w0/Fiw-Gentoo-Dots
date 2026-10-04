@@ -61,9 +61,10 @@
     "label": "Kitty lavender profiles",
     "group": "fiw-apps",
     "packages": [
-      "x11-terms/kitty"
+      "x11-terms/kitty",
+      "app-shells/fish"
     ],
-    "note": "Select fonts separately for the bundled JetBrainsMono Nerd Font."
+    "note": "Both profiles start Fish. Select fonts separately for the bundled JetBrainsMono Nerd Font."
   },
   "neovim": {
     "label": "Neovim transparent purple style",

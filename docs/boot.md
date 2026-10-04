@@ -55,6 +55,11 @@ is generated before replacing it. If the previous menu was edited locally,
 the new menu becomes a `.new` proposal. Existing `/etc/default/grub` settings
 are used by `grub-mkconfig`.
 
+Explicit deployment asks before replacing a conflicting GRUB menu or Limine
+managed block, with a backup. Keeping it writes a proposal and leaves firmware
+registration and order unchanged. Automatic kernel refreshes preserve edits
+without prompting; review their proposals before using the new entries.
+
 ## Kernel updates and backups
 
 Deployment installs a standalone refresh helper at
@@ -72,9 +77,11 @@ live under `/var/lib/Fiw-Gentoo-Dots`. No existing disk partition is formatted.
 Automatic deployment currently supports amd64 UEFI, GPT ESPs, plain ext4/Btrfs
 roots and unsigned boot. Encrypted, UKI-only, BIOS and signing workflows can
 keep their existing loader. Secure Boot being active stops unsigned deployment
-before changes. A fresh ext4 QEMU/KVM guest booted the binary kernel with a
-separately provisioned UEFI GRUB loader. The automatic deployment and kernel
-update hooks described here still need end-to-end boot checks.
+before changes. Automatic GRUB and Limine deployment and booting were checked
+in Gentoo QEMU/KVM with ext4 and a Btrfs `@` root. The custom Ryzen kernel and
+binary fallback booted, and addition/removal hooks and preservation of edited
+menus were checked. Physical firmware and unsupported storage layouts still
+need their own setup.
 
 `optional/fiw-cachy-patch` refreshes the custom kernel patch; it does not select
 a bootloader. See the [helper list](scripts.md) before using it.

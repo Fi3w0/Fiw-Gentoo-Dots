@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # SpotX-Bash + spicetify (Marketplace) on Gentoo's media-sound/spotify.
 # Run as your regular user after the first setup and after every Spotify update.
-# Write access comes from an ACL (/etc/portage/env/media-sound/spotify).
+# Write access must be configured explicitly before opting in.
 set -euo pipefail
 
 client=/opt/spotify/spotify-client
@@ -9,7 +9,7 @@ spotx_url=https://raw.githubusercontent.com/SpotX-Official/SpotX-Bash/main/spotx
 spicetify=$HOME/.spicetify/spicetify
 
 [[ -w $client/Apps/xpui.spa && -w $client/spotify ]] || {
-	echo "No write access to $client. Run once as root: the optional Spotify ACL setup described in docs/spotify.md" >&2
+	echo "No write access to $client. Review docs/spotify.md and configure client write access explicitly before opting in." >&2
 	exit 1
 }
 

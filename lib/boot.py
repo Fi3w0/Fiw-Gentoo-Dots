@@ -10,6 +10,7 @@ import shlex
 import shutil
 import subprocess
 import sys
+import tempfile
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -229,7 +230,35 @@ def write(path, content, backups, mode=0o644):
     tmp.replace(path)
 
 
-def refresh(saved, backups, exclude=None):
+def grub_config(output, images, exclude=None):
+    env = dict(os.environ, GRUB_TOP_LEVEL=images[0]['kernel'])
+    command = ['grub-mkconfig', '-o', str(output)]
+    if not exclude:
+        subprocess.run(command, env=env, check=True)
+        return
+    # Removal hooks can run before the kernel file disappears. Filter discovery
+    # through GRUB's library override, without moving installed boot artifacts.
+    library = Path('/usr/share/grub')
+    source = (library / 'grub-mkconfig_lib').read_text()
+    source, count = re.subn(r'\bgrub_file_is_not_garbage\s*\(\s*\)',
+                           'fiw_dots_file_is_not_garbage ()', source, count=1)
+    if count != 1:
+        raise RuntimeError('Cannot filter this GRUB library; preserving the boot menu.')
+    paths = ['/boot/kernel-' + exclude] + [prefix + exclude for prefix in
+             ('/boot/vmlinuz-', '/vmlinuz-', '/boot/vmlinux-', '/vmlinux-')]
+    source += '\ngrub_file_is_not_garbage () {\n case "$1" in\n ' + '|'.join(
+        shlex.quote(path) for path in paths) + ') return 1 ;;\n esac\n fiw_dots_file_is_not_garbage "$@"\n}\n'
+    with tempfile.TemporaryDirectory(prefix='fiw-dots-grub-') as directory:
+        root = Path(directory)
+        for path in library.iterdir():
+            if path.name != 'grub-mkconfig_lib':
+                (root / path.name).symlink_to(path)
+        (root / 'grub-mkconfig_lib').write_text(source)
+        subprocess.run(command, env=dict(env, pkgdatadir=directory), check=True)
+
+
+def refresh(saved, backups, exclude=None, ask=None):
+    saved.pop('pending_config', None)
     # Recheck the mount every time; never write into an unmounted ESP directory.
     target = discover_esp(Path(saved['esp']))
     images = kernel_images(exclude=exclude)
@@ -246,7 +275,10 @@ def refresh(saved, backups, exclude=None):
         config = GRUB_DIRECTORY / 'grub/grub.cfg'
         old_hash = file_hash(config)
         output = config
-        if old_hash and old_hash != saved.get('config_hash'):
+        edited = old_hash and old_hash != saved.get('config_hash')
+        replace = edited and ask and ask('Existing GRUB menu differs from the saved version. Replace it with the generated menu?',
+                                         ['replace', 'keep'], 'keep') == 'replace'
+        if edited and not replace:
             output = config.with_name(config.name + '.new.' + datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%S.%fZ'))
         else:
             backup(config, backups)
@@ -264,12 +296,13 @@ def refresh(saved, backups, exclude=None):
                 shutil.copy2(source, dest)
         scratch = output.with_name('.' + output.name + '.tmp')
         try:
-            subprocess.run(['grub-mkconfig', '-o', str(scratch)], check=True)
+            grub_config(scratch, images, exclude)
             scratch.replace(output)
         finally:
             if scratch.exists():
                 scratch.unlink()
         if output != config:
+            saved['pending_config'] = str(output)
             print('Preserved edited GRUB config; review ' + str(output))
         else:
             saved['config_hash'] = file_hash(config)
@@ -295,9 +328,13 @@ def refresh(saved, backups, exclude=None):
     prior = managed_block(old)
     block = render_limine(images, saved['cmdline'])
     output = merge_limine(old, block)
-    if prior and block_hash(prior) != saved.get('block_hash'):
+    edited = prior and block_hash(prior) != saved.get('block_hash')
+    replace = edited and ask and ask('Existing Limine entries differ from the saved version. Replace the managed entries?',
+                                     ['replace', 'keep'], 'keep') == 'replace'
+    if edited and not replace:
         proposal = config.with_name(config.name + '.new.' + datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%S.%fZ'))
         write(proposal, output, backups)
+        saved['pending_config'] = str(proposal)
         print('Preserved edited Limine entries; review ' + str(proposal))
     elif output != old:
         write(config, output, backups)
@@ -381,7 +418,12 @@ def deploy(mode, esp=None, ask=confirm):
     else:
         subprocess.run(proposed['commands'][0], check=True)
         loader_path = '/EFI/Fiw-Gentoo/grubx64.efi'
-    saved = refresh(saved, backups)
+    saved = refresh(saved, backups, ask=ask)
+    pending = saved.pop('pending_config', None)
+    if pending and firmware != 'keep':
+        commands = []
+        firmware = 'keep'
+        print('Kept the existing boot menu; firmware entries and order remain unchanged. Review ' + pending)
     # Native installkernel provides versioned /boot kernel/initrd files; our
     # final hook refreshes only the chosen loader's own configuration.
     write(Path('/etc/kernel/install.conf'), proposed['installkernel_config'], backups)
@@ -403,7 +445,8 @@ def deploy(mode, esp=None, ask=confirm):
     report.write_text(json.dumps({'plan': proposed, 'firmware_choice': firmware,
                                   'backups': str(backups)}, indent=2) + '\n')
     print('Boot deployment finished. Report: ' + str(report))
-    return {'status': 'completed', 'mode': mode, 'firmware_choice': firmware,
+    return {'status': 'partial' if pending else 'completed', 'mode': mode, 'firmware_choice': firmware,
+            'review': [pending] if pending else [],
             'report': str(report), 'backups': str(backups)}
 
 
@@ -422,6 +465,7 @@ def main():
     stamp = datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%S.%fZ')
     backups = MANAGED / 'backups' / ('boot-refresh-' + stamp)
     updated = refresh(saved, backups, args.exclude_version)
+    updated.pop('pending_config', None)
     write(STATE, json.dumps(updated, indent=2) + '\n', backups, 0o600)
 
 

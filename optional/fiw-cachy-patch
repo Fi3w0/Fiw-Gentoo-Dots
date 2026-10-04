@@ -15,9 +15,10 @@ trap 'rm -rf "$work"' EXIT
 cd "$work"
 
 # Newest CachyOS release for this kernel version (cachyos-7.2.8-1, -2, ...)
-tag=$(curl -fsSL "https://api.github.com/repos/CachyOS/linux/releases?per_page=50" |
+releases=$(curl -fsSL "https://api.github.com/repos/CachyOS/linux/releases?per_page=50")
+tag=$(printf '%s\n' "$releases" |
 	grep -oE "\"tag_name\": *\"cachyos-${ver//./\\.}-[0-9]+\"" |
-	grep -oE "cachyos-[0-9.]+-[0-9]+" | sort -V | tail -1)
+	grep -oE "cachyos-[0-9.]+-[0-9]+" | sort -V | tail -1 || true)
 [[ -n $tag ]] || { echo "CachyOS has no release for $ver yet" >&2; exit 1; }
 echo "Using $tag"
 

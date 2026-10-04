@@ -183,10 +183,16 @@ def capture_fish():
 
 
 def capture_kitty():
+    def portable_profile(text, name):
+        text = re.sub(r'(?m)^linux_display_server\s+wayland\s*$',
+                      'linux_display_server auto', text)
+        text = re.sub(r'(?m)^shell\s+.*\n?', '', text)
+        if name == 'kitty-common.conf':
+            text = text.rstrip() + '\n\nshell fish\n'
+        return text
     for name in ['kitty.conf', 'kitty-main.conf', 'kitty-bright.conf', 'kitty-common.conf']:
         copy('kitty', '.config/kitty/' + name,
-             lambda t: re.sub(r'(?m)^linux_display_server\s+wayland\s*$',
-                              'linux_display_server auto', t))
+             lambda t: portable_profile(t, name))
 
 
 def capture_neovim():
