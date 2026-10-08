@@ -353,7 +353,12 @@ def root_files(selection, repo_location=None):
             result['etc/kernel/config.d/' + src.name] = src.read_text()
         result['etc/portage/package.accept_keywords/fiw-dots-kernel'] = 'sys-kernel/gentoo-kernel ~amd64\nsys-kernel/gentoo-kernel-bin ~amd64\nvirtual/dist-kernel ~amd64\n'
         result['etc/portage/env/sys-kernel/gentoo-kernel'] = (REPO / 'optional/kernel/guard').read_text()
-        result['etc/portage/package.mask/fiw-dots-custom-kernel'] = '# Tested custom-kernel snapshot; update snapshot and patch explicitly.\n>sys-kernel/gentoo-kernel-7.2.8\n'
+        # Point releases of the tested series reuse the patch (see guard); a new series needs a new snapshot.
+        major, minor = json.loads((REPO / 'optional/kernel/snapshot.json').read_text())['patch_kernel'].split('.')[:2]
+        result['etc/portage/package.mask/fiw-dots-custom-kernel'] = '# Tested custom-kernel series; update snapshot and patch for the next one.\n>=sys-kernel/gentoo-kernel-' + major + '.' + str(int(minor) + 1) + '\n'
+    if selection['profile'] == 'fiw-ryzen':
+        result['etc/sysctl.d/70-fiw-dots-performance.conf'] = (REPO / 'optional/tuning/70-fiw-performance.conf').read_text()
+        result['etc/modules-load.d/fiw-dots-bbr.conf'] = (REPO / 'optional/tuning/bbr.conf').read_text()
     if selection['bootloader'] != 'keep':
         result['etc/portage/package.use/fiw-dots-boot'] = ('sys-kernel/installkernel systemd dracut -grub -uki -ukify -ugrd -efistub -refind -systemd-boot\n')
         if selection['bootloader'] == 'grub':

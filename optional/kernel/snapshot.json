@@ -1,10 +1,9 @@
 {
-  "atom": "=sys-kernel/gentoo-kernel-7.2.8",
-  "patch_kernel": "7.2.7",
-  "cachyos_tag": "cachyos-7.2.7-1",
+  "atom": "=sys-kernel/gentoo-kernel-7.2.9",
+  "patch_kernel": "7.2.9",
+  "cachyos_tag": "cachyos-7.2.9-2",
   "tested_kernel_versions": [
-    "7.2.7",
-    "7.2.8"
+    "7.2.9"
   ],
-  "patch_sha256": "c1aca3cbd113866e5660cb827403ee73a8ca6f0eb5dcb497fad90561e059ef75"
+  "patch_sha256": "49e635ff0b35ebfbff5ddfab117dcd49bafc2b04f8794fccd6c7ff201f27ebf9"
 }

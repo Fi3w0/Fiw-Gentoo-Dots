@@ -3,14 +3,17 @@
 export KBUILD_BUILD_USER=fiw
 export KBUILD_BUILD_HOST=gentoo
 
-# The CachyOS patch is a diff against exactly one kernel version. Refuse to build
-# any other version until scripts/fiw-cachy-patch has regenerated it.
-# Versions the current patch is known to apply to (space separated).
-# 2026-09-26: CachyOS has no 7.2.8 yet; the 7.2.7-1 patch applies to 7.2.8 (3 hunks
-# with fuzz, checked by hand: only context shifted by 7.2.8's APX lines).
-FIW_CACHY_PV="7.2.7 7.2.8"
+# Version the CachyOS patch in /etc/portage/patches was generated for.
+# fiw-cachy-patch rewrites this line (the postsync hook runs it when CachyOS
+# has a release for a new gentoo-kernel). A newer point release in the same
+# series (7.2.x) reuses the existing patch and config.d unchanged; if the patch
+# no longer applies, the build stops and the installed kernels stay as they are.
+FIW_CACHY_PV=7.2.9
 pre_src_prepare() {
-	if [[ " ${FIW_CACHY_PV} " != *" ${PV} "* ]]; then
-		die "CachyOS patch is for ${FIW_CACHY_PV}, not ${PV}. Run: fiw-cachy-patch ${PV}"
+	[[ ${PV} == "${FIW_CACHY_PV}" ]] && return
+	if [[ ${PV%.*} != "${FIW_CACHY_PV%.*}" ]]; then
+		die "CachyOS patch is for ${FIW_CACHY_PV}; ${PV} is a new series. Run: fiw-cachy-patch ${PV}"
 	fi
+	ewarn "No CachyOS patch for ${PV} yet: reusing the ${FIW_CACHY_PV} patch and config."
+	ewarn "Fallbacks if it misbehaves: gentoo-kernel-bin entry, or CachyOS."
 }
