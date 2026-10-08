@@ -40,8 +40,6 @@ mkdir -p "$patchdir"
 rm -f "$patchdir"/0100-cachyos-*.patch
 install -m644 "${tag}.patch" "$patchdir/0100-${tag}.patch"
 sed -i "s/^FIW_CACHY_PV=.*/FIW_CACHY_PV=${ver}/" "$guard"
-# kernel name: <ver>-<cachyos release>-<rest>, only the release number changes
-sed -i -E "s/^CONFIG_LOCALVERSION=\"-[0-9]+-/CONFIG_LOCALVERSION=\"-${tag##*-}-/" "$name_cfg"
 grep ^CONFIG_LOCALVERSION "$name_cfg"
 echo "Installed $patchdir/0100-${tag}.patch; guard now allows ${ver}."
 echo "Next: emerge -1 =sys-kernel/gentoo-kernel-${ver}"

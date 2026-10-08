@@ -73,7 +73,7 @@ Custom kernel installs with NVIDIA also check its modules against the selected
 custom kernel and binary fallback. Missing or outdated modules are compiled
 for each, and failures appear in the package report.
 
-The custom kernel snapshot is CachyOS 7.2.9-2 (`7.2.9-2-fiw-nyx-v1.2`). Newer
+The custom kernel uses the CachyOS 7.2.9-2 patch and is named `7.2.9-fiw-nyx-v1.2`. Newer
 7.2.x point releases reuse that patch and config; the next series stays masked
 until the snapshot is updated. Fiw's Ryzen preset also installs
 `/etc/sysctl.d/70-fiw-dots-performance.conf` (CachyOS-style memory/network
