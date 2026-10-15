@@ -8,7 +8,7 @@ export KBUILD_BUILD_HOST=gentoo
 # has a release for a new gentoo-kernel). A newer point release in the same
 # series (7.2.x) reuses the existing patch and config.d unchanged; if the patch
 # no longer applies, the build stops and the installed kernels stay as they are.
-FIW_CACHY_PV=7.2.9
+FIW_CACHY_PV=7.2.10
 pre_src_prepare() {
 	[[ ${PV} == "${FIW_CACHY_PV}" ]] && return
 	if [[ ${PV%.*} != "${FIW_CACHY_PV%.*}" ]]; then

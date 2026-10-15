@@ -13,8 +13,9 @@ sudo ./install --selection local/selection.json --deploy-bootloader
 sudo ./install --selection local/selection.json --deploy-bootloader --esp /boot/efi
 ```
 
-Discovery checks mounted `/efi`, `/boot/efi` and `/boot` candidates for the GPT
-ESP type and FAT filesystem. The plan shows the selected partition, root
+Discovery checks `/efi`, `/boot/efi`, `/boot` and FAT mount points from
+`/etc/fstab` for the GPT ESP type and FAT filesystem. An `x-systemd.automount`
+ESP is mounted by accessing it first. The plan shows the selected partition, root
 filesystem, kernel arguments, installed kernel/initramfs candidates and
 proposed loader config or commands. UUIDs are derived on the target and kept
 in its local state; they are not shipped in the repo.
@@ -41,7 +42,8 @@ followed by generic kernels, including an installed binary fallback.
 A marked block contains the generated Gentoo entries. Entries outside that
 block are preserved. Locally edited managed entries receive a `.new` proposal
 instead of being overwritten. ESP free space is checked before copying kernel
-artifacts. The protocol and paths follow the upstream
+artifacts. Once the managed menu is current, kernel folders it no longer lists
+are removed from the ESP; folders with other files are left alone. The protocol and paths follow the upstream
 [Limine configuration reference](https://github.com/limine-bootloader/limine/blob/v12.x/CONFIG.md).
 
 ## GRUB

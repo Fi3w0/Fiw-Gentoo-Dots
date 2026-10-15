@@ -28,13 +28,31 @@ def mount_info(path, exact=False):
                             text=True, capture_output=True)
     if result.returncode:
         raise RuntimeError('Not a mounted filesystem: ' + str(path))
-    data = json.loads(result.stdout)['filesystems'][0]
-    return data
+    # An x-systemd.automount point lists its autofs placeholder first.
+    mounted = [fs for fs in json.loads(result.stdout)['filesystems'] if fs['fstype'] != 'autofs']
+    if not mounted:
+        raise RuntimeError('Not a mounted filesystem: ' + str(path))
+    return mounted[-1]
+
+
+def fstab_vfat():
+    result = subprocess.run(['findmnt', '--fstab', '--json', '--types', 'vfat', '--output', 'TARGET'],
+                            text=True, capture_output=True)
+    if result.returncode or not result.stdout.strip():
+        return []
+    return [Path(fs['target']) for fs in json.loads(result.stdout)['filesystems']]
 
 
 def discover_esp(path=None):
     candidates = [Path(path)] if path else [Path('/efi'), Path('/boot/efi'), Path('/boot')]
+    if not path:
+        candidates += [target for target in fstab_vfat() if target not in candidates]
     for candidate in candidates:
+        # Accessing an automount point mounts it; findmnt alone does not.
+        try:
+            os.listdir(candidate)
+        except OSError:
+            pass
         try:
             info = mount_info(candidate, exact=True)
         except RuntimeError:
@@ -336,10 +354,27 @@ def refresh(saved, backups, exclude=None, ask=None):
         write(proposal, output, backups)
         saved['pending_config'] = str(proposal)
         print('Preserved edited Limine entries; review ' + str(proposal))
-    elif output != old:
-        write(config, output, backups)
-        saved['block_hash'] = block_hash(block)
+    else:
+        if output != old:
+            write(config, output, backups)
+            saved['block_hash'] = block_hash(block)
+        # Only once the menu no longer lists them: drop removed kernels' copies.
+        prune_kernels(folder / 'kernels', {image['version'] for image in images})
     return saved
+
+
+def prune_kernels(directory, keep):
+    """Remove ESP kernel folders that refresh created and the menu no longer uses."""
+    if not directory.is_dir():
+        return
+    for path in directory.iterdir():
+        if path.name in keep or path.is_symlink() or not path.is_dir():
+            continue
+        names = {child.name for child in path.iterdir()}
+        # Leave anything that is not purely this tool's vmlinuz/initramfs copy.
+        if names <= {'vmlinuz', 'initramfs.img', '.vmlinuz.tmp', '.initramfs.img.tmp'}:
+            shutil.rmtree(path)
+            print('Removed unused ESP kernel copy: ' + path.name)
 
 
 def confirm(prompt, choices, default):

@@ -483,6 +483,30 @@ def nvidia_modules():
     return result
 
 
+def replace_tree(source, target):
+    """Replace target with a copy of source; merging would keep removed ebuilds
+    next to a Manifest that no longer lists their distfiles."""
+    target.parent.mkdir(parents=True, exist_ok=True)
+    scratch = target.with_name('.' + target.name + '-new-' + str(os.getpid()))
+    retired = target.with_name('.' + target.name + '-old-' + str(os.getpid()))
+    try:
+        shutil.copytree(source, scratch, symlinks=True)
+        if target.exists() or target.is_symlink():
+            target.rename(retired)
+        try:
+            scratch.rename(target)
+        except OSError:
+            if retired.exists() and not target.exists():
+                retired.rename(target)
+            raise
+    finally:
+        for leftover in (scratch, retired):
+            if leftover.is_symlink():
+                leftover.unlink()
+            elif leftover.exists():
+                shutil.rmtree(leftover)
+
+
 def install_packages(selection):
     if os.geteuid() != 0:
         raise RuntimeError('Package installation requires root. Run sudo ./install --install-packages --selection <file>.')
@@ -578,7 +602,7 @@ def install_packages(selection):
         overlay = Path('/var/db/repos/fiw-dots')
         if overlay.exists():
             shutil.copytree(overlay, backup_root / 'overlay', symlinks=True)
-        shutil.copytree(REPO / 'overlay', overlay, dirs_exist_ok=True, symlinks=True)
+        replace_tree(REPO / 'overlay', overlay)
         make_conf = Path('/etc/portage/make.conf')
         include = 'source /etc/portage/fiw-dots.conf'
         if include not in make_conf.read_text():

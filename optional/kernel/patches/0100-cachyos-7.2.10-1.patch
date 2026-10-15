@@ -1,6 +1,6 @@
 diff -ruN --no-dereference -x .git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
---- a/Documentation/admin-guide/kernel-parameters.txt	2026-10-07 05:21:40.768534597 +0200
-+++ b/Documentation/admin-guide/kernel-parameters.txt	2026-10-03 14:48:53.000000000 +0200
+--- a/Documentation/admin-guide/kernel-parameters.txt	2026-10-11 15:27:50.000000000 +0200
++++ b/Documentation/admin-guide/kernel-parameters.txt	2026-10-13 14:33:30.000000000 +0200
 @@ -2487,6 +2487,9 @@
  			disable
  			  Do not enable intel_pstate as the default
@@ -37,8 +37,8 @@ diff -ruN --no-dereference -x .git a/Documentation/admin-guide/kernel-parameters
  	tsc_early_khz=  [X86,EARLY] Skip early TSC calibration and use the given
  			value instead. Useful when the early TSC frequency discovery
 diff -ruN --no-dereference -x .git a/Documentation/admin-guide/pm/amd-pstate.rst b/Documentation/admin-guide/pm/amd-pstate.rst
---- a/Documentation/admin-guide/pm/amd-pstate.rst	2026-08-16 23:32:26.000000000 +0200
-+++ b/Documentation/admin-guide/pm/amd-pstate.rst	2026-10-03 14:48:53.000000000 +0200
+--- a/Documentation/admin-guide/pm/amd-pstate.rst	2026-10-11 15:27:50.000000000 +0200
++++ b/Documentation/admin-guide/pm/amd-pstate.rst	2026-10-13 14:33:30.000000000 +0200
 @@ -372,6 +372,22 @@
  Attempting to manually write to the ``energy_performance_preference`` sysfs
  file will fail when ``dynamic_epp`` is enabled.
@@ -63,8 +63,8 @@ diff -ruN --no-dereference -x .git a/Documentation/admin-guide/pm/amd-pstate.rst
  ======================================
  
 diff -ruN --no-dereference -x .git a/Makefile b/Makefile
---- a/Makefile	2026-10-07 05:21:40.774623869 +0200
-+++ b/Makefile	2026-10-03 14:48:53.000000000 +0200
+--- a/Makefile	2026-10-11 15:27:50.000000000 +0200
++++ b/Makefile	2026-10-13 14:33:30.000000000 +0200
 @@ -932,11 +932,20 @@
  ifdef CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE
  KBUILD_CFLAGS += -O2
@@ -87,8 +87,8 @@ diff -ruN --no-dereference -x .git a/Makefile b/Makefile
  # depends on `opt-level` and `debug-assertions`, respectively.
  KBUILD_RUSTFLAGS += -Cdebug-assertions=$(if $(CONFIG_RUST_DEBUG_ASSERTIONS),y,n)
 diff -ruN --no-dereference -x .git a/arch/arm/include/asm/mmu_context.h b/arch/arm/include/asm/mmu_context.h
---- a/arch/arm/include/asm/mmu_context.h	2026-08-16 23:32:26.000000000 +0200
-+++ b/arch/arm/include/asm/mmu_context.h	2026-10-03 14:48:53.000000000 +0200
+--- a/arch/arm/include/asm/mmu_context.h	2026-10-11 15:27:50.000000000 +0200
++++ b/arch/arm/include/asm/mmu_context.h	2026-10-13 14:33:30.000000000 +0200
 @@ -80,7 +80,7 @@
  #ifndef MODULE
  #define finish_arch_post_lock_switch \
@@ -99,8 +99,8 @@ diff -ruN --no-dereference -x .git a/arch/arm/include/asm/mmu_context.h b/arch/a
  	struct mm_struct *mm = current->mm;
  
 diff -ruN --no-dereference -x .git a/arch/riscv/include/asm/sync_core.h b/arch/riscv/include/asm/sync_core.h
---- a/arch/riscv/include/asm/sync_core.h	2026-08-16 23:32:26.000000000 +0200
-+++ b/arch/riscv/include/asm/sync_core.h	2026-10-03 14:48:53.000000000 +0200
+--- a/arch/riscv/include/asm/sync_core.h	2026-10-11 15:27:50.000000000 +0200
++++ b/arch/riscv/include/asm/sync_core.h	2026-10-13 14:33:30.000000000 +0200
 @@ -6,7 +6,7 @@
   * RISC-V implements return to user-space through an xRET instruction,
   * which is not core serializing.
@@ -111,8 +111,8 @@ diff -ruN --no-dereference -x .git a/arch/riscv/include/asm/sync_core.h b/arch/r
  	asm volatile ("fence.i" ::: "memory");
  }
 diff -ruN --no-dereference -x .git a/arch/s390/include/asm/mmu_context.h b/arch/s390/include/asm/mmu_context.h
---- a/arch/s390/include/asm/mmu_context.h	2026-08-16 23:32:26.000000000 +0200
-+++ b/arch/s390/include/asm/mmu_context.h	2026-10-03 14:48:53.000000000 +0200
+--- a/arch/s390/include/asm/mmu_context.h	2026-10-11 15:27:50.000000000 +0200
++++ b/arch/s390/include/asm/mmu_context.h	2026-10-13 14:33:30.000000000 +0200
 @@ -93,7 +93,7 @@
  }
  
@@ -123,8 +123,8 @@ diff -ruN --no-dereference -x .git a/arch/s390/include/asm/mmu_context.h b/arch/
  	struct task_struct *tsk = current;
  	struct mm_struct *mm = tsk->mm;
 diff -ruN --no-dereference -x .git a/arch/sparc/include/asm/mmu_context_64.h b/arch/sparc/include/asm/mmu_context_64.h
---- a/arch/sparc/include/asm/mmu_context_64.h	2026-08-16 23:32:26.000000000 +0200
-+++ b/arch/sparc/include/asm/mmu_context_64.h	2026-10-03 14:48:53.000000000 +0200
+--- a/arch/sparc/include/asm/mmu_context_64.h	2026-10-11 15:27:50.000000000 +0200
++++ b/arch/sparc/include/asm/mmu_context_64.h	2026-10-13 14:33:30.000000000 +0200
 @@ -160,7 +160,7 @@
  }
  
@@ -135,8 +135,8 @@ diff -ruN --no-dereference -x .git a/arch/sparc/include/asm/mmu_context_64.h b/a
  	/* Restore the state of MCDPER register for the new process
  	 * just switched to.
 diff -ruN --no-dereference -x .git a/arch/x86/Kconfig.cpu b/arch/x86/Kconfig.cpu
---- a/arch/x86/Kconfig.cpu	2026-10-07 05:21:40.842225539 +0200
-+++ b/arch/x86/Kconfig.cpu	2026-10-03 14:48:53.000000000 +0200
+--- a/arch/x86/Kconfig.cpu	2026-10-11 15:27:50.000000000 +0200
++++ b/arch/x86/Kconfig.cpu	2026-10-13 14:33:30.000000000 +0200
 @@ -214,6 +214,10 @@
  	def_bool (RUSTC_VERSION >= 108800 && RUSTC_LLVM_MAJOR_VERSION >= 23) || \
  		 RUSTC_VERSION >= 109300
@@ -197,8 +197,8 @@ diff -ruN --no-dereference -x .git a/arch/x86/Kconfig.cpu b/arch/x86/Kconfig.cpu
  	bool "Generic x86 support"
  	depends on X86_32
 diff -ruN --no-dereference -x .git a/arch/x86/Makefile b/arch/x86/Makefile
---- a/arch/x86/Makefile	2026-10-07 05:21:40.842340618 +0200
-+++ b/arch/x86/Makefile	2026-10-03 14:48:53.000000000 +0200
+--- a/arch/x86/Makefile	2026-10-11 15:27:50.000000000 +0200
++++ b/arch/x86/Makefile	2026-10-13 14:33:30.000000000 +0200
 @@ -167,10 +167,22 @@
  
          # generate_rust_target.rs handles Rust APX gating.
@@ -225,8 +225,8 @@ diff -ruN --no-dereference -x .git a/arch/x86/Makefile b/arch/x86/Makefile
          KBUILD_CFLAGS += -mno-red-zone
          KBUILD_CFLAGS += -mcmodel=kernel
 diff -ruN --no-dereference -x .git a/arch/x86/include/asm/pci.h b/arch/x86/include/asm/pci.h
---- a/arch/x86/include/asm/pci.h	2026-08-16 23:32:26.000000000 +0200
-+++ b/arch/x86/include/asm/pci.h	2026-10-03 14:48:53.000000000 +0200
+--- a/arch/x86/include/asm/pci.h	2026-10-11 15:27:50.000000000 +0200
++++ b/arch/x86/include/asm/pci.h	2026-10-13 14:33:30.000000000 +0200
 @@ -26,6 +26,7 @@
  #if IS_ENABLED(CONFIG_VMD)
  	struct pci_dev	*vmd_dev;	/* VMD Device if in Intel VMD domain */
@@ -248,8 +248,8 @@ diff -ruN --no-dereference -x .git a/arch/x86/include/asm/pci.h b/arch/x86/inclu
     already-configured bus numbers - to be used for buggy BIOSes
     or architectures with incomplete PCI setup by the loader */
 diff -ruN --no-dereference -x .git a/arch/x86/include/asm/sync_core.h b/arch/x86/include/asm/sync_core.h
---- a/arch/x86/include/asm/sync_core.h	2026-08-16 23:32:26.000000000 +0200
-+++ b/arch/x86/include/asm/sync_core.h	2026-10-03 14:48:53.000000000 +0200
+--- a/arch/x86/include/asm/sync_core.h	2026-10-11 15:27:50.000000000 +0200
++++ b/arch/x86/include/asm/sync_core.h	2026-10-13 14:33:30.000000000 +0200
 @@ -93,7 +93,7 @@
   * to user-mode. x86 implements return to user-space through sysexit,
   * sysrel, and sysretq, which are not core serializing.
@@ -260,8 +260,8 @@ diff -ruN --no-dereference -x .git a/arch/x86/include/asm/sync_core.h b/arch/x86
  	/* With PTI, we unconditionally serialize before running user code. */
  	if (static_cpu_has(X86_FEATURE_PTI))
 diff -ruN --no-dereference -x .git a/arch/x86/include/asm/tlbflush.h b/arch/x86/include/asm/tlbflush.h
---- a/arch/x86/include/asm/tlbflush.h	2026-08-16 23:32:26.000000000 +0200
-+++ b/arch/x86/include/asm/tlbflush.h	2026-10-03 14:48:53.000000000 +0200
+--- a/arch/x86/include/asm/tlbflush.h	2026-10-11 15:27:50.000000000 +0200
++++ b/arch/x86/include/asm/tlbflush.h	2026-10-13 14:33:30.000000000 +0200
 @@ -4,6 +4,7 @@
  
  #include <linux/mm_types.h>
@@ -293,8 +293,8 @@ diff -ruN --no-dereference -x .git a/arch/x86/include/asm/tlbflush.h b/arch/x86/
  void flush_tlb_local(void);
  void flush_tlb_one_user(unsigned long addr);
 diff -ruN --no-dereference -x .git a/arch/x86/include/asm/tsc.h b/arch/x86/include/asm/tsc.h
---- a/arch/x86/include/asm/tsc.h	2026-08-16 23:32:26.000000000 +0200
-+++ b/arch/x86/include/asm/tsc.h	2026-10-03 14:48:53.000000000 +0200
+--- a/arch/x86/include/asm/tsc.h	2026-10-11 15:27:50.000000000 +0200
++++ b/arch/x86/include/asm/tsc.h	2026-10-13 14:33:30.000000000 +0200
 @@ -93,6 +93,7 @@
  extern unsigned long long native_sched_clock_from_tsc(u64 tsc);
  
@@ -304,8 +304,8 @@ diff -ruN --no-dereference -x .git a/arch/x86/include/asm/tsc.h b/arch/x86/inclu
  
  /*
 diff -ruN --no-dereference -x .git a/arch/x86/kernel/acpi/sleep.c b/arch/x86/kernel/acpi/sleep.c
---- a/arch/x86/kernel/acpi/sleep.c	2026-08-16 23:32:26.000000000 +0200
-+++ b/arch/x86/kernel/acpi/sleep.c	2026-10-03 14:48:53.000000000 +0200
+--- a/arch/x86/kernel/acpi/sleep.c	2026-10-11 15:27:50.000000000 +0200
++++ b/arch/x86/kernel/acpi/sleep.c	2026-10-13 14:33:30.000000000 +0200
 @@ -104,6 +104,15 @@
  			header->pmode_misc_en_high))
  		header->pmode_behavior |=
@@ -323,8 +323,8 @@ diff -ruN --no-dereference -x .git a/arch/x86/kernel/acpi/sleep.c b/arch/x86/ker
  	header->real_magic = 0x12345678;
  
 diff -ruN --no-dereference -x .git a/arch/x86/kernel/cpu/amd.c b/arch/x86/kernel/cpu/amd.c
---- a/arch/x86/kernel/cpu/amd.c	2026-08-16 23:32:26.000000000 +0200
-+++ b/arch/x86/kernel/cpu/amd.c	2026-10-03 14:48:53.000000000 +0200
+--- a/arch/x86/kernel/cpu/amd.c	2026-10-11 15:27:50.000000000 +0200
++++ b/arch/x86/kernel/cpu/amd.c	2026-10-13 14:33:30.000000000 +0200
 @@ -1042,11 +1042,8 @@
  
  static void init_amd_zen5(struct cpuinfo_x86 *c)
@@ -340,8 +340,8 @@ diff -ruN --no-dereference -x .git a/arch/x86/kernel/cpu/amd.c b/arch/x86/kernel
  
  static void init_amd(struct cpuinfo_x86 *c)
 diff -ruN --no-dereference -x .git a/arch/x86/kernel/cpu/bus_lock.c b/arch/x86/kernel/cpu/bus_lock.c
---- a/arch/x86/kernel/cpu/bus_lock.c	2026-08-16 23:32:26.000000000 +0200
-+++ b/arch/x86/kernel/cpu/bus_lock.c	2026-10-03 14:48:53.000000000 +0200
+--- a/arch/x86/kernel/cpu/bus_lock.c	2026-10-11 15:27:50.000000000 +0200
++++ b/arch/x86/kernel/cpu/bus_lock.c	2026-10-13 14:33:30.000000000 +0200
 @@ -47,7 +47,11 @@
  
  static struct ratelimit_state bld_ratelimit;
@@ -355,8 +355,8 @@ diff -ruN --no-dereference -x .git a/arch/x86/kernel/cpu/bus_lock.c b/arch/x86/k
  
  #ifdef CONFIG_PROC_SYSCTL
 diff -ruN --no-dereference -x .git a/arch/x86/kernel/kvm.c b/arch/x86/kernel/kvm.c
---- a/arch/x86/kernel/kvm.c	2026-08-16 23:32:26.000000000 +0200
-+++ b/arch/x86/kernel/kvm.c	2026-10-03 14:48:53.000000000 +0200
+--- a/arch/x86/kernel/kvm.c	2026-10-11 15:27:50.000000000 +0200
++++ b/arch/x86/kernel/kvm.c	2026-10-13 14:33:30.000000000 +0200
 @@ -663,8 +663,10 @@
  	u8 state;
  	int cpu;
@@ -370,8 +370,8 @@ diff -ruN --no-dereference -x .git a/arch/x86/kernel/kvm.c b/arch/x86/kernel/kvm
  	/*
  	 * We have to call flush only on online vCPUs. And
 diff -ruN --no-dereference -x .git a/arch/x86/kernel/smpboot.c b/arch/x86/kernel/smpboot.c
---- a/arch/x86/kernel/smpboot.c	2026-08-16 23:32:26.000000000 +0200
-+++ b/arch/x86/kernel/smpboot.c	2026-10-03 14:48:53.000000000 +0200
+--- a/arch/x86/kernel/smpboot.c	2026-10-11 15:27:50.000000000 +0200
++++ b/arch/x86/kernel/smpboot.c	2026-10-13 14:33:30.000000000 +0200
 @@ -61,6 +61,7 @@
  #include <linux/cpuhotplug.h>
  #include <linux/mc146818rtc.h>
@@ -398,8 +398,8 @@ diff -ruN --no-dereference -x .git a/arch/x86/kernel/smpboot.c b/arch/x86/kernel
  	nmi_selftest();
  	impress_friends();
 diff -ruN --no-dereference -x .git a/arch/x86/kernel/tsc.c b/arch/x86/kernel/tsc.c
---- a/arch/x86/kernel/tsc.c	2026-08-16 23:32:26.000000000 +0200
-+++ b/arch/x86/kernel/tsc.c	2026-10-03 14:48:53.000000000 +0200
+--- a/arch/x86/kernel/tsc.c	2026-10-11 15:27:50.000000000 +0200
++++ b/arch/x86/kernel/tsc.c	2026-10-13 14:33:30.000000000 +0200
 @@ -52,6 +52,7 @@
  static DEFINE_STATIC_KEY_FALSE_RO(__use_tsc);
  
@@ -418,8 +418,8 @@ diff -ruN --no-dereference -x .git a/arch/x86/kernel/tsc.c b/arch/x86/kernel/tsc
  }
  __setup("tsc=", tsc_setup);
 diff -ruN --no-dereference -x .git a/arch/x86/kernel/tsc_sync.c b/arch/x86/kernel/tsc_sync.c
---- a/arch/x86/kernel/tsc_sync.c	2026-08-16 23:32:26.000000000 +0200
-+++ b/arch/x86/kernel/tsc_sync.c	2026-10-03 14:48:53.000000000 +0200
+--- a/arch/x86/kernel/tsc_sync.c	2026-10-11 15:27:50.000000000 +0200
++++ b/arch/x86/kernel/tsc_sync.c	2026-10-13 14:33:30.000000000 +0200
 @@ -34,6 +34,8 @@
  static DEFINE_PER_CPU(struct tsc_adjust, tsc_adjust);
  static struct timer_list tsc_sync_check_timer;
@@ -515,8 +515,8 @@ diff -ruN --no-dereference -x .git a/arch/x86/kernel/tsc_sync.c b/arch/x86/kerne
  
  }
 diff -ruN --no-dereference -x .git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
---- a/arch/x86/mm/tlb.c	2026-08-16 23:32:26.000000000 +0200
-+++ b/arch/x86/mm/tlb.c	2026-10-03 14:48:53.000000000 +0200
+--- a/arch/x86/mm/tlb.c	2026-10-11 15:27:50.000000000 +0200
++++ b/arch/x86/mm/tlb.c	2026-10-13 14:33:30.000000000 +0200
 @@ -1373,35 +1373,19 @@
   */
  unsigned long tlb_single_page_flush_ceiling __read_mostly = 33;
@@ -697,8 +697,8 @@ diff -ruN --no-dereference -x .git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
  
  /*
 diff -ruN --no-dereference -x .git a/arch/x86/pci/common.c b/arch/x86/pci/common.c
---- a/arch/x86/pci/common.c	2026-08-16 23:32:26.000000000 +0200
-+++ b/arch/x86/pci/common.c	2026-10-03 14:48:53.000000000 +0200
+--- a/arch/x86/pci/common.c	2026-10-11 15:27:50.000000000 +0200
++++ b/arch/x86/pci/common.c	2026-10-13 14:33:30.000000000 +0200
 @@ -723,12 +723,15 @@
  		return 0;
  }
@@ -718,8 +718,8 @@ diff -ruN --no-dereference -x .git a/arch/x86/pci/common.c b/arch/x86/pci/common
  }
 -#endif
 diff -ruN --no-dereference -x .git a/arch/x86/realmode/rm/wakeup.h b/arch/x86/realmode/rm/wakeup.h
---- a/arch/x86/realmode/rm/wakeup.h	2026-08-16 23:32:26.000000000 +0200
-+++ b/arch/x86/realmode/rm/wakeup.h	2026-10-03 14:48:53.000000000 +0200
+--- a/arch/x86/realmode/rm/wakeup.h	2026-10-11 15:27:50.000000000 +0200
++++ b/arch/x86/realmode/rm/wakeup.h	2026-10-13 14:33:30.000000000 +0200
 @@ -23,6 +23,8 @@
  	u64 pmode_gdt;
  	u32 pmode_misc_en_low;	/* Protected mode MISC_ENABLE */
@@ -737,8 +737,8 @@ diff -ruN --no-dereference -x .git a/arch/x86/realmode/rm/wakeup.h b/arch/x86/re
  
  #endif /* ARCH_X86_KERNEL_ACPI_RM_WAKEUP_H */
 diff -ruN --no-dereference -x .git a/arch/x86/realmode/rm/wakeup_asm.S b/arch/x86/realmode/rm/wakeup_asm.S
---- a/arch/x86/realmode/rm/wakeup_asm.S	2026-08-16 23:32:26.000000000 +0200
-+++ b/arch/x86/realmode/rm/wakeup_asm.S	2026-10-03 14:48:53.000000000 +0200
+--- a/arch/x86/realmode/rm/wakeup_asm.S	2026-10-11 15:27:50.000000000 +0200
++++ b/arch/x86/realmode/rm/wakeup_asm.S	2026-10-13 14:33:30.000000000 +0200
 @@ -27,6 +27,7 @@
  	pmode_efer:	.quad	0	/* Saved EFER */
  	pmode_gdt:	.quad	0
@@ -766,8 +766,8 @@ diff -ruN --no-dereference -x .git a/arch/x86/realmode/rm/wakeup_asm.S b/arch/x8
  
  #ifndef CONFIG_64BIT
 diff -ruN --no-dereference -x .git a/block/Kconfig.iosched b/block/Kconfig.iosched
---- a/block/Kconfig.iosched	2026-08-16 23:32:26.000000000 +0200
-+++ b/block/Kconfig.iosched	2026-10-03 14:48:53.000000000 +0200
+--- a/block/Kconfig.iosched	2026-10-11 15:27:50.000000000 +0200
++++ b/block/Kconfig.iosched	2026-10-13 14:33:30.000000000 +0200
 @@ -16,6 +16,20 @@
  	  synchronous writes, it will self-tune queue depths to achieve that
  	  goal.
@@ -790,8 +790,8 @@ diff -ruN --no-dereference -x .git a/block/Kconfig.iosched b/block/Kconfig.iosch
  	tristate "BFQ I/O scheduler"
  	select BLK_ICQ
 diff -ruN --no-dereference -x .git a/block/Makefile b/block/Makefile
---- a/block/Makefile	2026-08-16 23:32:26.000000000 +0200
-+++ b/block/Makefile	2026-10-03 14:48:53.000000000 +0200
+--- a/block/Makefile	2026-10-11 15:27:50.000000000 +0200
++++ b/block/Makefile	2026-10-13 14:33:30.000000000 +0200
 @@ -25,6 +25,7 @@
  obj-$(CONFIG_BLK_CGROUP_IOCOST)	+= blk-iocost.o
  obj-$(CONFIG_MQ_IOSCHED_DEADLINE)	+= mq-deadline.o
@@ -813,7 +813,7 @@ diff -ruN --no-dereference -x .git a/block/Makefile b/block/Makefile
 +
 diff -ruN --no-dereference -x .git a/block/adios.c b/block/adios.c
 --- a/block/adios.c	1970-01-01 01:00:00.000000000 +0100
-+++ b/block/adios.c	2026-10-03 14:48:53.000000000 +0200
++++ b/block/adios.c	2026-10-13 14:33:30.000000000 +0200
 @@ -0,0 +1,1981 @@
 +// SPDX-License-Identifier: GPL-2.0
 +/*
@@ -2798,8 +2798,8 @@ diff -ruN --no-dereference -x .git a/block/adios.c b/block/adios.c
 +MODULE_DESCRIPTION(ADIOS_PROGNAME);
 \ No newline at end of file
 diff -ruN --no-dereference -x .git a/block/elevator.c b/block/elevator.c
---- a/block/elevator.c	2026-08-16 23:32:26.000000000 +0200
-+++ b/block/elevator.c	2026-10-03 14:48:53.000000000 +0200
+--- a/block/elevator.c	2026-10-11 15:27:50.000000000 +0200
++++ b/block/elevator.c	2026-10-13 14:33:30.000000000 +0200
 @@ -740,6 +740,19 @@
  	if (q->tag_set->flags & BLK_MQ_F_NO_SCHED_BY_DEFAULT)
  		return;
@@ -2839,8 +2839,8 @@ diff -ruN --no-dereference -x .git a/block/elevator.c b/block/elevator.c
  }
  
 diff -ruN --no-dereference -x .git a/drivers/acpi/processor_idle.c b/drivers/acpi/processor_idle.c
---- a/drivers/acpi/processor_idle.c	2026-10-07 05:21:40.870219273 +0200
-+++ b/drivers/acpi/processor_idle.c	2026-10-03 14:48:53.000000000 +0200
+--- a/drivers/acpi/processor_idle.c	2026-10-11 15:27:50.000000000 +0200
++++ b/drivers/acpi/processor_idle.c	2026-10-13 14:33:30.000000000 +0200
 @@ -1441,6 +1441,19 @@
  	if (disabled_by_idle_boot_param())
  		return;
@@ -2862,8 +2862,8 @@ diff -ruN --no-dereference -x .git a/drivers/acpi/processor_idle.c b/drivers/acp
  		pr->flags.power_setup_done = 1;
  
 diff -ruN --no-dereference -x .git a/drivers/acpi/scan.c b/drivers/acpi/scan.c
---- a/drivers/acpi/scan.c	2026-10-07 05:21:40.870618691 +0200
-+++ b/drivers/acpi/scan.c	2026-10-03 14:48:53.000000000 +0200
+--- a/drivers/acpi/scan.c	2026-10-11 15:27:50.000000000 +0200
++++ b/drivers/acpi/scan.c	2026-10-13 14:33:30.000000000 +0200
 @@ -1757,6 +1757,7 @@
  	 * by the drivers/platform/x86/serial-multi-instantiate.c driver, which
  	 * knows which client device id to use for each resource.
@@ -2881,8 +2881,8 @@ diff -ruN --no-dereference -x .git a/drivers/acpi/scan.c b/drivers/acpi/scan.c
  		/* Non-conforming _HID for Cirrus Logic already released */
  		{"CLSA0100", },
 diff -ruN --no-dereference -x .git a/drivers/acpi/x86/apple.c b/drivers/acpi/x86/apple.c
---- a/drivers/acpi/x86/apple.c	2026-08-16 23:32:26.000000000 +0200
-+++ b/drivers/acpi/x86/apple.c	2026-10-03 14:48:53.000000000 +0200
+--- a/drivers/acpi/x86/apple.c	2026-10-11 15:27:50.000000000 +0200
++++ b/drivers/acpi/x86/apple.c	2026-10-13 14:33:30.000000000 +0200
 @@ -6,7 +6,13 @@
  
  #include <linux/acpi.h>
@@ -3027,8 +3027,8 @@ diff -ruN --no-dereference -x .git a/drivers/acpi/x86/apple.c b/drivers/acpi/x86
 +late_initcall(apple_t2_cpu_pm_init);
 +#endif
 diff -ruN --no-dereference -x .git a/drivers/ata/ahci.c b/drivers/ata/ahci.c
---- a/drivers/ata/ahci.c	2026-10-07 05:21:40.871192130 +0200
-+++ b/drivers/ata/ahci.c	2026-10-03 14:48:53.000000000 +0200
+--- a/drivers/ata/ahci.c	2026-10-11 15:27:50.000000000 +0200
++++ b/drivers/ata/ahci.c	2026-10-13 14:33:30.000000000 +0200
 @@ -2659,7 +2659,7 @@
  	return IRQ_RETVAL(rc);
  }
@@ -3082,9 +3082,9 @@ diff -ruN --no-dereference -x .git a/drivers/ata/ahci.c b/drivers/ata/ahci.c
  	sysfs_add_file_to_group(&pdev->dev.kobj,
  				&dev_attr_remapped_nvme.attr,
 diff -ruN --no-dereference -x .git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
---- a/drivers/bluetooth/btusb.c	2026-10-07 05:21:40.879573544 +0200
-+++ b/drivers/bluetooth/btusb.c	2026-10-03 14:48:53.000000000 +0200
-@@ -585,6 +585,8 @@
+--- a/drivers/bluetooth/btusb.c	2026-10-11 15:27:50.000000000 +0200
++++ b/drivers/bluetooth/btusb.c	2026-10-13 14:33:30.000000000 +0200
+@@ -587,6 +587,8 @@
  						     BTUSB_WIDEBAND_SPEECH },
  	{ USB_DEVICE(0x13d3, 0x3612), .driver_info = BTUSB_REALTEK |
  						     BTUSB_WIDEBAND_SPEECH },
@@ -3093,7 +3093,7 @@ diff -ruN --no-dereference -x .git a/drivers/bluetooth/btusb.c b/drivers/bluetoo
  	{ USB_DEVICE(0x0489, 0xe122), .driver_info = BTUSB_REALTEK |
  						     BTUSB_WIDEBAND_SPEECH },
  
-@@ -713,6 +715,8 @@
+@@ -715,6 +717,8 @@
  	{ USB_DEVICE(0x13d3, 0x3596), .driver_info = BTUSB_MEDIATEK |
  						     BTUSB_WIDEBAND_SPEECH },
  	/* MediaTek MT7922 Bluetooth devices */
@@ -3103,8 +3103,8 @@ diff -ruN --no-dereference -x .git a/drivers/bluetooth/btusb.c b/drivers/bluetoo
  						     BTUSB_WIDEBAND_SPEECH },
  	{ USB_DEVICE(0x13d3, 0x3610), .driver_info = BTUSB_MEDIATEK |
 diff -ruN --no-dereference -x .git a/drivers/cpufreq/amd-pstate.c b/drivers/cpufreq/amd-pstate.c
---- a/drivers/cpufreq/amd-pstate.c	2026-10-07 05:21:40.897356410 +0200
-+++ b/drivers/cpufreq/amd-pstate.c	2026-10-03 14:48:53.000000000 +0200
+--- a/drivers/cpufreq/amd-pstate.c	2026-10-11 15:27:50.000000000 +0200
++++ b/drivers/cpufreq/amd-pstate.c	2026-10-13 14:33:30.000000000 +0200
 @@ -27,6 +27,7 @@
  #include <linux/module.h>
  #include <linux/init.h>
@@ -3444,8 +3444,8 @@ diff -ruN --no-dereference -x .git a/drivers/cpufreq/amd-pstate.c b/drivers/cpuf
  
  static struct cpufreq_driver amd_pstate_driver = {
 diff -ruN --no-dereference -x .git a/drivers/cpufreq/amd-pstate.h b/drivers/cpufreq/amd-pstate.h
---- a/drivers/cpufreq/amd-pstate.h	2026-08-16 23:32:26.000000000 +0200
-+++ b/drivers/cpufreq/amd-pstate.h	2026-10-03 14:48:53.000000000 +0200
+--- a/drivers/cpufreq/amd-pstate.h	2026-10-11 15:27:50.000000000 +0200
++++ b/drivers/cpufreq/amd-pstate.h	2026-10-13 14:33:30.000000000 +0200
 @@ -10,6 +10,7 @@
  
  #include <linux/pm_qos.h>
@@ -3496,8 +3496,8 @@ diff -ruN --no-dereference -x .git a/drivers/cpufreq/amd-pstate.h b/drivers/cpuf
  
  /*
 diff -ruN --no-dereference -x .git a/drivers/cpufreq/intel_pstate.c b/drivers/cpufreq/intel_pstate.c
---- a/drivers/cpufreq/intel_pstate.c	2026-10-07 05:21:40.898663602 +0200
-+++ b/drivers/cpufreq/intel_pstate.c	2026-10-03 14:48:53.000000000 +0200
+--- a/drivers/cpufreq/intel_pstate.c	2026-10-11 15:27:50.000000000 +0200
++++ b/drivers/cpufreq/intel_pstate.c	2026-10-13 14:33:30.000000000 +0200
 @@ -3927,6 +3927,8 @@
  
  	if (!strcmp(str, "disable"))
@@ -3508,8 +3508,8 @@ diff -ruN --no-dereference -x .git a/drivers/cpufreq/intel_pstate.c b/drivers/cp
  		default_driver = &intel_pstate;
  	else if (!strcmp(str, "passive"))
 diff -ruN --no-dereference -x .git a/drivers/gpu/drm/amd/amdgpu/amdgpu.h b/drivers/gpu/drm/amd/amdgpu/amdgpu.h
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu.h	2026-10-07 05:21:40.919669507 +0200
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu.h	2026-10-03 14:48:53.000000000 +0200
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu.h	2026-10-11 15:27:50.000000000 +0200
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu.h	2026-10-13 14:33:30.000000000 +0200
 @@ -161,6 +161,7 @@
   */
  extern int amdgpu_modeset;
@@ -3519,8 +3519,8 @@ diff -ruN --no-dereference -x .git a/drivers/gpu/drm/amd/amdgpu/amdgpu.h b/drive
  extern int amdgpu_gart_size;
  extern int amdgpu_gtt_size;
 diff -ruN --no-dereference -x .git a/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c	2026-10-07 05:21:40.921790445 +0200
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c	2026-10-03 14:48:53.000000000 +0200
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c	2026-10-11 15:27:50.000000000 +0200
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c	2026-10-13 14:33:30.000000000 +0200
 @@ -150,6 +150,7 @@
  };
  
@@ -3555,43 +3555,9 @@ diff -ruN --no-dereference -x .git a/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c b/d
  	if ((pdev->class >> 8) == PCI_CLASS_DISPLAY_VGA ||
  	    (pdev->class >> 8) == PCI_CLASS_DISPLAY_OTHER) {
  		if (drm_firmware_drivers_only() && amdgpu_modeset == -1)
-diff -ruN --no-dereference -x .git a/drivers/gpu/drm/amd/amdgpu/vi.c b/drivers/gpu/drm/amd/amdgpu/vi.c
---- a/drivers/gpu/drm/amd/amdgpu/vi.c	2026-08-16 23:32:26.000000000 +0200
-+++ b/drivers/gpu/drm/amd/amdgpu/vi.c	2026-10-03 14:48:53.000000000 +0200
-@@ -1407,10 +1407,30 @@
- 	return (nak_r + nak_g);
- }
- 
-+struct vi_reset_quirk {
-+	u16 device;
-+	u16 subsystem_vendor;
-+	u16 subsystem_device;
-+	u8 revision;
-+};
-+
-+static const struct vi_reset_quirk vi_reset_quirks[] = {
-+	{ 0x67ef, PCI_VENDOR_ID_APPLE, 0x0190, 0xe3 }, /* Radeon Pro 555X */
-+	{ 0x67ef, PCI_VENDOR_ID_APPLE, 0x018f, 0xc2 }, /* Radeon Pro 560X */
-+};
-+
- static bool vi_need_reset_on_init(struct amdgpu_device *adev)
- {
-+	unsigned int i;
- 	u32 clock_cntl, pc;
- 
-+	for (i = 0; i < ARRAY_SIZE(vi_reset_quirks); i++)
-+		if (adev->pdev->device == vi_reset_quirks[i].device &&
-+		    adev->pdev->subsystem_vendor == vi_reset_quirks[i].subsystem_vendor &&
-+		    adev->pdev->subsystem_device == vi_reset_quirks[i].subsystem_device &&
-+		    adev->pdev->revision == vi_reset_quirks[i].revision)
-+			return true;
-+
- 	if (adev->flags & AMD_IS_APU)
- 		return false;
- 
 diff -ruN --no-dereference -x .git a/drivers/gpu/drm/amd/display/Kconfig b/drivers/gpu/drm/amd/display/Kconfig
---- a/drivers/gpu/drm/amd/display/Kconfig	2026-08-16 23:32:26.000000000 +0200
-+++ b/drivers/gpu/drm/amd/display/Kconfig	2026-10-03 14:48:53.000000000 +0200
+--- a/drivers/gpu/drm/amd/display/Kconfig	2026-10-11 15:27:50.000000000 +0200
++++ b/drivers/gpu/drm/amd/display/Kconfig	2026-10-13 14:33:30.000000000 +0200
 @@ -68,4 +68,10 @@
  	  For more information on KUnit and unit tests in general, please
  	  refer to the KUnit documentation in Documentation/dev-tools/kunit/.
@@ -3604,9 +3570,9 @@ diff -ruN --no-dereference -x .git a/drivers/gpu/drm/amd/display/Kconfig b/drive
 +
  endmenu
 diff -ruN --no-dereference -x .git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
---- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c	2026-10-07 05:21:40.930553474 +0200
-+++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c	2026-10-03 14:48:53.000000000 +0200
-@@ -2255,6 +2255,9 @@
+--- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c	2026-10-11 15:27:50.000000000 +0200
++++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c	2026-10-13 14:33:30.000000000 +0200
+@@ -2258,6 +2258,9 @@
  	if (amdgpu_dc_debug_mask & DC_SKIP_DETECTION_LT)
  		adev->dm.dc->debug.skip_detection_link_training = true;
  
@@ -3616,7 +3582,7 @@ diff -ruN --no-dereference -x .git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgp
  	adev->dm.dc->debug.visual_confirm = amdgpu_dc_visual_confirm;
  
  	/* TODO: Remove after DP2 receiver gets proper support of Cable ID feature */
-@@ -5212,7 +5215,7 @@
+@@ -5220,7 +5223,7 @@
  	if (r)
  		return r;
  
@@ -3625,7 +3591,7 @@ diff -ruN --no-dereference -x .git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgp
  	if (amdgpu_dm_create_color_properties(adev))
  		return -ENOMEM;
  #endif
-@@ -7015,16 +7018,11 @@
+@@ -7088,16 +7091,11 @@
  	timing_out->v_border_top = 0;
  	timing_out->v_border_bottom = 0;
  	/* TODO: un-hardcode */
@@ -3647,7 +3613,7 @@ diff -ruN --no-dereference -x .git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgp
  		timing_out->pixel_encoding = PIXEL_ENCODING_YCBCR420;
  	else if ((connector->display_info.color_formats & BIT(DRM_OUTPUT_COLOR_FORMAT_YCBCR422))
  			&& aconnector
-@@ -7115,6 +7113,11 @@
+@@ -7188,6 +7186,11 @@
  
  	stream->output_color_space = get_output_color_space(timing_out, connector_state);
  	stream->content_type = get_output_content_type(connector_state);
@@ -3659,7 +3625,7 @@ diff -ruN --no-dereference -x .git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgp
  }
  
  static void fill_audio_info(struct audio_info *audio_info,
-@@ -7635,6 +7638,7 @@
+@@ -7708,6 +7711,7 @@
  	struct drm_display_mode mode;
  	struct drm_display_mode saved_mode;
  	struct drm_display_mode *freesync_mode = NULL;
@@ -3667,7 +3633,7 @@ diff -ruN --no-dereference -x .git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgp
  	bool native_mode_found = false;
  	bool recalculate_timing = false;
  	bool scale = dm_state->scaling != RMX_OFF;
-@@ -7726,6 +7730,16 @@
+@@ -7799,6 +7803,16 @@
  		}
  	}
  
@@ -3684,7 +3650,7 @@ diff -ruN --no-dereference -x .git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgp
  	if (recalculate_timing)
  		drm_mode_set_crtcinfo(&saved_mode, 0);
  
-@@ -7772,7 +7786,7 @@
+@@ -7845,7 +7859,7 @@
  
  	if (stream->signal == SIGNAL_TYPE_HDMI_TYPE_A ||
  	    stream->signal == SIGNAL_TYPE_HDMI_FRL)
@@ -3693,7 +3659,7 @@ diff -ruN --no-dereference -x .git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgp
  
  	if (stream->signal == SIGNAL_TYPE_DISPLAY_PORT ||
  	    stream->signal == SIGNAL_TYPE_DISPLAY_PORT_MST ||
-@@ -10065,7 +10079,11 @@
+@@ -10138,7 +10152,11 @@
  
  	aconn = (struct amdgpu_dm_connector *)new_stream->dm_stream_context;
  
@@ -3706,7 +3672,7 @@ diff -ruN --no-dereference -x .git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgp
  		pack_sdp_v1_3 = aconn->pack_sdp_v1_3;
  
  		if (aconn->vsdb_info.amd_vsdb_version == 1)
-@@ -10151,6 +10169,10 @@
+@@ -10224,6 +10242,10 @@
  						     VRR_STATE_ACTIVE_VARIABLE :
  						     VRR_STATE_INACTIVE;
  		}
@@ -3717,7 +3683,7 @@ diff -ruN --no-dereference -x .git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgp
  	} else {
  		config.state = VRR_STATE_UNSUPPORTED;
  	}
-@@ -13892,7 +13914,7 @@
+@@ -13965,7 +13987,7 @@
  	return ret;
  }
  
@@ -3726,7 +3692,7 @@ diff -ruN --no-dereference -x .git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgp
  				     const struct edid *edid)
  {
  	u8 *edid_ext = NULL;
-@@ -13925,8 +13947,8 @@
+@@ -13998,8 +14020,8 @@
  				max_vfreq = edid_ext[j+10];
  
  			if (max_vfreq && min_vfreq) {
@@ -3737,7 +3703,7 @@ diff -ruN --no-dereference -x .git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgp
  
  				return;
  			}
-@@ -13946,13 +13968,13 @@
+@@ -14019,13 +14041,13 @@
  	return connector->display_info.amd_vsdb.version != 0;
  }
  
@@ -3753,7 +3719,7 @@ diff -ruN --no-dereference -x .git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgp
  
  	/*----- drm_find_cea_extension() -----*/
  	/* No EDID or EDID extensions */
-@@ -13973,9 +13995,101 @@
+@@ -14046,9 +14068,101 @@
  	if (edid_ext[0] != CEA_EXT)
  		return -ENODEV;
  
@@ -3857,7 +3823,7 @@ diff -ruN --no-dereference -x .git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgp
  }
  
  /**
-@@ -13996,16 +14110,19 @@
+@@ -14069,16 +14183,19 @@
  void amdgpu_dm_update_freesync_caps(struct drm_connector *connector,
  				    const struct drm_edid *drm_edid, bool do_mccs)
  {
@@ -3879,7 +3845,7 @@ diff -ruN --no-dereference -x .git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgp
  
  	if (!connector->state) {
  		drm_err(adev_to_drm(adev), "%s - Connector has no state", __func__);
-@@ -14033,71 +14150,67 @@
+@@ -14106,71 +14223,67 @@
  	if (!adev->dm.freesync_module || !dc_supports_vrr(sink->ctx->dce_version))
  		goto update;
  
@@ -4001,7 +3967,7 @@ diff -ruN --no-dereference -x .git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgp
  	}
  
  	/* Handle MCCS */
-@@ -14115,6 +14228,11 @@
+@@ -14188,6 +14301,11 @@
  	if (dm_con_state)
  		dm_con_state->freesync_capable = freesync_capable;
  
@@ -4014,8 +3980,8 @@ diff -ruN --no-dereference -x .git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgp
  	    amdgpu_dm_connector->dc_link->replay_settings.config.replay_supported) {
  		amdgpu_dm_connector->dc_link->replay_settings.config.replay_supported = false;
 diff -ruN --no-dereference -x .git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_color.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_color.c
---- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_color.c	2026-10-07 05:21:40.931732242 +0200
-+++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_color.c	2026-10-03 14:48:53.000000000 +0200
+--- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_color.c	2026-10-11 15:27:50.000000000 +0200
++++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_color.c	2026-10-13 14:33:30.000000000 +0200
 @@ -187,7 +187,7 @@
  }
  EXPORT_IF_KUNIT(amdgpu_dm_fixpt_from_s3132);
@@ -4026,8 +3992,8 @@ diff -ruN --no-dereference -x .git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgp
   *
   * AMD driver supports pre-defined mathematical functions for transferring
 diff -ruN --no-dereference -x .git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_crtc.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_crtc.c
---- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_crtc.c	2026-10-07 05:21:40.932013025 +0200
-+++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_crtc.c	2026-10-03 14:48:53.000000000 +0200
+--- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_crtc.c	2026-10-11 15:27:50.000000000 +0200
++++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_crtc.c	2026-10-13 14:33:30.000000000 +0200
 @@ -484,7 +484,7 @@
  }
  #endif
@@ -4056,8 +4022,8 @@ diff -ruN --no-dereference -x .git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgp
  #endif
  	return 0;
 diff -ruN --no-dereference -x .git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_helpers.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_helpers.c
---- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_helpers.c	2026-10-07 05:21:40.932856968 +0200
-+++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_helpers.c	2026-10-03 14:48:53.000000000 +0200
+--- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_helpers.c	2026-10-11 15:27:50.000000000 +0200
++++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_helpers.c	2026-10-13 14:33:30.000000000 +0200
 @@ -194,7 +194,12 @@
  				  edid_caps->display_name,
  				  AUDIO_INFO_DISPLAY_NAME_SIZE_IN_CHARS);
@@ -4146,8 +4112,8 @@ diff -ruN --no-dereference -x .git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgp
  				mccs_op = true;
  
 diff -ruN --no-dereference -x .git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_plane.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_plane.c
---- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_plane.c	2026-10-07 05:21:40.933427701 +0200
-+++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_plane.c	2026-10-03 14:48:53.000000000 +0200
+--- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_plane.c	2026-10-11 15:27:50.000000000 +0200
++++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_plane.c	2026-10-13 14:33:30.000000000 +0200
 @@ -1628,7 +1628,7 @@
  	drm_atomic_helper_plane_destroy_state(plane, state);
  }
@@ -4181,8 +4147,8 @@ diff -ruN --no-dereference -x .git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgp
  }
 -
 diff -ruN --no-dereference -x .git a/drivers/gpu/drm/amd/display/dc/dc.h b/drivers/gpu/drm/amd/display/dc/dc.h
---- a/drivers/gpu/drm/amd/display/dc/dc.h	2026-08-16 23:32:26.000000000 +0200
-+++ b/drivers/gpu/drm/amd/display/dc/dc.h	2026-10-03 14:48:53.000000000 +0200
+--- a/drivers/gpu/drm/amd/display/dc/dc.h	2026-10-11 15:27:50.000000000 +0200
++++ b/drivers/gpu/drm/amd/display/dc/dc.h	2026-10-13 14:33:30.000000000 +0200
 @@ -1117,6 +1117,7 @@
  	bool scl_reset_length10;
  	bool hdmi20_disable;
@@ -4192,8 +4158,8 @@ diff -ruN --no-dereference -x .git a/drivers/gpu/drm/amd/display/dc/dc.h b/drive
  
  	uint8_t force_odm_combine; //bit vector based on otg inst
 diff -ruN --no-dereference -x .git a/drivers/gpu/drm/amd/display/dc/dc_types.h b/drivers/gpu/drm/amd/display/dc/dc_types.h
---- a/drivers/gpu/drm/amd/display/dc/dc_types.h	2026-10-07 05:21:40.934369429 +0200
-+++ b/drivers/gpu/drm/amd/display/dc/dc_types.h	2026-10-03 14:48:53.000000000 +0200
+--- a/drivers/gpu/drm/amd/display/dc/dc_types.h	2026-10-11 15:27:50.000000000 +0200
++++ b/drivers/gpu/drm/amd/display/dc/dc_types.h	2026-10-13 14:33:30.000000000 +0200
 @@ -222,9 +222,14 @@
  
  	uint32_t max_tmds_clk_mhz;
@@ -4211,8 +4177,8 @@ diff -ruN --no-dereference -x .git a/drivers/gpu/drm/amd/display/dc/dc_types.h b
  	bool hdr_supported;
  	bool rr_capable;
 diff -ruN --no-dereference -x .git a/drivers/gpu/drm/amd/display/dc/dm_helpers.h b/drivers/gpu/drm/amd/display/dc/dm_helpers.h
---- a/drivers/gpu/drm/amd/display/dc/dm_helpers.h	2026-08-16 23:32:26.000000000 +0200
-+++ b/drivers/gpu/drm/amd/display/dc/dm_helpers.h	2026-10-03 14:48:53.000000000 +0200
+--- a/drivers/gpu/drm/amd/display/dc/dm_helpers.h	2026-10-11 15:27:50.000000000 +0200
++++ b/drivers/gpu/drm/amd/display/dc/dm_helpers.h	2026-10-13 14:33:30.000000000 +0200
 @@ -231,10 +231,10 @@
  		const struct dc_link *link,
  		struct set_config_cmd_payload *payload,
@@ -4226,8 +4192,8 @@ diff -ruN --no-dereference -x .git a/drivers/gpu/drm/amd/display/dc/dm_helpers.h
  bool dm_helpers_is_hdr_on(struct dc_context *ctx, struct dc_stream_state *stream);
  
 diff -ruN --no-dereference -x .git a/drivers/gpu/drm/amd/display/dc/dml/dsc/qp_tables.h b/drivers/gpu/drm/amd/display/dc/dml/dsc/qp_tables.h
---- a/drivers/gpu/drm/amd/display/dc/dml/dsc/qp_tables.h	2026-08-16 23:32:26.000000000 +0200
-+++ b/drivers/gpu/drm/amd/display/dc/dml/dsc/qp_tables.h	2026-10-03 14:48:53.000000000 +0200
+--- a/drivers/gpu/drm/amd/display/dc/dml/dsc/qp_tables.h	2026-10-11 15:27:50.000000000 +0200
++++ b/drivers/gpu/drm/amd/display/dc/dml/dsc/qp_tables.h	2026-10-13 14:33:30.000000000 +0200
 @@ -63,7 +63,7 @@
  	{ 6.5, { 4, 6, 7, 8, 8, 8, 9, 10, 11, 11, 12, 12, 12, 13, 15} },
  	{   7, { 4, 5, 7, 7, 8, 8, 8, 9, 10, 11, 11, 12, 12, 13, 14} },
@@ -4247,8 +4213,8 @@ diff -ruN --no-dereference -x .git a/drivers/gpu/drm/amd/display/dc/dml/dsc/qp_t
  	{   9, { 0, 0, 1, 1, 3, 3, 3, 3, 3, 3, 5, 5, 5, 7, 12} },
  	{ 9.5, { 0, 0, 1, 1, 3, 3, 3, 3, 3, 3, 5, 5, 5, 7, 12} },
 diff -ruN --no-dereference -x .git a/drivers/gpu/drm/amd/display/dc/dml/dsc/rc_calc_fpu.c b/drivers/gpu/drm/amd/display/dc/dml/dsc/rc_calc_fpu.c
---- a/drivers/gpu/drm/amd/display/dc/dml/dsc/rc_calc_fpu.c	2026-08-16 23:32:26.000000000 +0200
-+++ b/drivers/gpu/drm/amd/display/dc/dml/dsc/rc_calc_fpu.c	2026-10-03 14:48:53.000000000 +0200
+--- a/drivers/gpu/drm/amd/display/dc/dml/dsc/rc_calc_fpu.c	2026-10-11 15:27:50.000000000 +0200
++++ b/drivers/gpu/drm/amd/display/dc/dml/dsc/rc_calc_fpu.c	2026-10-13 14:33:30.000000000 +0200
 @@ -123,7 +123,7 @@
  		*p++ = (int)((bpp <= 12) ? (-8) : ((bpp >= 15) ? (-6) : (-8 + dsc_roundf((bpp - 12) * (2 / 3.0)))));
  		*p++ = (int)((bpp <= 12) ? (-10) : ((bpp >= 15) ? (-8) : (-10 + dsc_roundf((bpp - 12) * (2 / 3.0)))));
@@ -4264,8 +4230,8 @@ diff -ruN --no-dereference -x .git a/drivers/gpu/drm/amd/display/dc/dml/dsc/rc_c
  }
 -
 diff -ruN --no-dereference -x .git a/drivers/gpu/drm/amd/display/include/ddc_service_types.h b/drivers/gpu/drm/amd/display/include/ddc_service_types.h
---- a/drivers/gpu/drm/amd/display/include/ddc_service_types.h	2026-08-16 23:32:26.000000000 +0200
-+++ b/drivers/gpu/drm/amd/display/include/ddc_service_types.h	2026-10-03 14:48:53.000000000 +0200
+--- a/drivers/gpu/drm/amd/display/include/ddc_service_types.h	2026-10-11 15:27:50.000000000 +0200
++++ b/drivers/gpu/drm/amd/display/include/ddc_service_types.h	2026-10-13 14:33:30.000000000 +0200
 @@ -37,6 +37,7 @@
  #define DP_BRANCH_DEVICE_ID_001CF8 0x001CF8
  #define DP_BRANCH_DEVICE_ID_0060AD 0x0060AD
@@ -4275,8 +4241,8 @@ diff -ruN --no-dereference -x .git a/drivers/gpu/drm/amd/display/include/ddc_ser
  #define DP_BRANCH_HW_REV_20 0x20
  
 diff -ruN --no-dereference -x .git a/drivers/gpu/drm/amd/display/modules/freesync/freesync.c b/drivers/gpu/drm/amd/display/modules/freesync/freesync.c
---- a/drivers/gpu/drm/amd/display/modules/freesync/freesync.c	2026-08-16 23:32:26.000000000 +0200
-+++ b/drivers/gpu/drm/amd/display/modules/freesync/freesync.c	2026-10-03 14:48:53.000000000 +0200
+--- a/drivers/gpu/drm/amd/display/modules/freesync/freesync.c	2026-10-11 15:27:50.000000000 +0200
++++ b/drivers/gpu/drm/amd/display/modules/freesync/freesync.c	2026-10-13 14:33:30.000000000 +0200
 @@ -27,6 +27,7 @@
  #include "dc.h"
  #include "mod_freesync.h"
@@ -4296,8 +4262,8 @@ diff -ruN --no-dereference -x .git a/drivers/gpu/drm/amd/display/modules/freesyn
  		build_vrr_infopacket_v3(stream->signal, vrr, app_tf, infopacket, stream->freesync_on_desktop);
  		break;
 diff -ruN --no-dereference -x .git a/drivers/gpu/drm/amd/display/modules/inc/mod_info_packet.h b/drivers/gpu/drm/amd/display/modules/inc/mod_info_packet.h
---- a/drivers/gpu/drm/amd/display/modules/inc/mod_info_packet.h	2026-08-16 23:32:26.000000000 +0200
-+++ b/drivers/gpu/drm/amd/display/modules/inc/mod_info_packet.h	2026-10-03 14:48:53.000000000 +0200
+--- a/drivers/gpu/drm/amd/display/modules/inc/mod_info_packet.h	2026-10-11 15:27:50.000000000 +0200
++++ b/drivers/gpu/drm/amd/display/modules/inc/mod_info_packet.h	2026-10-13 14:33:30.000000000 +0200
 @@ -34,6 +34,8 @@
  struct dc_info_packet;
  struct mod_vrr_params;
@@ -4319,8 +4285,8 @@ diff -ruN --no-dereference -x .git a/drivers/gpu/drm/amd/display/modules/inc/mod
  	AS_SDP_VER_0 = 0x0,
  	AS_SDP_VER_1 = 0x1,
 diff -ruN --no-dereference -x .git a/drivers/gpu/drm/amd/display/modules/inc/mod_info_packet_types.h b/drivers/gpu/drm/amd/display/modules/inc/mod_info_packet_types.h
---- a/drivers/gpu/drm/amd/display/modules/inc/mod_info_packet_types.h	2026-08-16 23:32:26.000000000 +0200
-+++ b/drivers/gpu/drm/amd/display/modules/inc/mod_info_packet_types.h	2026-10-03 14:48:53.000000000 +0200
+--- a/drivers/gpu/drm/amd/display/modules/inc/mod_info_packet_types.h	2026-10-11 15:27:50.000000000 +0200
++++ b/drivers/gpu/drm/amd/display/modules/inc/mod_info_packet_types.h	2026-10-13 14:33:30.000000000 +0200
 @@ -29,9 +29,10 @@
  enum adaptive_sync_type {
  	ADAPTIVE_SYNC_TYPE_NONE                  = 0,
@@ -4335,8 +4301,8 @@ diff -ruN --no-dereference -x .git a/drivers/gpu/drm/amd/display/modules/inc/mod
  
  #endif /* MOD_INFO_PACKET_TYPES_H_ */
 diff -ruN --no-dereference -x .git a/drivers/gpu/drm/amd/display/modules/info_packet/info_packet.c b/drivers/gpu/drm/amd/display/modules/info_packet/info_packet.c
---- a/drivers/gpu/drm/amd/display/modules/info_packet/info_packet.c	2026-08-16 23:32:26.000000000 +0200
-+++ b/drivers/gpu/drm/amd/display/modules/info_packet/info_packet.c	2026-10-03 14:48:53.000000000 +0200
+--- a/drivers/gpu/drm/amd/display/modules/info_packet/info_packet.c	2026-10-11 15:27:50.000000000 +0200
++++ b/drivers/gpu/drm/amd/display/modules/info_packet/info_packet.c	2026-10-13 14:33:30.000000000 +0200
 @@ -48,6 +48,7 @@
  	vsc_packet_rev7 = 7,
  };
@@ -4581,8 +4547,8 @@ diff -ruN --no-dereference -x .git a/drivers/gpu/drm/amd/display/modules/info_pa
  		break;
  	}
 diff -ruN --no-dereference -x .git a/drivers/gpu/drm/amd/include/amd_shared.h b/drivers/gpu/drm/amd/include/amd_shared.h
---- a/drivers/gpu/drm/amd/include/amd_shared.h	2026-08-16 23:32:26.000000000 +0200
-+++ b/drivers/gpu/drm/amd/include/amd_shared.h	2026-10-03 14:48:53.000000000 +0200
+--- a/drivers/gpu/drm/amd/include/amd_shared.h	2026-10-11 15:27:50.000000000 +0200
++++ b/drivers/gpu/drm/amd/include/amd_shared.h	2026-10-13 14:33:30.000000000 +0200
 @@ -416,6 +416,12 @@
  	 * @DC_SKIP_DETECTION_LT: (0x200000) If set, skip detection link training
  	 */
@@ -4597,8 +4563,8 @@ diff -ruN --no-dereference -x .git a/drivers/gpu/drm/amd/include/amd_shared.h b/
  
  enum amd_dpm_forced_level;
 diff -ruN --no-dereference -x .git a/drivers/gpu/drm/amd/pm/amdgpu_pm.c b/drivers/gpu/drm/amd/pm/amdgpu_pm.c
---- a/drivers/gpu/drm/amd/pm/amdgpu_pm.c	2026-08-16 23:32:26.000000000 +0200
-+++ b/drivers/gpu/drm/amd/pm/amdgpu_pm.c	2026-10-03 14:48:53.000000000 +0200
+--- a/drivers/gpu/drm/amd/pm/amdgpu_pm.c	2026-10-11 15:27:50.000000000 +0200
++++ b/drivers/gpu/drm/amd/pm/amdgpu_pm.c	2026-10-13 14:33:30.000000000 +0200
 @@ -3410,6 +3410,9 @@
  					 struct device_attribute *attr,
  					 char *buf)
@@ -4610,8 +4576,8 @@ diff -ruN --no-dereference -x .git a/drivers/gpu/drm/amd/pm/amdgpu_pm.c b/driver
  }
  
 diff -ruN --no-dereference -x .git a/drivers/gpu/drm/amd/pm/swsmu/amdgpu_smu.c b/drivers/gpu/drm/amd/pm/swsmu/amdgpu_smu.c
---- a/drivers/gpu/drm/amd/pm/swsmu/amdgpu_smu.c	2026-08-16 23:32:26.000000000 +0200
-+++ b/drivers/gpu/drm/amd/pm/swsmu/amdgpu_smu.c	2026-10-03 14:48:53.000000000 +0200
+--- a/drivers/gpu/drm/amd/pm/swsmu/amdgpu_smu.c	2026-10-11 15:27:50.000000000 +0200
++++ b/drivers/gpu/drm/amd/pm/swsmu/amdgpu_smu.c	2026-10-13 14:33:30.000000000 +0200
 @@ -3001,7 +3001,10 @@
  			*limit = smu->max_power_limit;
  			break;
@@ -4634,8 +4600,8 @@ diff -ruN --no-dereference -x .git a/drivers/gpu/drm/amd/pm/swsmu/amdgpu_smu.c b
  				"New power limit (%d) is out of range [%d,%d]\n",
  				limit, smu->min_power_limit, smu->max_power_limit);
 diff -ruN --no-dereference -x .git a/drivers/gpu/drm/amd/pm/swsmu/smu11/smu_v11_0.c b/drivers/gpu/drm/amd/pm/swsmu/smu11/smu_v11_0.c
---- a/drivers/gpu/drm/amd/pm/swsmu/smu11/smu_v11_0.c	2026-08-16 23:32:26.000000000 +0200
-+++ b/drivers/gpu/drm/amd/pm/swsmu/smu11/smu_v11_0.c	2026-10-03 14:48:53.000000000 +0200
+--- a/drivers/gpu/drm/amd/pm/swsmu/smu11/smu_v11_0.c	2026-10-11 15:27:50.000000000 +0200
++++ b/drivers/gpu/drm/amd/pm/swsmu/smu11/smu_v11_0.c	2026-10-13 14:33:30.000000000 +0200
 @@ -674,6 +674,22 @@
  	int ret = 0;
  	uint32_t feature_mask[2];
@@ -4660,8 +4626,8 @@ diff -ruN --no-dereference -x .git a/drivers/gpu/drm/amd/pm/swsmu/smu11/smu_v11_
  	    feature->feature_num < SMU_FEATURE_NUM_DEFAULT) {
  		ret = -EINVAL;
 diff -ruN --no-dereference -x .git a/drivers/gpu/drm/drm_displayid_internal.h b/drivers/gpu/drm/drm_displayid_internal.h
---- a/drivers/gpu/drm/drm_displayid_internal.h	2026-08-16 23:32:26.000000000 +0200
-+++ b/drivers/gpu/drm/drm_displayid_internal.h	2026-10-03 14:48:53.000000000 +0200
+--- a/drivers/gpu/drm/drm_displayid_internal.h	2026-10-11 15:27:50.000000000 +0200
++++ b/drivers/gpu/drm/drm_displayid_internal.h	2026-10-13 14:33:30.000000000 +0200
 @@ -67,6 +67,7 @@
  #define DATA_BLOCK_2_TILED_DISPLAY_TOPOLOGY	0x28
  #define DATA_BLOCK_2_CONTAINER_ID		0x29
@@ -4716,8 +4682,8 @@ diff -ruN --no-dereference -x .git a/drivers/gpu/drm/drm_displayid_internal.h b/
  
  /*
 diff -ruN --no-dereference -x .git a/drivers/gpu/drm/drm_edid.c b/drivers/gpu/drm/drm_edid.c
---- a/drivers/gpu/drm/drm_edid.c	2026-08-16 23:32:26.000000000 +0200
-+++ b/drivers/gpu/drm/drm_edid.c	2026-10-03 14:48:53.000000000 +0200
+--- a/drivers/gpu/drm/drm_edid.c	2026-10-11 15:27:50.000000000 +0200
++++ b/drivers/gpu/drm/drm_edid.c	2026-10-13 14:33:30.000000000 +0200
 @@ -45,6 +45,7 @@
  #include <drm/drm_edid.h>
  #include <drm/drm_eld.h>
@@ -5082,8 +5048,8 @@ diff -ruN --no-dereference -x .git a/drivers/gpu/drm/drm_edid.c b/drivers/gpu/dr
  	/* extended blocks are not supported yet */
  	if (timing_size != 6)
 diff -ruN --no-dereference -x .git a/drivers/gpu/drm/gud/gud_connector.c b/drivers/gpu/drm/gud/gud_connector.c
---- a/drivers/gpu/drm/gud/gud_connector.c	2026-10-07 05:21:40.940041990 +0200
-+++ b/drivers/gpu/drm/gud/gud_connector.c	2026-10-03 14:48:53.000000000 +0200
+--- a/drivers/gpu/drm/gud/gud_connector.c	2026-10-11 15:27:50.000000000 +0200
++++ b/drivers/gpu/drm/gud/gud_connector.c	2026-10-13 14:33:30.000000000 +0200
 @@ -399,11 +399,8 @@
  	for (i = 0; i < num_modes; i++) {
  		char *mode = &buf[i * GUD_CONNECTOR_TV_MODE_NAME_LEN];
@@ -5099,8 +5065,8 @@ diff -ruN --no-dereference -x .git a/drivers/gpu/drm/gud/gud_connector.c b/drive
  	}
  
 diff -ruN --no-dereference -x .git a/drivers/gpu/drm/i915/display/intel_ddi.c b/drivers/gpu/drm/i915/display/intel_ddi.c
---- a/drivers/gpu/drm/i915/display/intel_ddi.c	2026-08-16 23:32:26.000000000 +0200
-+++ b/drivers/gpu/drm/i915/display/intel_ddi.c	2026-10-03 14:48:53.000000000 +0200
+--- a/drivers/gpu/drm/i915/display/intel_ddi.c	2026-10-11 15:27:50.000000000 +0200
++++ b/drivers/gpu/drm/i915/display/intel_ddi.c	2026-10-13 14:33:30.000000000 +0200
 @@ -4940,6 +4940,9 @@
  	if (dig_port->ddi_a_4_lanes)
  		return false;
@@ -5111,9 +5077,64 @@ diff -ruN --no-dereference -x .git a/drivers/gpu/drm/i915/display/intel_ddi.c b/
  	/* Broxton/Geminilake: Bspec says that DDI_A_4_LANES is the only
  	 *                     supported configuration
  	 */
+diff -ruN --no-dereference -x .git a/drivers/gpu/drm/i915/display/intel_dp.c b/drivers/gpu/drm/i915/display/intel_dp.c
+--- a/drivers/gpu/drm/i915/display/intel_dp.c	2026-10-11 15:27:50.000000000 +0200
++++ b/drivers/gpu/drm/i915/display/intel_dp.c	2026-10-13 14:33:30.000000000 +0200
+@@ -4889,6 +4889,38 @@
+ 	intel_edp_set_data_override_rates(intel_dp);
+ }
+ 
++static void intel_edp_wake_sink(struct intel_dp *intel_dp)
++{
++	u8 value = 0;
++	int ret;
++
++	/*
++	 * Read the current sink power state. drm_dp_dpcd_read_byte() already
++	 * retries the AUX transaction internally, so a single read suffices.
++	 * First commercial eDP panels are Ver1.0 or 1.1, on which DPCD
++	 * DP_SET_POWER is supported.
++	 */
++	ret = drm_dp_dpcd_read_byte(&intel_dp->aux, DP_SET_POWER, &value);
++
++	/*
++	 * If the AUX read failed the sink may be asleep and not responding,
++	 * or it read back D3; in either case wake it up to D0.
++	 * In case of AUX read failure which is usually a POR case, the
++	 * remaining bits of register 0x600 is set to '0' on POR. So a bare
++	 * write should be fine.
++	 */
++	if (ret < 0 || value == DP_SET_POWER_D3) {
++		value &= ~DP_SET_POWER_MASK;
++		value |= DP_SET_POWER_D0;
++		drm_dp_dpcd_write_byte(&intel_dp->aux, DP_SET_POWER,
++				       value);
++		/* After setting to D0 need a min of 1ms to wake (Spec DP2.1 sec 2.3.1.2) */
++		fsleep(1000);
++		drm_dp_dpcd_write_byte(&intel_dp->aux, DP_SET_POWER,
++				       value);
++	}
++}
++
+ static bool
+ intel_edp_init_dpcd(struct intel_dp *intel_dp, struct intel_connector *connector)
+ {
+@@ -4899,6 +4931,12 @@
+ 	/* this function is meant to be called only once */
+ 	drm_WARN_ON(display->drm, intel_dp->dpcd[DP_DPCD_REV] != 0);
+ 
++	/*
++	 * Spec DP2.1 Section 3.5.2.16 page 966.
++	 * Also if sink is asleep, this will wake the sink.
++	 */
++	intel_edp_wake_sink(intel_dp);
++
+ 	if (drm_dp_read_dpcd_caps(&intel_dp->aux, intel_dp->dpcd) != 0)
+ 		return false;
+ 
 diff -ruN --no-dereference -x .git a/drivers/gpu/drm/i915/display/intel_fbdev.c b/drivers/gpu/drm/i915/display/intel_fbdev.c
---- a/drivers/gpu/drm/i915/display/intel_fbdev.c	2026-08-16 23:32:26.000000000 +0200
-+++ b/drivers/gpu/drm/i915/display/intel_fbdev.c	2026-10-03 14:48:53.000000000 +0200
+--- a/drivers/gpu/drm/i915/display/intel_fbdev.c	2026-10-11 15:27:50.000000000 +0200
++++ b/drivers/gpu/drm/i915/display/intel_fbdev.c	2026-10-13 14:33:30.000000000 +0200
 @@ -280,10 +280,10 @@
  	ifbdev->fb = NULL;
  
@@ -5129,8 +5150,8 @@ diff -ruN --no-dereference -x .git a/drivers/gpu/drm/i915/display/intel_fbdev.c 
  			    fb->base.width, fb->base.height,
  			    sizes->fb_width, sizes->fb_height);
 diff -ruN --no-dereference -x .git a/drivers/gpu/drm/i915/display/intel_frontbuffer.c b/drivers/gpu/drm/i915/display/intel_frontbuffer.c
---- a/drivers/gpu/drm/i915/display/intel_frontbuffer.c	2026-08-16 23:32:26.000000000 +0200
-+++ b/drivers/gpu/drm/i915/display/intel_frontbuffer.c	2026-10-03 14:48:53.000000000 +0200
+--- a/drivers/gpu/drm/i915/display/intel_frontbuffer.c	2026-10-11 15:27:50.000000000 +0200
++++ b/drivers/gpu/drm/i915/display/intel_frontbuffer.c	2026-10-13 14:33:30.000000000 +0200
 @@ -97,6 +97,7 @@
  	might_sleep();
  	intel_td_flush(display);
@@ -5140,8 +5161,8 @@ diff -ruN --no-dereference -x .git a/drivers/gpu/drm/i915/display/intel_frontbuf
  	intel_fbc_flush(display, frontbuffer_bits, origin);
  }
 diff -ruN --no-dereference -x .git a/drivers/gpu/drm/i915/display/intel_psr.c b/drivers/gpu/drm/i915/display/intel_psr.c
---- a/drivers/gpu/drm/i915/display/intel_psr.c	2026-10-07 05:21:40.941328413 +0200
-+++ b/drivers/gpu/drm/i915/display/intel_psr.c	2026-10-03 14:48:53.000000000 +0200
+--- a/drivers/gpu/drm/i915/display/intel_psr.c	2026-10-11 15:27:50.000000000 +0200
++++ b/drivers/gpu/drm/i915/display/intel_psr.c	2026-10-13 14:33:30.000000000 +0200
 @@ -714,8 +714,14 @@
  		 * To support PSR version 02h and PSR version 03h without
  		 * Y-coordinate requirement panels we would need to enable
@@ -5213,8 +5234,8 @@ diff -ruN --no-dereference -x .git a/drivers/gpu/drm/i915/display/intel_psr.c b/
 +	}
 +}
 diff -ruN --no-dereference -x .git a/drivers/gpu/drm/i915/display/intel_psr.h b/drivers/gpu/drm/i915/display/intel_psr.h
---- a/drivers/gpu/drm/i915/display/intel_psr.h	2026-08-16 23:32:26.000000000 +0200
-+++ b/drivers/gpu/drm/i915/display/intel_psr.h	2026-10-03 14:48:53.000000000 +0200
+--- a/drivers/gpu/drm/i915/display/intel_psr.h	2026-10-11 15:27:50.000000000 +0200
++++ b/drivers/gpu/drm/i915/display/intel_psr.h	2026-10-13 14:33:30.000000000 +0200
 @@ -40,6 +40,7 @@
  void intel_psr_invalidate(struct intel_display *display,
  			  unsigned frontbuffer_bits,
@@ -5224,8 +5245,8 @@ diff -ruN --no-dereference -x .git a/drivers/gpu/drm/i915/display/intel_psr.h b/
  		     unsigned frontbuffer_bits,
  		     enum fb_op_origin origin);
 diff -ruN --no-dereference -x .git a/drivers/gpu/drm/i915/display/intel_quirks.c b/drivers/gpu/drm/i915/display/intel_quirks.c
---- a/drivers/gpu/drm/i915/display/intel_quirks.c	2026-10-07 05:21:40.941479770 +0200
-+++ b/drivers/gpu/drm/i915/display/intel_quirks.c	2026-10-03 14:48:53.000000000 +0200
+--- a/drivers/gpu/drm/i915/display/intel_quirks.c	2026-10-11 15:27:50.000000000 +0200
++++ b/drivers/gpu/drm/i915/display/intel_quirks.c	2026-10-13 14:33:30.000000000 +0200
 @@ -66,6 +66,18 @@
  	drm_info(display->drm, "Applying Increase DDI Disabled quirk\n");
  }
@@ -5256,8 +5277,8 @@ diff -ruN --no-dereference -x .git a/drivers/gpu/drm/i915/display/intel_quirks.c
  
  static const struct intel_dpcd_quirk intel_dpcd_quirks[] = {
 diff -ruN --no-dereference -x .git a/drivers/gpu/drm/i915/display/intel_quirks.h b/drivers/gpu/drm/i915/display/intel_quirks.h
---- a/drivers/gpu/drm/i915/display/intel_quirks.h	2026-08-16 23:32:26.000000000 +0200
-+++ b/drivers/gpu/drm/i915/display/intel_quirks.h	2026-10-03 14:48:53.000000000 +0200
+--- a/drivers/gpu/drm/i915/display/intel_quirks.h	2026-10-11 15:27:50.000000000 +0200
++++ b/drivers/gpu/drm/i915/display/intel_quirks.h	2026-10-13 14:33:30.000000000 +0200
 @@ -23,6 +23,7 @@
  	QUIRK_EDP_LIMIT_RATE_HBR2,
  	QUIRK_DISABLE_EDP_PANEL_REPLAY,
@@ -5267,8 +5288,8 @@ diff -ruN --no-dereference -x .git a/drivers/gpu/drm/i915/display/intel_quirks.h
  
  void intel_init_quirks(struct intel_display *display);
 diff -ruN --no-dereference -x .git a/drivers/gpu/drm/i915/gt/intel_rc6.c b/drivers/gpu/drm/i915/gt/intel_rc6.c
---- a/drivers/gpu/drm/i915/gt/intel_rc6.c	2026-08-16 23:32:26.000000000 +0200
-+++ b/drivers/gpu/drm/i915/gt/intel_rc6.c	2026-10-03 14:48:53.000000000 +0200
+--- a/drivers/gpu/drm/i915/gt/intel_rc6.c	2026-10-11 15:27:50.000000000 +0200
++++ b/drivers/gpu/drm/i915/gt/intel_rc6.c	2026-10-13 14:33:30.000000000 +0200
 @@ -2,9 +2,9 @@
  /*
   * Copyright © 2019 Intel Corporation
@@ -5299,8 +5320,8 @@ diff -ruN --no-dereference -x .git a/drivers/gpu/drm/i915/gt/intel_rc6.c b/drive
  		return false;
  
 diff -ruN --no-dereference -x .git a/drivers/gpu/drm/nouveau/nouveau_ttm.c b/drivers/gpu/drm/nouveau/nouveau_ttm.c
---- a/drivers/gpu/drm/nouveau/nouveau_ttm.c	2026-08-16 23:32:26.000000000 +0200
-+++ b/drivers/gpu/drm/nouveau/nouveau_ttm.c	2026-10-03 14:48:53.000000000 +0200
+--- a/drivers/gpu/drm/nouveau/nouveau_ttm.c	2026-10-11 15:27:50.000000000 +0200
++++ b/drivers/gpu/drm/nouveau/nouveau_ttm.c	2026-10-13 14:33:30.000000000 +0200
 @@ -188,6 +188,11 @@
  
  		man->func = &nouveau_vram_manager;
@@ -5314,8 +5335,8 @@ diff -ruN --no-dereference -x .git a/drivers/gpu/drm/nouveau/nouveau_ttm.c b/dri
  					  drm->gem.vram_available >> PAGE_SHIFT);
  		ttm_set_driver_manager(&drm->ttm.bdev, TTM_PL_VRAM, man);
 diff -ruN --no-dereference -x .git a/drivers/gpu/drm/ttm/ttm_bo.c b/drivers/gpu/drm/ttm/ttm_bo.c
---- a/drivers/gpu/drm/ttm/ttm_bo.c	2026-10-07 05:21:40.949498045 +0200
-+++ b/drivers/gpu/drm/ttm/ttm_bo.c	2026-10-03 14:48:53.000000000 +0200
+--- a/drivers/gpu/drm/ttm/ttm_bo.c	2026-10-11 15:27:50.000000000 +0200
++++ b/drivers/gpu/drm/ttm/ttm_bo.c	2026-10-13 14:33:30.000000000 +0200
 @@ -488,6 +488,118 @@
  	return ret;
  }
@@ -5622,8 +5643,8 @@ diff -ruN --no-dereference -x .git a/drivers/gpu/drm/ttm/ttm_bo.c b/drivers/gpu/
  
  		ret = ttm_bo_add_pipelined_eviction_fences(bo, man, ctx->no_wait_gpu);
 diff -ruN --no-dereference -x .git a/drivers/gpu/drm/ttm/ttm_resource.c b/drivers/gpu/drm/ttm/ttm_resource.c
---- a/drivers/gpu/drm/ttm/ttm_resource.c	2026-08-16 23:32:26.000000000 +0200
-+++ b/drivers/gpu/drm/ttm/ttm_resource.c	2026-10-03 14:48:53.000000000 +0200
+--- a/drivers/gpu/drm/ttm/ttm_resource.c	2026-10-11 15:27:50.000000000 +0200
++++ b/drivers/gpu/drm/ttm/ttm_resource.c	2026-10-13 14:33:30.000000000 +0200
 @@ -386,33 +386,52 @@
  }
  EXPORT_SYMBOL(ttm_resource_fini);
@@ -5694,8 +5715,8 @@ diff -ruN --no-dereference -x .git a/drivers/gpu/drm/ttm/ttm_resource.c b/driver
  	spin_lock(&bo->bdev->lru_lock);
  	ttm_resource_add_bulk_move(*res_ptr, bo);
 diff -ruN --no-dereference -x .git a/drivers/gpu/drm/xe/display/xe_display_bo.c b/drivers/gpu/drm/xe/display/xe_display_bo.c
---- a/drivers/gpu/drm/xe/display/xe_display_bo.c	2026-08-16 23:32:26.000000000 +0200
-+++ b/drivers/gpu/drm/xe/display/xe_display_bo.c	2026-10-03 14:48:53.000000000 +0200
+--- a/drivers/gpu/drm/xe/display/xe_display_bo.c	2026-10-11 15:27:50.000000000 +0200
++++ b/drivers/gpu/drm/xe/display/xe_display_bo.c	2026-10-13 14:33:30.000000000 +0200
 @@ -147,33 +147,12 @@
  	struct xe_device *xe = to_xe_device(drm);
  	struct xe_bo *obj;
@@ -5737,8 +5758,8 @@ diff -ruN --no-dereference -x .git a/drivers/gpu/drm/xe/display/xe_display_bo.c 
  		drm_err(&xe->drm, "failed to allocate framebuffer (%pe)\n", obj);
  		return ERR_PTR(-ENOMEM);
 diff -ruN --no-dereference -x .git a/drivers/gpu/vga/vga_switcheroo.c b/drivers/gpu/vga/vga_switcheroo.c
---- a/drivers/gpu/vga/vga_switcheroo.c	2026-08-16 23:32:26.000000000 +0200
-+++ b/drivers/gpu/vga/vga_switcheroo.c	2026-10-03 14:48:53.000000000 +0200
+--- a/drivers/gpu/vga/vga_switcheroo.c	2026-10-11 15:27:50.000000000 +0200
++++ b/drivers/gpu/vga/vga_switcheroo.c	2026-10-13 14:33:30.000000000 +0200
 @@ -31,6 +31,7 @@
  #define pr_fmt(fmt) "vga_switcheroo: " fmt
  
@@ -5763,8 +5784,8 @@ diff -ruN --no-dereference -x .git a/drivers/gpu/vga/vga_switcheroo.c b/drivers/
  	}
  
 diff -ruN --no-dereference -x .git a/drivers/hid/Kconfig b/drivers/hid/Kconfig
---- a/drivers/hid/Kconfig	2026-10-07 05:21:40.953344198 +0200
-+++ b/drivers/hid/Kconfig	2026-10-03 14:48:53.000000000 +0200
+--- a/drivers/hid/Kconfig	2026-10-11 15:27:50.000000000 +0200
++++ b/drivers/hid/Kconfig	2026-10-13 14:33:30.000000000 +0200
 @@ -743,7 +743,8 @@
  	Support for the Apple Magic Mouse/Trackpad multi-touch.
  
@@ -5785,8 +5806,8 @@ diff -ruN --no-dereference -x .git a/drivers/hid/Kconfig b/drivers/hid/Kconfig
 +
  endif # HID_SUPPORT
 diff -ruN --no-dereference -x .git a/drivers/hid/Makefile b/drivers/hid/Makefile
---- a/drivers/hid/Makefile	2026-08-16 23:32:26.000000000 +0200
-+++ b/drivers/hid/Makefile	2026-10-03 14:48:53.000000000 +0200
+--- a/drivers/hid/Makefile	2026-10-11 15:27:50.000000000 +0200
++++ b/drivers/hid/Makefile	2026-10-13 14:33:30.000000000 +0200
 @@ -179,6 +179,12 @@
  
  obj-$(CONFIG_AMD_SFH_HID)       += amd-sfh-hid/
@@ -5802,7 +5823,7 @@ diff -ruN --no-dereference -x .git a/drivers/hid/Makefile b/drivers/hid/Makefile
  obj-$(CONFIG_INTEL_THC_HID)     += intel-thc-hid/
 diff -ruN --no-dereference -x .git a/drivers/hid/dockchannel-hid/Kconfig b/drivers/hid/dockchannel-hid/Kconfig
 --- a/drivers/hid/dockchannel-hid/Kconfig	1970-01-01 01:00:00.000000000 +0100
-+++ b/drivers/hid/dockchannel-hid/Kconfig	2026-10-03 14:48:53.000000000 +0200
++++ b/drivers/hid/dockchannel-hid/Kconfig	2026-10-13 14:33:30.000000000 +0200
 @@ -0,0 +1,13 @@
 +# SPDX-License-Identifier: GPL-2.0-only OR MIT
 +menu "DockChannel HID support"
@@ -5819,7 +5840,7 @@ diff -ruN --no-dereference -x .git a/drivers/hid/dockchannel-hid/Kconfig b/drive
 +endmenu
 diff -ruN --no-dereference -x .git a/drivers/hid/dockchannel-hid/Makefile b/drivers/hid/dockchannel-hid/Makefile
 --- a/drivers/hid/dockchannel-hid/Makefile	1970-01-01 01:00:00.000000000 +0100
-+++ b/drivers/hid/dockchannel-hid/Makefile	2026-10-03 14:48:53.000000000 +0200
++++ b/drivers/hid/dockchannel-hid/Makefile	2026-10-13 14:33:30.000000000 +0200
 @@ -0,0 +1,6 @@
 +# SPDX-License-Identifier: GPL-2.0-only OR MIT
 +#
@@ -5829,7 +5850,7 @@ diff -ruN --no-dereference -x .git a/drivers/hid/dockchannel-hid/Makefile b/driv
 +obj-$(CONFIG_HID_DOCKCHANNEL)	+= dockchannel-hid.o
 diff -ruN --no-dereference -x .git a/drivers/hid/dockchannel-hid/dockchannel-hid.c b/drivers/hid/dockchannel-hid/dockchannel-hid.c
 --- a/drivers/hid/dockchannel-hid/dockchannel-hid.c	1970-01-01 01:00:00.000000000 +0100
-+++ b/drivers/hid/dockchannel-hid/dockchannel-hid.c	2026-10-03 14:48:53.000000000 +0200
++++ b/drivers/hid/dockchannel-hid/dockchannel-hid.c	2026-10-13 14:33:30.000000000 +0200
 @@ -0,0 +1,1213 @@
 +/*
 + * SPDX-License-Identifier: GPL-2.0 OR MIT
@@ -7045,8 +7066,8 @@ diff -ruN --no-dereference -x .git a/drivers/hid/dockchannel-hid/dockchannel-hid
 +MODULE_AUTHOR("Hector Martin <marcan@marcan.st>");
 +MODULE_LICENSE("Dual MIT/GPL");
 diff -ruN --no-dereference -x .git a/drivers/hid/hid-apple.c b/drivers/hid/hid-apple.c
---- a/drivers/hid/hid-apple.c	2026-10-07 05:21:40.953665689 +0200
-+++ b/drivers/hid/hid-apple.c	2026-10-03 14:48:53.000000000 +0200
+--- a/drivers/hid/hid-apple.c	2026-10-11 15:27:50.000000000 +0200
++++ b/drivers/hid/hid-apple.c	2026-10-13 14:33:30.000000000 +0200
 @@ -30,7 +30,7 @@
  #include "hid-ids.h"
  
@@ -7219,8 +7240,8 @@ diff -ruN --no-dereference -x .git a/drivers/hid/hid-apple.c b/drivers/hid/hid-a
  		.driver_data = APPLE_HAS_FN | APPLE_ISO_TILDE_QUIRK | APPLE_RDESC_BATTERY },
  	{ HID_BLUETOOTH_DEVICE(BT_VENDOR_ID_APPLE, USB_DEVICE_ID_APPLE_MAGIC_KEYBOARD_2024),
 diff -ruN --no-dereference -x .git a/drivers/hid/hid-appletb-kbd.c b/drivers/hid/hid-appletb-kbd.c
---- a/drivers/hid/hid-appletb-kbd.c	2026-08-16 23:32:26.000000000 +0200
-+++ b/drivers/hid/hid-appletb-kbd.c	2026-10-03 14:48:53.000000000 +0200
+--- a/drivers/hid/hid-appletb-kbd.c	2026-10-11 15:27:50.000000000 +0200
++++ b/drivers/hid/hid-appletb-kbd.c	2026-10-13 14:33:30.000000000 +0200
 @@ -56,6 +56,12 @@
  module_param_named(idle_timeout, appletb_tb_idle_timeout, int, 0644);
  MODULE_PARM_DESC(idle_timeout, "Idle timeout in sec");
@@ -7312,8 +7333,8 @@ diff -ruN --no-dereference -x .git a/drivers/hid/hid-appletb-kbd.c b/drivers/hid
  		}
  	}
 diff -ruN --no-dereference -x .git a/drivers/hid/hid-asus.c b/drivers/hid/hid-asus.c
---- a/drivers/hid/hid-asus.c	2026-10-07 05:21:40.953754036 +0200
-+++ b/drivers/hid/hid-asus.c	2026-10-03 14:48:53.000000000 +0200
+--- a/drivers/hid/hid-asus.c	2026-10-11 15:27:50.000000000 +0200
++++ b/drivers/hid/hid-asus.c	2026-10-13 14:33:30.000000000 +0200
 @@ -1480,12 +1480,14 @@
  		return ret;
  	}
@@ -7336,8 +7357,8 @@ diff -ruN --no-dereference -x .git a/drivers/hid/hid-asus.c b/drivers/hid/hid-as
  	}
  
 diff -ruN --no-dereference -x .git a/drivers/hid/hid-core.c b/drivers/hid/hid-core.c
---- a/drivers/hid/hid-core.c	2026-10-07 05:21:40.953949908 +0200
-+++ b/drivers/hid/hid-core.c	2026-10-03 14:48:53.000000000 +0200
+--- a/drivers/hid/hid-core.c	2026-10-11 15:27:50.000000000 +0200
++++ b/drivers/hid/hid-core.c	2026-10-13 14:33:30.000000000 +0200
 @@ -477,7 +477,10 @@
  
  	case HID_GLOBAL_ITEM_TAG_REPORT_SIZE:
@@ -7364,8 +7385,8 @@ diff -ruN --no-dereference -x .git a/drivers/hid/hid-core.c b/drivers/hid/hid-co
  		bus = "VIRTUAL";
  		break;
 diff -ruN --no-dereference -x .git a/drivers/hid/hid-ids.h b/drivers/hid/hid-ids.h
---- a/drivers/hid/hid-ids.h	2026-10-07 05:21:40.954372120 +0200
-+++ b/drivers/hid/hid-ids.h	2026-10-03 14:48:53.000000000 +0200
+--- a/drivers/hid/hid-ids.h	2026-10-11 15:27:50.000000000 +0200
++++ b/drivers/hid/hid-ids.h	2026-10-13 14:33:30.000000000 +0200
 @@ -96,6 +96,8 @@
  
  #define USB_VENDOR_ID_APPLE		0x05ac
@@ -7391,8 +7412,8 @@ diff -ruN --no-dereference -x .git a/drivers/hid/hid-ids.h b/drivers/hid/hid-ids
  #define USB_VENDOR_ID_ASETEK			0x2433
  #define USB_DEVICE_ID_ASETEK_INVICTA		0xf300
 diff -ruN --no-dereference -x .git a/drivers/hid/hid-magicmouse.c b/drivers/hid/hid-magicmouse.c
---- a/drivers/hid/hid-magicmouse.c	2026-10-07 05:21:40.954947252 +0200
-+++ b/drivers/hid/hid-magicmouse.c	2026-10-03 14:48:53.000000000 +0200
+--- a/drivers/hid/hid-magicmouse.c	2026-10-11 15:27:50.000000000 +0200
++++ b/drivers/hid/hid-magicmouse.c	2026-10-13 14:33:30.000000000 +0200
 @@ -60,8 +60,14 @@
  #define MOUSE_REPORT_ID    0x29
  #define MOUSE2_REPORT_ID   0x12
@@ -8329,7 +8350,7 @@ diff -ruN --no-dereference -x .git a/drivers/hid/hid-magicmouse.c b/drivers/hid/
  MODULE_DEVICE_TABLE(hid, magic_mice);
 diff -ruN --no-dereference -x .git a/drivers/hid/spi-hid/Kconfig b/drivers/hid/spi-hid/Kconfig
 --- a/drivers/hid/spi-hid/Kconfig	1970-01-01 01:00:00.000000000 +0100
-+++ b/drivers/hid/spi-hid/Kconfig	2026-10-03 14:48:53.000000000 +0200
++++ b/drivers/hid/spi-hid/Kconfig	2026-10-13 14:33:30.000000000 +0200
 @@ -0,0 +1,24 @@
 +# SPDX-License-Identifier: GPL-2.0-only
 +menu "SPI HID support"
@@ -8357,7 +8378,7 @@ diff -ruN --no-dereference -x .git a/drivers/hid/spi-hid/Kconfig b/drivers/hid/s
 +	select CRC16
 diff -ruN --no-dereference -x .git a/drivers/hid/spi-hid/Makefile b/drivers/hid/spi-hid/Makefile
 --- a/drivers/hid/spi-hid/Makefile	1970-01-01 01:00:00.000000000 +0100
-+++ b/drivers/hid/spi-hid/Makefile	2026-10-03 14:48:53.000000000 +0200
++++ b/drivers/hid/spi-hid/Makefile	2026-10-13 14:33:30.000000000 +0200
 @@ -0,0 +1,10 @@
 +# SPDX-License-Identifier: GPL-2.0-only
 +#
@@ -8371,7 +8392,7 @@ diff -ruN --no-dereference -x .git a/drivers/hid/spi-hid/Makefile b/drivers/hid/
 +obj-$(CONFIG_SPI_HID_APPLE_OF)			+= spi-hid-apple-of.o
 diff -ruN --no-dereference -x .git a/drivers/hid/spi-hid/spi-hid-apple-core.c b/drivers/hid/spi-hid/spi-hid-apple-core.c
 --- a/drivers/hid/spi-hid/spi-hid-apple-core.c	1970-01-01 01:00:00.000000000 +0100
-+++ b/drivers/hid/spi-hid/spi-hid-apple-core.c	2026-10-03 14:48:53.000000000 +0200
++++ b/drivers/hid/spi-hid/spi-hid-apple-core.c	2026-10-13 14:33:30.000000000 +0200
 @@ -0,0 +1,1194 @@
 +/*
 + * SPDX-License-Identifier: GPL-2.0
@@ -9569,7 +9590,7 @@ diff -ruN --no-dereference -x .git a/drivers/hid/spi-hid/spi-hid-apple-core.c b/
 +MODULE_LICENSE("GPL");
 diff -ruN --no-dereference -x .git a/drivers/hid/spi-hid/spi-hid-apple-of.c b/drivers/hid/spi-hid/spi-hid-apple-of.c
 --- a/drivers/hid/spi-hid/spi-hid-apple-of.c	1970-01-01 01:00:00.000000000 +0100
-+++ b/drivers/hid/spi-hid/spi-hid-apple-of.c	2026-10-03 14:48:53.000000000 +0200
++++ b/drivers/hid/spi-hid/spi-hid-apple-of.c	2026-10-13 14:33:30.000000000 +0200
 @@ -0,0 +1,153 @@
 +/*
 + * SPDX-License-Identifier: GPL-2.0
@@ -9726,7 +9747,7 @@ diff -ruN --no-dereference -x .git a/drivers/hid/spi-hid/spi-hid-apple-of.c b/dr
 +MODULE_LICENSE("GPL");
 diff -ruN --no-dereference -x .git a/drivers/hid/spi-hid/spi-hid-apple.h b/drivers/hid/spi-hid/spi-hid-apple.h
 --- a/drivers/hid/spi-hid/spi-hid-apple.h	1970-01-01 01:00:00.000000000 +0100
-+++ b/drivers/hid/spi-hid/spi-hid-apple.h	2026-10-03 14:48:53.000000000 +0200
++++ b/drivers/hid/spi-hid/spi-hid-apple.h	2026-10-13 14:33:30.000000000 +0200
 @@ -0,0 +1,35 @@
 +/* SPDX-License-Identifier: GPL-2.0-only OR MIT */
 +
@@ -9764,8 +9785,8 @@ diff -ruN --no-dereference -x .git a/drivers/hid/spi-hid/spi-hid-apple.h b/drive
 +
 +#endif /* SPI_HID_APPLE_H */
 diff -ruN --no-dereference -x .git a/drivers/hwmon/Kconfig b/drivers/hwmon/Kconfig
---- a/drivers/hwmon/Kconfig	2026-08-16 23:32:26.000000000 +0200
-+++ b/drivers/hwmon/Kconfig	2026-10-03 14:48:53.000000000 +0200
+--- a/drivers/hwmon/Kconfig	2026-10-11 15:27:50.000000000 +0200
++++ b/drivers/hwmon/Kconfig	2026-10-13 14:33:30.000000000 +0200
 @@ -388,6 +388,16 @@
  	  Say Y here if you have an applicable laptop and want to experience
  	  the awesome power of applesmc.
@@ -9784,8 +9805,8 @@ diff -ruN --no-dereference -x .git a/drivers/hwmon/Kconfig b/drivers/hwmon/Kconf
  	tristate "ARCTIC Fan Controller"
  	depends on USB_HID
 diff -ruN --no-dereference -x .git a/drivers/hwmon/Makefile b/drivers/hwmon/Makefile
---- a/drivers/hwmon/Makefile	2026-08-16 23:32:26.000000000 +0200
-+++ b/drivers/hwmon/Makefile	2026-10-03 14:48:53.000000000 +0200
+--- a/drivers/hwmon/Makefile	2026-10-11 15:27:50.000000000 +0200
++++ b/drivers/hwmon/Makefile	2026-10-13 14:33:30.000000000 +0200
 @@ -48,6 +48,7 @@
  obj-$(CONFIG_SENSORS_ADT7475)	+= adt7475.o
  obj-$(CONFIG_SENSORS_AHT10)	+= aht10.o
@@ -9796,7 +9817,7 @@ diff -ruN --no-dereference -x .git a/drivers/hwmon/Makefile b/drivers/hwmon/Make
  obj-$(CONFIG_SENSORS_ARM_SCMI)	+= scmi-hwmon.o
 diff -ruN --no-dereference -x .git a/drivers/hwmon/applesmc-t2.c b/drivers/hwmon/applesmc-t2.c
 --- a/drivers/hwmon/applesmc-t2.c	1970-01-01 01:00:00.000000000 +0100
-+++ b/drivers/hwmon/applesmc-t2.c	2026-10-03 14:48:53.000000000 +0200
++++ b/drivers/hwmon/applesmc-t2.c	2026-10-13 14:33:30.000000000 +0200
 @@ -0,0 +1,1917 @@
 +// SPDX-License-Identifier: GPL-2.0-only
 +/*
@@ -11716,8 +11737,8 @@ diff -ruN --no-dereference -x .git a/drivers/hwmon/applesmc-t2.c b/drivers/hwmon
 +MODULE_LICENSE("GPL v2");
 +MODULE_DEVICE_TABLE(dmi, t2_mac_tbl);
 diff -ruN --no-dereference -x .git a/drivers/hwmon/applesmc.c b/drivers/hwmon/applesmc.c
---- a/drivers/hwmon/applesmc.c	2026-10-07 05:21:40.957905108 +0200
-+++ b/drivers/hwmon/applesmc.c	2026-10-03 14:48:53.000000000 +0200
+--- a/drivers/hwmon/applesmc.c	2026-10-11 15:27:50.000000000 +0200
++++ b/drivers/hwmon/applesmc.c	2026-10-13 14:33:30.000000000 +0200
 @@ -17,6 +17,7 @@
  
  #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
@@ -11736,8 +11757,8 @@ diff -ruN --no-dereference -x .git a/drivers/hwmon/applesmc.c b/drivers/hwmon/ap
  		ret = -ENODEV;
  		goto out;
 diff -ruN --no-dereference -x .git a/drivers/i2c/i2c-core-acpi.c b/drivers/i2c/i2c-core-acpi.c
---- a/drivers/i2c/i2c-core-acpi.c	2026-08-16 23:32:26.000000000 +0200
-+++ b/drivers/i2c/i2c-core-acpi.c	2026-10-03 14:48:53.000000000 +0200
+--- a/drivers/i2c/i2c-core-acpi.c	2026-10-11 15:27:50.000000000 +0200
++++ b/drivers/i2c/i2c-core-acpi.c	2026-10-13 14:33:30.000000000 +0200
 @@ -373,6 +373,7 @@
  	 * the device works without issues on Windows at what is expected to be
  	 * a 400KHz frequency. The root cause of the issue is not known.
@@ -11747,8 +11768,8 @@ diff -ruN --no-dereference -x .git a/drivers/i2c/i2c-core-acpi.c b/drivers/i2c/i
  	{ "ELAN0678", 0 },
  	{ "ELAN06FA", 0 },
 diff -ruN --no-dereference -x .git a/drivers/input/evdev.c b/drivers/input/evdev.c
---- a/drivers/input/evdev.c	2026-10-07 05:21:40.970240380 +0200
-+++ b/drivers/input/evdev.c	2026-10-03 14:48:53.000000000 +0200
+--- a/drivers/input/evdev.c	2026-10-11 15:27:50.000000000 +0200
++++ b/drivers/input/evdev.c	2026-10-13 14:33:30.000000000 +0200
 @@ -47,6 +47,7 @@
  	struct fasync_struct *fasync;
  	struct evdev *evdev;
@@ -11810,8 +11831,8 @@ diff -ruN --no-dereference -x .git a/drivers/input/evdev.c b/drivers/input/evdev
  }
  
 diff -ruN --no-dereference -x .git a/drivers/media/v4l2-core/Kconfig b/drivers/media/v4l2-core/Kconfig
---- a/drivers/media/v4l2-core/Kconfig	2026-08-16 23:32:26.000000000 +0200
-+++ b/drivers/media/v4l2-core/Kconfig	2026-10-03 14:48:53.000000000 +0200
+--- a/drivers/media/v4l2-core/Kconfig	2026-10-11 15:27:50.000000000 +0200
++++ b/drivers/media/v4l2-core/Kconfig	2026-10-13 14:33:30.000000000 +0200
 @@ -40,6 +40,11 @@
  config V4L2_JPEG_HELPER
  	tristate
@@ -11825,8 +11846,8 @@ diff -ruN --no-dereference -x .git a/drivers/media/v4l2-core/Kconfig b/drivers/m
  config V4L2_H264
  	tristate
 diff -ruN --no-dereference -x .git a/drivers/media/v4l2-core/Makefile b/drivers/media/v4l2-core/Makefile
---- a/drivers/media/v4l2-core/Makefile	2026-08-16 23:32:26.000000000 +0200
-+++ b/drivers/media/v4l2-core/Makefile	2026-10-03 14:48:53.000000000 +0200
+--- a/drivers/media/v4l2-core/Makefile	2026-10-11 15:27:50.000000000 +0200
++++ b/drivers/media/v4l2-core/Makefile	2026-10-13 14:33:30.000000000 +0200
 @@ -34,5 +34,7 @@
  obj-$(CONFIG_V4L2_MEM2MEM_DEV) += v4l2-mem2mem.o
  obj-$(CONFIG_V4L2_VP9) += v4l2-vp9.o
@@ -11837,7 +11858,7 @@ diff -ruN --no-dereference -x .git a/drivers/media/v4l2-core/Makefile b/drivers/
  obj-$(CONFIG_VIDEO_DEV) += v4l2-dv-timings.o videodev.o
 diff -ruN --no-dereference -x .git a/drivers/media/v4l2-core/v4l2loopback.c b/drivers/media/v4l2-core/v4l2loopback.c
 --- a/drivers/media/v4l2-core/v4l2loopback.c	1970-01-01 01:00:00.000000000 +0100
-+++ b/drivers/media/v4l2-core/v4l2loopback.c	2026-10-03 14:48:53.000000000 +0200
++++ b/drivers/media/v4l2-core/v4l2loopback.c	2026-10-13 14:33:30.000000000 +0200
 @@ -0,0 +1,3375 @@
 +/* -*- c-file-style: "linux" -*- */
 +/*
@@ -15216,7 +15237,7 @@ diff -ruN --no-dereference -x .git a/drivers/media/v4l2-core/v4l2loopback.c b/dr
 +module_exit(v4l2loopback_cleanup_module);
 diff -ruN --no-dereference -x .git a/drivers/media/v4l2-core/v4l2loopback.h b/drivers/media/v4l2-core/v4l2loopback.h
 --- a/drivers/media/v4l2-core/v4l2loopback.h	1970-01-01 01:00:00.000000000 +0100
-+++ b/drivers/media/v4l2-core/v4l2loopback.h	2026-10-03 14:48:53.000000000 +0200
++++ b/drivers/media/v4l2-core/v4l2loopback.h	2026-10-13 14:33:30.000000000 +0200
 @@ -0,0 +1,108 @@
 +/* SPDX-License-Identifier: GPL-2.0+ WITH Linux-syscall-note */
 +/*
@@ -15328,7 +15349,7 @@ diff -ruN --no-dereference -x .git a/drivers/media/v4l2-core/v4l2loopback.h b/dr
 +#endif /* _V4L2LOOPBACK_H */
 diff -ruN --no-dereference -x .git a/drivers/media/v4l2-core/v4l2loopback_formats.h b/drivers/media/v4l2-core/v4l2loopback_formats.h
 --- a/drivers/media/v4l2-core/v4l2loopback_formats.h	1970-01-01 01:00:00.000000000 +0100
-+++ b/drivers/media/v4l2-core/v4l2loopback_formats.h	2026-10-03 14:48:53.000000000 +0200
++++ b/drivers/media/v4l2-core/v4l2loopback_formats.h	2026-10-13 14:33:30.000000000 +0200
 @@ -0,0 +1,445 @@
 +static const struct v4l2l_format formats[] = {
 +#ifndef V4L2_PIX_FMT_VP9
@@ -15776,8 +15797,8 @@ diff -ruN --no-dereference -x .git a/drivers/media/v4l2-core/v4l2loopback_format
 +#endif /* V4L2_PIX_FMT_HEVC */
 +};
 diff -ruN --no-dereference -x .git a/drivers/net/wireguard/queueing.h b/drivers/net/wireguard/queueing.h
---- a/drivers/net/wireguard/queueing.h	2026-08-16 23:32:26.000000000 +0200
-+++ b/drivers/net/wireguard/queueing.h	2026-10-03 14:48:53.000000000 +0200
+--- a/drivers/net/wireguard/queueing.h	2026-10-11 15:27:50.000000000 +0200
++++ b/drivers/net/wireguard/queueing.h	2026-10-13 14:33:30.000000000 +0200
 @@ -78,12 +78,14 @@
  	u8 l4_hash = skb->l4_hash;
  	u8 sw_hash = skb->sw_hash;
@@ -15794,8 +15815,8 @@ diff -ruN --no-dereference -x .git a/drivers/net/wireguard/queueing.h b/drivers/
  	skb->queue_mapping = 0;
  	skb->nohdr = 0;
 diff -ruN --no-dereference -x .git a/drivers/net/wireless/intel/iwlwifi/mld/mac80211.c b/drivers/net/wireless/intel/iwlwifi/mld/mac80211.c
---- a/drivers/net/wireless/intel/iwlwifi/mld/mac80211.c	2026-08-16 23:32:26.000000000 +0200
-+++ b/drivers/net/wireless/intel/iwlwifi/mld/mac80211.c	2026-10-03 14:48:53.000000000 +0200
+--- a/drivers/net/wireless/intel/iwlwifi/mld/mac80211.c	2026-10-11 15:27:50.000000000 +0200
++++ b/drivers/net/wireless/intel/iwlwifi/mld/mac80211.c	2026-10-13 14:33:30.000000000 +0200
 @@ -516,6 +516,10 @@
  	u32 link_id = u32_get_bits(info->control.flags,
  				   IEEE80211_TX_CTRL_MLO_LINK);
@@ -15808,8 +15829,8 @@ diff -ruN --no-dereference -x .git a/drivers/net/wireless/intel/iwlwifi/mld/mac8
  	 * so the FW can't translate the MLD addr to the link addr. Do it here
  	 */
 diff -ruN --no-dereference -x .git a/drivers/net/wireless/intel/iwlwifi/mld/tx.c b/drivers/net/wireless/intel/iwlwifi/mld/tx.c
---- a/drivers/net/wireless/intel/iwlwifi/mld/tx.c	2026-08-16 23:32:26.000000000 +0200
-+++ b/drivers/net/wireless/intel/iwlwifi/mld/tx.c	2026-10-03 14:48:53.000000000 +0200
+--- a/drivers/net/wireless/intel/iwlwifi/mld/tx.c	2026-10-11 15:27:50.000000000 +0200
++++ b/drivers/net/wireless/intel/iwlwifi/mld/tx.c	2026-10-13 14:33:30.000000000 +0200
 @@ -987,6 +987,9 @@
  	struct sk_buff *skb = NULL;
  	u8 zero_addr[ETH_ALEN] = {};
@@ -15821,8 +15842,8 @@ diff -ruN --no-dereference -x .git a/drivers/net/wireless/intel/iwlwifi/mld/tx.c
  	 * Don't transmit during firmware restart. The firmware is dead,
  	 * so iwl_trans_tx() would return -EIO for each frame. Avoid the
 diff -ruN --no-dereference -x .git a/drivers/pci/controller/Makefile b/drivers/pci/controller/Makefile
---- a/drivers/pci/controller/Makefile	2026-08-16 23:32:26.000000000 +0200
-+++ b/drivers/pci/controller/Makefile	2026-10-03 14:48:53.000000000 +0200
+--- a/drivers/pci/controller/Makefile	2026-10-11 15:27:50.000000000 +0200
++++ b/drivers/pci/controller/Makefile	2026-10-13 14:33:30.000000000 +0200
 @@ -1,4 +1,10 @@
  # SPDX-License-Identifier: GPL-2.0
 +ifdef CONFIG_X86_64
@@ -15836,7 +15857,7 @@ diff -ruN --no-dereference -x .git a/drivers/pci/controller/Makefile b/drivers/p
  obj-$(CONFIG_PCI_IXP4XX) += pci-ixp4xx.o
 diff -ruN --no-dereference -x .git a/drivers/pci/controller/intel-nvme-remap.c b/drivers/pci/controller/intel-nvme-remap.c
 --- a/drivers/pci/controller/intel-nvme-remap.c	1970-01-01 01:00:00.000000000 +0100
-+++ b/drivers/pci/controller/intel-nvme-remap.c	2026-10-03 14:48:53.000000000 +0200
++++ b/drivers/pci/controller/intel-nvme-remap.c	2026-10-13 14:33:30.000000000 +0200
 @@ -0,0 +1,465 @@
 +// SPDX-License-Identifier: GPL-2.0
 +/*
@@ -16304,8 +16325,8 @@ diff -ruN --no-dereference -x .git a/drivers/pci/controller/intel-nvme-remap.c b
 +MODULE_AUTHOR("Daniel Drake <drake@endlessm.com>");
 +MODULE_LICENSE("GPL v2");
 diff -ruN --no-dereference -x .git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
---- a/drivers/pci/quirks.c	2026-10-07 05:21:41.042696267 +0200
-+++ b/drivers/pci/quirks.c	2026-10-03 14:48:53.000000000 +0200
+--- a/drivers/pci/quirks.c	2026-10-11 15:27:50.000000000 +0200
++++ b/drivers/pci/quirks.c	2026-10-13 14:33:30.000000000 +0200
 @@ -3747,6 +3747,106 @@
  	dev->dev_flags |= PCI_DEV_FLAGS_NO_BUS_RESET;
  }
@@ -16422,8 +16443,8 @@ diff -ruN --no-dereference -x .git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
  };
  
 diff -ruN --no-dereference -x .git a/drivers/pci/vgaarb.c b/drivers/pci/vgaarb.c
---- a/drivers/pci/vgaarb.c	2026-08-16 23:32:26.000000000 +0200
-+++ b/drivers/pci/vgaarb.c	2026-10-03 14:48:53.000000000 +0200
+--- a/drivers/pci/vgaarb.c	2026-10-11 15:27:50.000000000 +0200
++++ b/drivers/pci/vgaarb.c	2026-10-13 14:33:30.000000000 +0200
 @@ -143,6 +143,7 @@
  	pci_dev_put(vga_default);
  	vga_default = pci_dev_get(pdev);
@@ -16433,8 +16454,8 @@ diff -ruN --no-dereference -x .git a/drivers/pci/vgaarb.c b/drivers/pci/vgaarb.c
  /**
   * vga_remove_vgacon - deactivate VGA console
 diff -ruN --no-dereference -x .git a/drivers/platform/x86/apple-gmux.c b/drivers/platform/x86/apple-gmux.c
---- a/drivers/platform/x86/apple-gmux.c	2026-08-16 23:32:26.000000000 +0200
-+++ b/drivers/platform/x86/apple-gmux.c	2026-10-03 14:48:53.000000000 +0200
+--- a/drivers/platform/x86/apple-gmux.c	2026-10-11 15:27:50.000000000 +0200
++++ b/drivers/platform/x86/apple-gmux.c	2026-10-13 14:33:30.000000000 +0200
 @@ -21,6 +21,7 @@
  #include <linux/delay.h>
  #include <linux/pci.h>
@@ -16475,8 +16496,8 @@ diff -ruN --no-dereference -x .git a/drivers/platform/x86/apple-gmux.c b/drivers
  	 * Retina MacBook Pros cannot switch the panel's AUX separately
  	 * and need eDP pre-calibration. They are distinguishable from
 diff -ruN --no-dereference -x .git a/drivers/platform/x86/serial-multi-instantiate.c b/drivers/platform/x86/serial-multi-instantiate.c
---- a/drivers/platform/x86/serial-multi-instantiate.c	2026-08-16 23:32:26.000000000 +0200
-+++ b/drivers/platform/x86/serial-multi-instantiate.c	2026-10-03 14:48:53.000000000 +0200
+--- a/drivers/platform/x86/serial-multi-instantiate.c	2026-10-11 15:27:50.000000000 +0200
++++ b/drivers/platform/x86/serial-multi-instantiate.c	2026-10-13 14:33:30.000000000 +0200
 @@ -307,6 +307,15 @@
  	smi_devs_unregister(smi);
  }
@@ -16526,8 +16547,8 @@ diff -ruN --no-dereference -x .git a/drivers/platform/x86/serial-multi-instantia
  	/* Non-conforming _HID for Cirrus Logic already released */
  	{ "CLSA0100", (unsigned long)&cs35l41_hda },
 diff -ruN --no-dereference -x .git a/drivers/scsi/Kconfig b/drivers/scsi/Kconfig
---- a/drivers/scsi/Kconfig	2026-08-16 23:32:26.000000000 +0200
-+++ b/drivers/scsi/Kconfig	2026-10-03 14:48:53.000000000 +0200
+--- a/drivers/scsi/Kconfig	2026-10-11 15:27:50.000000000 +0200
++++ b/drivers/scsi/Kconfig	2026-10-13 14:33:30.000000000 +0200
 @@ -1522,4 +1522,6 @@
  
  source "drivers/scsi/device_handler/Kconfig"
@@ -16536,8 +16557,8 @@ diff -ruN --no-dereference -x .git a/drivers/scsi/Kconfig b/drivers/scsi/Kconfig
 +
  endmenu
 diff -ruN --no-dereference -x .git a/drivers/scsi/Makefile b/drivers/scsi/Makefile
---- a/drivers/scsi/Makefile	2026-08-16 23:32:26.000000000 +0200
-+++ b/drivers/scsi/Makefile	2026-10-03 14:48:53.000000000 +0200
+--- a/drivers/scsi/Makefile	2026-10-11 15:27:50.000000000 +0200
++++ b/drivers/scsi/Makefile	2026-10-13 14:33:30.000000000 +0200
 @@ -152,6 +152,7 @@
  obj-$(CONFIG_SCSI_ENCLOSURE)	+= ses.o
  
@@ -16548,7 +16569,7 @@ diff -ruN --no-dereference -x .git a/drivers/scsi/Makefile b/drivers/scsi/Makefi
  obj-$(CONFIG_SCSI_DEBUG)	+= scsi_debug.o
 diff -ruN --no-dereference -x .git a/drivers/scsi/vhba/Kconfig b/drivers/scsi/vhba/Kconfig
 --- a/drivers/scsi/vhba/Kconfig	1970-01-01 01:00:00.000000000 +0100
-+++ b/drivers/scsi/vhba/Kconfig	2026-10-03 14:48:53.000000000 +0200
++++ b/drivers/scsi/vhba/Kconfig	2026-10-13 14:33:30.000000000 +0200
 @@ -0,0 +1,9 @@
 +config VHBA
 +	tristate "Virtual (SCSI) Host Bus Adapter"
@@ -16561,7 +16582,7 @@ diff -ruN --no-dereference -x .git a/drivers/scsi/vhba/Kconfig b/drivers/scsi/vh
 +	  will be called vhba.
 diff -ruN --no-dereference -x .git a/drivers/scsi/vhba/Makefile b/drivers/scsi/vhba/Makefile
 --- a/drivers/scsi/vhba/Makefile	1970-01-01 01:00:00.000000000 +0100
-+++ b/drivers/scsi/vhba/Makefile	2026-10-03 14:48:53.000000000 +0200
++++ b/drivers/scsi/vhba/Makefile	2026-10-13 14:33:30.000000000 +0200
 @@ -0,0 +1,4 @@
 +VHBA_VERSION := 20250329
 +
@@ -16569,7 +16590,7 @@ diff -ruN --no-dereference -x .git a/drivers/scsi/vhba/Makefile b/drivers/scsi/v
 +ccflags-y := -DVHBA_VERSION=\"$(VHBA_VERSION)\" -Werror
 diff -ruN --no-dereference -x .git a/drivers/scsi/vhba/vhba.c b/drivers/scsi/vhba/vhba.c
 --- a/drivers/scsi/vhba/vhba.c	1970-01-01 01:00:00.000000000 +0100
-+++ b/drivers/scsi/vhba/vhba.c	2026-10-03 14:48:53.000000000 +0200
++++ b/drivers/scsi/vhba/vhba.c	2026-10-13 14:33:30.000000000 +0200
 @@ -0,0 +1,1132 @@
 +/*
 + * vhba.c
@@ -17704,8 +17725,8 @@ diff -ruN --no-dereference -x .git a/drivers/scsi/vhba/vhba.c b/drivers/scsi/vhb
 +module_exit(vhba_exit);
 +
 diff -ruN --no-dereference -x .git a/drivers/soc/apple/Kconfig b/drivers/soc/apple/Kconfig
---- a/drivers/soc/apple/Kconfig	2026-08-16 23:32:26.000000000 +0200
-+++ b/drivers/soc/apple/Kconfig	2026-10-03 14:48:53.000000000 +0200
+--- a/drivers/soc/apple/Kconfig	2026-10-11 15:27:50.000000000 +0200
++++ b/drivers/soc/apple/Kconfig	2026-10-13 14:33:30.000000000 +0200
 @@ -4,6 +4,15 @@
  
  menu "Apple SoC drivers"
@@ -17743,8 +17764,8 @@ diff -ruN --no-dereference -x .git a/drivers/soc/apple/Kconfig b/drivers/soc/app
  	tristate "Apple SART DMA address filter"
  	depends on ARCH_APPLE || COMPILE_TEST
 diff -ruN --no-dereference -x .git a/drivers/soc/apple/Makefile b/drivers/soc/apple/Makefile
---- a/drivers/soc/apple/Makefile	2026-08-16 23:32:26.000000000 +0200
-+++ b/drivers/soc/apple/Makefile	2026-10-03 14:48:53.000000000 +0200
+--- a/drivers/soc/apple/Makefile	2026-10-11 15:27:50.000000000 +0200
++++ b/drivers/soc/apple/Makefile	2026-10-13 14:33:30.000000000 +0200
 @@ -1,11 +1,17 @@
  # SPDX-License-Identifier: GPL-2.0-only
  
@@ -17765,7 +17786,7 @@ diff -ruN --no-dereference -x .git a/drivers/soc/apple/Makefile b/drivers/soc/ap
  
 diff -ruN --no-dereference -x .git a/drivers/soc/apple/dockchannel.c b/drivers/soc/apple/dockchannel.c
 --- a/drivers/soc/apple/dockchannel.c	1970-01-01 01:00:00.000000000 +0100
-+++ b/drivers/soc/apple/dockchannel.c	2026-10-03 14:48:53.000000000 +0200
++++ b/drivers/soc/apple/dockchannel.c	2026-10-13 14:33:30.000000000 +0200
 @@ -0,0 +1,404 @@
 +// SPDX-License-Identifier: GPL-2.0-only OR MIT
 +/*
@@ -18173,7 +18194,7 @@ diff -ruN --no-dereference -x .git a/drivers/soc/apple/dockchannel.c b/drivers/s
 +MODULE_DESCRIPTION("Apple DockChannel driver");
 diff -ruN --no-dereference -x .git a/drivers/soc/apple/rtkit-helper.c b/drivers/soc/apple/rtkit-helper.c
 --- a/drivers/soc/apple/rtkit-helper.c	1970-01-01 01:00:00.000000000 +0100
-+++ b/drivers/soc/apple/rtkit-helper.c	2026-10-03 14:48:53.000000000 +0200
++++ b/drivers/soc/apple/rtkit-helper.c	2026-10-13 14:33:30.000000000 +0200
 @@ -0,0 +1,151 @@
 +// SPDX-License-Identifier: GPL-2.0-only OR MIT
 +/*
@@ -18327,8 +18348,8 @@ diff -ruN --no-dereference -x .git a/drivers/soc/apple/rtkit-helper.c b/drivers/
 +MODULE_LICENSE("Dual MIT/GPL");
 +MODULE_DESCRIPTION("Apple RTKit helper driver");
 diff -ruN --no-dereference -x .git a/drivers/staging/Kconfig b/drivers/staging/Kconfig
---- a/drivers/staging/Kconfig	2026-08-16 23:32:26.000000000 +0200
-+++ b/drivers/staging/Kconfig	2026-10-03 14:48:53.000000000 +0200
+--- a/drivers/staging/Kconfig	2026-10-11 15:27:50.000000000 +0200
++++ b/drivers/staging/Kconfig	2026-10-13 14:33:30.000000000 +0200
 @@ -48,4 +48,6 @@
  
  source "drivers/staging/vme_user/Kconfig"
@@ -18337,8 +18358,8 @@ diff -ruN --no-dereference -x .git a/drivers/staging/Kconfig b/drivers/staging/K
 +
  endif # STAGING
 diff -ruN --no-dereference -x .git a/drivers/staging/Makefile b/drivers/staging/Makefile
---- a/drivers/staging/Makefile	2026-08-16 23:32:26.000000000 +0200
-+++ b/drivers/staging/Makefile	2026-10-03 14:48:53.000000000 +0200
+--- a/drivers/staging/Makefile	2026-10-11 15:27:50.000000000 +0200
++++ b/drivers/staging/Makefile	2026-10-13 14:33:30.000000000 +0200
 @@ -13,3 +13,4 @@
  obj-$(CONFIG_GREYBUS)		+= greybus/
  obj-$(CONFIG_BCM2835_VCHIQ)	+= vc04_services/
@@ -18346,7 +18367,7 @@ diff -ruN --no-dereference -x .git a/drivers/staging/Makefile b/drivers/staging/
 +obj-$(CONFIG_T2BCE_CORE)		+= t2bce/
 diff -ruN --no-dereference -x .git a/drivers/staging/t2bce/Kconfig b/drivers/staging/t2bce/Kconfig
 --- a/drivers/staging/t2bce/Kconfig	1970-01-01 01:00:00.000000000 +0100
-+++ b/drivers/staging/t2bce/Kconfig	2026-10-03 14:48:53.000000000 +0200
++++ b/drivers/staging/t2bce/Kconfig	2026-10-13 14:33:30.000000000 +0200
 @@ -0,0 +1,40 @@
 +# SPDX-License-Identifier: GPL-2.0-only
 +menu "Apple T2 Buffer Copy Engine support"
@@ -18390,7 +18411,7 @@ diff -ruN --no-dereference -x .git a/drivers/staging/t2bce/Kconfig b/drivers/sta
 +endmenu
 diff -ruN --no-dereference -x .git a/drivers/staging/t2bce/Makefile b/drivers/staging/t2bce/Makefile
 --- a/drivers/staging/t2bce/Makefile	1970-01-01 01:00:00.000000000 +0100
-+++ b/drivers/staging/t2bce/Makefile	2026-10-03 14:48:53.000000000 +0200
++++ b/drivers/staging/t2bce/Makefile	2026-10-13 14:33:30.000000000 +0200
 @@ -0,0 +1,5 @@
 +# SPDX-License-Identifier: GPL-2.0-only
 +obj-$(CONFIG_T2BCE_DMA) += t2bce_dma/
@@ -18399,7 +18420,7 @@ diff -ruN --no-dereference -x .git a/drivers/staging/t2bce/Makefile b/drivers/st
 +obj-$(CONFIG_T2BCE_AUDIO) += t2bce_audio/
 diff -ruN --no-dereference -x .git a/drivers/staging/t2bce/t2bce_audio/Makefile b/drivers/staging/t2bce/t2bce_audio/Makefile
 --- a/drivers/staging/t2bce/t2bce_audio/Makefile	1970-01-01 01:00:00.000000000 +0100
-+++ b/drivers/staging/t2bce/t2bce_audio/Makefile	2026-10-03 14:48:53.000000000 +0200
++++ b/drivers/staging/t2bce/t2bce_audio/Makefile	2026-10-13 14:33:30.000000000 +0200
 @@ -0,0 +1,7 @@
 +# SPDX-License-Identifier: GPL-2.0-only
 +obj-$(CONFIG_T2BCE_AUDIO) += t2bce_audio.o
@@ -18410,7 +18431,7 @@ diff -ruN --no-dereference -x .git a/drivers/staging/t2bce/t2bce_audio/Makefile 
 +ccflags-y += -I$(src)/../t2bce_core/include
 diff -ruN --no-dereference -x .git a/drivers/staging/t2bce/t2bce_audio/audio.c b/drivers/staging/t2bce/t2bce_audio/audio.c
 --- a/drivers/staging/t2bce/t2bce_audio/audio.c	1970-01-01 01:00:00.000000000 +0100
-+++ b/drivers/staging/t2bce/t2bce_audio/audio.c	2026-10-03 14:48:53.000000000 +0200
++++ b/drivers/staging/t2bce/t2bce_audio/audio.c	2026-10-13 14:33:30.000000000 +0200
 @@ -0,0 +1,930 @@
 +#include <linux/pci.h>
 +#include <linux/spinlock.h>
@@ -19344,7 +19365,7 @@ diff -ruN --no-dereference -x .git a/drivers/staging/t2bce/t2bce_audio/audio.c b
 +module_exit(t2audio_module_exit);
 diff -ruN --no-dereference -x .git a/drivers/staging/t2bce/t2bce_audio/audio.h b/drivers/staging/t2bce/t2bce_audio/audio.h
 --- a/drivers/staging/t2bce/t2bce_audio/audio.h	1970-01-01 01:00:00.000000000 +0100
-+++ b/drivers/staging/t2bce/t2bce_audio/audio.h	2026-10-03 14:48:53.000000000 +0200
++++ b/drivers/staging/t2bce/t2bce_audio/audio.h	2026-10-13 14:33:30.000000000 +0200
 @@ -0,0 +1,148 @@
 +#ifndef T2AUDIO_H
 +#define T2AUDIO_H
@@ -19496,7 +19517,7 @@ diff -ruN --no-dereference -x .git a/drivers/staging/t2bce/t2bce_audio/audio.h b
 +#endif //T2AUDIO_H
 diff -ruN --no-dereference -x .git a/drivers/staging/t2bce/t2bce_audio/description.h b/drivers/staging/t2bce/t2bce_audio/description.h
 --- a/drivers/staging/t2bce/t2bce_audio/description.h	1970-01-01 01:00:00.000000000 +0100
-+++ b/drivers/staging/t2bce/t2bce_audio/description.h	2026-10-03 14:48:53.000000000 +0200
++++ b/drivers/staging/t2bce/t2bce_audio/description.h	2026-10-13 14:33:30.000000000 +0200
 @@ -0,0 +1,42 @@
 +#ifndef T2AUDIO_DESCRIPTION_H
 +#define T2AUDIO_DESCRIPTION_H
@@ -19542,7 +19563,7 @@ diff -ruN --no-dereference -x .git a/drivers/staging/t2bce/t2bce_audio/descripti
 +#endif //T2AUDIO_DESCRIPTION_H
 diff -ruN --no-dereference -x .git a/drivers/staging/t2bce/t2bce_audio/pcm.c b/drivers/staging/t2bce/t2bce_audio/pcm.c
 --- a/drivers/staging/t2bce/t2bce_audio/pcm.c	1970-01-01 01:00:00.000000000 +0100
-+++ b/drivers/staging/t2bce/t2bce_audio/pcm.c	2026-10-03 14:48:53.000000000 +0200
++++ b/drivers/staging/t2bce/t2bce_audio/pcm.c	2026-10-13 14:33:30.000000000 +0200
 @@ -0,0 +1,520 @@
 +#include "pcm.h"
 +#include "audio.h"
@@ -20066,7 +20087,7 @@ diff -ruN --no-dereference -x .git a/drivers/staging/t2bce/t2bce_audio/pcm.c b/d
 +}
 diff -ruN --no-dereference -x .git a/drivers/staging/t2bce/t2bce_audio/pcm.h b/drivers/staging/t2bce/t2bce_audio/pcm.h
 --- a/drivers/staging/t2bce/t2bce_audio/pcm.h	1970-01-01 01:00:00.000000000 +0100
-+++ b/drivers/staging/t2bce/t2bce_audio/pcm.h	2026-10-03 14:48:53.000000000 +0200
++++ b/drivers/staging/t2bce/t2bce_audio/pcm.h	2026-10-13 14:33:30.000000000 +0200
 @@ -0,0 +1,17 @@
 +#ifndef T2AUDIO_PCM_H
 +#define T2AUDIO_PCM_H
@@ -20087,7 +20108,7 @@ diff -ruN --no-dereference -x .git a/drivers/staging/t2bce/t2bce_audio/pcm.h b/d
 +#endif //T2AUDIO_PCM_H
 diff -ruN --no-dereference -x .git a/drivers/staging/t2bce/t2bce_audio/protocol.c b/drivers/staging/t2bce/t2bce_audio/protocol.c
 --- a/drivers/staging/t2bce/t2bce_audio/protocol.c	1970-01-01 01:00:00.000000000 +0100
-+++ b/drivers/staging/t2bce/t2bce_audio/protocol.c	2026-10-03 14:48:53.000000000 +0200
++++ b/drivers/staging/t2bce/t2bce_audio/protocol.c	2026-10-13 14:33:30.000000000 +0200
 @@ -0,0 +1,347 @@
 +#include "protocol.h"
 +#include "protocol_bce.h"
@@ -20439,7 +20460,7 @@ diff -ruN --no-dereference -x .git a/drivers/staging/t2bce/t2bce_audio/protocol.
 \ No newline at end of file
 diff -ruN --no-dereference -x .git a/drivers/staging/t2bce/t2bce_audio/protocol.h b/drivers/staging/t2bce/t2bce_audio/protocol.h
 --- a/drivers/staging/t2bce/t2bce_audio/protocol.h	1970-01-01 01:00:00.000000000 +0100
-+++ b/drivers/staging/t2bce/t2bce_audio/protocol.h	2026-10-03 14:48:53.000000000 +0200
++++ b/drivers/staging/t2bce/t2bce_audio/protocol.h	2026-10-13 14:33:30.000000000 +0200
 @@ -0,0 +1,147 @@
 +#ifndef T2AUDIO_PROTOCOL_H
 +#define T2AUDIO_PROTOCOL_H
@@ -20590,7 +20611,7 @@ diff -ruN --no-dereference -x .git a/drivers/staging/t2bce/t2bce_audio/protocol.
 +#endif //T2AUDIO_PROTOCOL_H
 diff -ruN --no-dereference -x .git a/drivers/staging/t2bce/t2bce_audio/protocol_bce.c b/drivers/staging/t2bce/t2bce_audio/protocol_bce.c
 --- a/drivers/staging/t2bce/t2bce_audio/protocol_bce.c	1970-01-01 01:00:00.000000000 +0100
-+++ b/drivers/staging/t2bce/t2bce_audio/protocol_bce.c	2026-10-03 14:48:53.000000000 +0200
++++ b/drivers/staging/t2bce/t2bce_audio/protocol_bce.c	2026-10-13 14:33:30.000000000 +0200
 @@ -0,0 +1,260 @@
 +#include "protocol_bce.h"
 +
@@ -20854,7 +20875,7 @@ diff -ruN --no-dereference -x .git a/drivers/staging/t2bce/t2bce_audio/protocol_
 +}
 diff -ruN --no-dereference -x .git a/drivers/staging/t2bce/t2bce_audio/protocol_bce.h b/drivers/staging/t2bce/t2bce_audio/protocol_bce.h
 --- a/drivers/staging/t2bce/t2bce_audio/protocol_bce.h	1970-01-01 01:00:00.000000000 +0100
-+++ b/drivers/staging/t2bce/t2bce_audio/protocol_bce.h	2026-10-03 14:48:53.000000000 +0200
++++ b/drivers/staging/t2bce/t2bce_audio/protocol_bce.h	2026-10-13 14:33:30.000000000 +0200
 @@ -0,0 +1,72 @@
 +#ifndef T2AUDIO_PROTOCOL_BCE_H
 +#define T2AUDIO_PROTOCOL_BCE_H
@@ -20930,7 +20951,7 @@ diff -ruN --no-dereference -x .git a/drivers/staging/t2bce/t2bce_audio/protocol_
 +#endif //T2AUDIO_PROTOCOL_BCE_H
 diff -ruN --no-dereference -x .git a/drivers/staging/t2bce/t2bce_core/Makefile b/drivers/staging/t2bce/t2bce_core/Makefile
 --- a/drivers/staging/t2bce/t2bce_core/Makefile	1970-01-01 01:00:00.000000000 +0100
-+++ b/drivers/staging/t2bce/t2bce_core/Makefile	2026-10-03 14:48:53.000000000 +0200
++++ b/drivers/staging/t2bce/t2bce_core/Makefile	2026-10-13 14:33:30.000000000 +0200
 @@ -0,0 +1,7 @@
 +# SPDX-License-Identifier: GPL-2.0-only
 +obj-$(CONFIG_T2BCE_CORE) += t2bce_core.o
@@ -20941,7 +20962,7 @@ diff -ruN --no-dereference -x .git a/drivers/staging/t2bce/t2bce_core/Makefile b
 +ccflags-y += -I$(src)/../t2bce_dma/include
 diff -ruN --no-dereference -x .git a/drivers/staging/t2bce/t2bce_core/include/t2bce_core_transport.h b/drivers/staging/t2bce/t2bce_core/include/t2bce_core_transport.h
 --- a/drivers/staging/t2bce/t2bce_core/include/t2bce_core_transport.h	1970-01-01 01:00:00.000000000 +0100
-+++ b/drivers/staging/t2bce/t2bce_core/include/t2bce_core_transport.h	2026-10-03 14:48:53.000000000 +0200
++++ b/drivers/staging/t2bce/t2bce_core/include/t2bce_core_transport.h	2026-10-13 14:33:30.000000000 +0200
 @@ -0,0 +1,83 @@
 +#ifndef T2BCE_CORE_TRANSPORT_H
 +#define T2BCE_CORE_TRANSPORT_H
@@ -21028,7 +21049,7 @@ diff -ruN --no-dereference -x .git a/drivers/staging/t2bce/t2bce_core/include/t2
 +#endif
 diff -ruN --no-dereference -x .git a/drivers/staging/t2bce/t2bce_core/mailbox.c b/drivers/staging/t2bce/t2bce_core/mailbox.c
 --- a/drivers/staging/t2bce/t2bce_core/mailbox.c	1970-01-01 01:00:00.000000000 +0100
-+++ b/drivers/staging/t2bce/t2bce_core/mailbox.c	2026-10-03 14:48:53.000000000 +0200
++++ b/drivers/staging/t2bce/t2bce_core/mailbox.c	2026-10-13 14:33:30.000000000 +0200
 @@ -0,0 +1,234 @@
 +#include "mailbox.h"
 +#include <linux/atomic.h>
@@ -21266,7 +21287,7 @@ diff -ruN --no-dereference -x .git a/drivers/staging/t2bce/t2bce_core/mailbox.c 
 +}
 diff -ruN --no-dereference -x .git a/drivers/staging/t2bce/t2bce_core/mailbox.h b/drivers/staging/t2bce/t2bce_core/mailbox.h
 --- a/drivers/staging/t2bce/t2bce_core/mailbox.h	1970-01-01 01:00:00.000000000 +0100
-+++ b/drivers/staging/t2bce/t2bce_core/mailbox.h	2026-10-03 14:48:53.000000000 +0200
++++ b/drivers/staging/t2bce/t2bce_core/mailbox.h	2026-10-13 14:33:30.000000000 +0200
 @@ -0,0 +1,64 @@
 +#ifndef BCE_MAILBOX_H
 +#define BCE_MAILBOX_H
@@ -21334,7 +21355,7 @@ diff -ruN --no-dereference -x .git a/drivers/staging/t2bce/t2bce_core/mailbox.h 
 +#endif //BCEDRIVER_MAILBOX_H
 diff -ruN --no-dereference -x .git a/drivers/staging/t2bce/t2bce_core/t2bce.h b/drivers/staging/t2bce/t2bce_core/t2bce.h
 --- a/drivers/staging/t2bce/t2bce_core/t2bce.h	1970-01-01 01:00:00.000000000 +0100
-+++ b/drivers/staging/t2bce/t2bce_core/t2bce.h	2026-10-03 14:48:53.000000000 +0200
++++ b/drivers/staging/t2bce/t2bce_core/t2bce.h	2026-10-13 14:33:30.000000000 +0200
 @@ -0,0 +1,51 @@
 +#ifndef APPLE_BCE_H
 +#define APPLE_BCE_H
@@ -21389,7 +21410,7 @@ diff -ruN --no-dereference -x .git a/drivers/staging/t2bce/t2bce_core/t2bce.h b/
 +#endif //APPLE_BCE_H
 diff -ruN --no-dereference -x .git a/drivers/staging/t2bce/t2bce_core/t2bce_main.c b/drivers/staging/t2bce/t2bce_core/t2bce_main.c
 --- a/drivers/staging/t2bce/t2bce_core/t2bce_main.c	1970-01-01 01:00:00.000000000 +0100
-+++ b/drivers/staging/t2bce/t2bce_core/t2bce_main.c	2026-10-03 14:48:53.000000000 +0200
++++ b/drivers/staging/t2bce/t2bce_core/t2bce_main.c	2026-10-13 14:33:30.000000000 +0200
 @@ -0,0 +1,770 @@
 +#include "t2bce.h"
 +#include <linux/module.h>
@@ -22163,7 +22184,7 @@ diff -ruN --no-dereference -x .git a/drivers/staging/t2bce/t2bce_core/t2bce_main
 +module_exit(t2bce_module_exit);
 diff -ruN --no-dereference -x .git a/drivers/staging/t2bce/t2bce_core/transport.c b/drivers/staging/t2bce/t2bce_core/transport.c
 --- a/drivers/staging/t2bce/t2bce_core/transport.c	1970-01-01 01:00:00.000000000 +0100
-+++ b/drivers/staging/t2bce/t2bce_core/transport.c	2026-10-03 14:48:53.000000000 +0200
++++ b/drivers/staging/t2bce/t2bce_core/transport.c	2026-10-13 14:33:30.000000000 +0200
 @@ -0,0 +1,406 @@
 +#include "t2bce_core_transport.h"
 +#include "t2bce.h"
@@ -22573,7 +22594,7 @@ diff -ruN --no-dereference -x .git a/drivers/staging/t2bce/t2bce_core/transport.
 +EXPORT_SYMBOL_GPL(t2bce_core_flush_queue);
 diff -ruN --no-dereference -x .git a/drivers/staging/t2bce/t2bce_dma/Makefile b/drivers/staging/t2bce/t2bce_dma/Makefile
 --- a/drivers/staging/t2bce/t2bce_dma/Makefile	1970-01-01 01:00:00.000000000 +0100
-+++ b/drivers/staging/t2bce/t2bce_dma/Makefile	2026-10-03 14:48:53.000000000 +0200
++++ b/drivers/staging/t2bce/t2bce_dma/Makefile	2026-10-13 14:33:30.000000000 +0200
 @@ -0,0 +1,6 @@
 +# SPDX-License-Identifier: GPL-2.0-only
 +obj-$(CONFIG_T2BCE_DMA) += t2bce_dma.o
@@ -22583,7 +22604,7 @@ diff -ruN --no-dereference -x .git a/drivers/staging/t2bce/t2bce_dma/Makefile b/
 +ccflags-y += -I$(src)/include
 diff -ruN --no-dereference -x .git a/drivers/staging/t2bce/t2bce_dma/include/t2bce_dma_queue.h b/drivers/staging/t2bce/t2bce_dma/include/t2bce_dma_queue.h
 --- a/drivers/staging/t2bce/t2bce_dma/include/t2bce_dma_queue.h	1970-01-01 01:00:00.000000000 +0100
-+++ b/drivers/staging/t2bce/t2bce_dma/include/t2bce_dma_queue.h	2026-10-03 14:48:53.000000000 +0200
++++ b/drivers/staging/t2bce/t2bce_dma/include/t2bce_dma_queue.h	2026-10-13 14:33:30.000000000 +0200
 @@ -0,0 +1,182 @@
 +#ifndef T2BCE_DMA_QUEUE_H
 +#define T2BCE_DMA_QUEUE_H
@@ -22769,7 +22790,7 @@ diff -ruN --no-dereference -x .git a/drivers/staging/t2bce/t2bce_dma/include/t2b
 +#endif
 diff -ruN --no-dereference -x .git a/drivers/staging/t2bce/t2bce_dma/queue.c b/drivers/staging/t2bce/t2bce_dma/queue.c
 --- a/drivers/staging/t2bce/t2bce_dma/queue.c	1970-01-01 01:00:00.000000000 +0100
-+++ b/drivers/staging/t2bce/t2bce_dma/queue.c	2026-10-03 14:48:53.000000000 +0200
++++ b/drivers/staging/t2bce/t2bce_dma/queue.c	2026-10-13 14:33:30.000000000 +0200
 @@ -0,0 +1,625 @@
 +#include "t2bce_dma_queue.h"
 +#include <linux/export.h>
@@ -23398,7 +23419,7 @@ diff -ruN --no-dereference -x .git a/drivers/staging/t2bce/t2bce_dma/queue.c b/d
 +MODULE_LICENSE("GPL");
 diff -ruN --no-dereference -x .git a/drivers/staging/t2bce/t2bce_vhci/Makefile b/drivers/staging/t2bce/t2bce_vhci/Makefile
 --- a/drivers/staging/t2bce/t2bce_vhci/Makefile	1970-01-01 01:00:00.000000000 +0100
-+++ b/drivers/staging/t2bce/t2bce_vhci/Makefile	2026-10-03 14:48:53.000000000 +0200
++++ b/drivers/staging/t2bce/t2bce_vhci/Makefile	2026-10-13 14:33:30.000000000 +0200
 @@ -0,0 +1,7 @@
 +# SPDX-License-Identifier: GPL-2.0-only
 +obj-$(CONFIG_T2BCE_VHCI) += t2bce_vhci.o
@@ -23409,7 +23430,7 @@ diff -ruN --no-dereference -x .git a/drivers/staging/t2bce/t2bce_vhci/Makefile b
 +ccflags-y += -I$(src)/../t2bce_core/include
 diff -ruN --no-dereference -x .git a/drivers/staging/t2bce/t2bce_vhci/command.h b/drivers/staging/t2bce/t2bce_vhci/command.h
 --- a/drivers/staging/t2bce/t2bce_vhci/command.h	1970-01-01 01:00:00.000000000 +0100
-+++ b/drivers/staging/t2bce/t2bce_vhci/command.h	2026-10-03 14:48:53.000000000 +0200
++++ b/drivers/staging/t2bce/t2bce_vhci/command.h	2026-10-13 14:33:30.000000000 +0200
 @@ -0,0 +1,206 @@
 +#ifndef BCE_VHCI_COMMAND_H
 +#define BCE_VHCI_COMMAND_H
@@ -23619,7 +23640,7 @@ diff -ruN --no-dereference -x .git a/drivers/staging/t2bce/t2bce_vhci/command.h 
 +#endif //BCE_VHCI_COMMAND_H
 diff -ruN --no-dereference -x .git a/drivers/staging/t2bce/t2bce_vhci/queue.c b/drivers/staging/t2bce/t2bce_vhci/queue.c
 --- a/drivers/staging/t2bce/t2bce_vhci/queue.c	1970-01-01 01:00:00.000000000 +0100
-+++ b/drivers/staging/t2bce/t2bce_vhci/queue.c	2026-10-03 14:48:53.000000000 +0200
++++ b/drivers/staging/t2bce/t2bce_vhci/queue.c	2026-10-13 14:33:30.000000000 +0200
 @@ -0,0 +1,269 @@
 +#include "queue.h"
 +#include "vhci.h"
@@ -23892,7 +23913,7 @@ diff -ruN --no-dereference -x .git a/drivers/staging/t2bce/t2bce_vhci/queue.c b/
 +}
 diff -ruN --no-dereference -x .git a/drivers/staging/t2bce/t2bce_vhci/queue.h b/drivers/staging/t2bce/t2bce_vhci/queue.h
 --- a/drivers/staging/t2bce/t2bce_vhci/queue.h	1970-01-01 01:00:00.000000000 +0100
-+++ b/drivers/staging/t2bce/t2bce_vhci/queue.h	2026-10-03 14:48:53.000000000 +0200
++++ b/drivers/staging/t2bce/t2bce_vhci/queue.h	2026-10-13 14:33:30.000000000 +0200
 @@ -0,0 +1,76 @@
 +#ifndef BCE_VHCI_QUEUE_H
 +#define BCE_VHCI_QUEUE_H
@@ -23972,7 +23993,7 @@ diff -ruN --no-dereference -x .git a/drivers/staging/t2bce/t2bce_vhci/queue.h b/
 +#endif //BCE_VHCI_QUEUE_H
 diff -ruN --no-dereference -x .git a/drivers/staging/t2bce/t2bce_vhci/transfer.c b/drivers/staging/t2bce/t2bce_vhci/transfer.c
 --- a/drivers/staging/t2bce/t2bce_vhci/transfer.c	1970-01-01 01:00:00.000000000 +0100
-+++ b/drivers/staging/t2bce/t2bce_vhci/transfer.c	2026-10-03 14:48:53.000000000 +0200
++++ b/drivers/staging/t2bce/t2bce_vhci/transfer.c	2026-10-13 14:33:30.000000000 +0200
 @@ -0,0 +1,1261 @@
 +#include "transfer.h"
 +#include "vhci.h"
@@ -25237,7 +25258,7 @@ diff -ruN --no-dereference -x .git a/drivers/staging/t2bce/t2bce_vhci/transfer.c
 +}
 diff -ruN --no-dereference -x .git a/drivers/staging/t2bce/t2bce_vhci/transfer.h b/drivers/staging/t2bce/t2bce_vhci/transfer.h
 --- a/drivers/staging/t2bce/t2bce_vhci/transfer.h	1970-01-01 01:00:00.000000000 +0100
-+++ b/drivers/staging/t2bce/t2bce_vhci/transfer.h	2026-10-03 14:48:53.000000000 +0200
++++ b/drivers/staging/t2bce/t2bce_vhci/transfer.h	2026-10-13 14:33:30.000000000 +0200
 @@ -0,0 +1,86 @@
 +#ifndef BCEDRIVER_TRANSFER_H
 +#define BCEDRIVER_TRANSFER_H
@@ -25327,7 +25348,7 @@ diff -ruN --no-dereference -x .git a/drivers/staging/t2bce/t2bce_vhci/transfer.h
 +#endif //BCEDRIVER_TRANSFER_H
 diff -ruN --no-dereference -x .git a/drivers/staging/t2bce/t2bce_vhci/vhci.c b/drivers/staging/t2bce/t2bce_vhci/vhci.c
 --- a/drivers/staging/t2bce/t2bce_vhci/vhci.c	1970-01-01 01:00:00.000000000 +0100
-+++ b/drivers/staging/t2bce/t2bce_vhci/vhci.c	2026-10-03 14:48:53.000000000 +0200
++++ b/drivers/staging/t2bce/t2bce_vhci/vhci.c	2026-10-13 14:33:30.000000000 +0200
 @@ -0,0 +1,1293 @@
 +#include "vhci.h"
 +#include "command.h"
@@ -26624,7 +26645,7 @@ diff -ruN --no-dereference -x .git a/drivers/staging/t2bce/t2bce_vhci/vhci.c b/d
 +module_exit(bce_vhci_module_exit);
 diff -ruN --no-dereference -x .git a/drivers/staging/t2bce/t2bce_vhci/vhci.h b/drivers/staging/t2bce/t2bce_vhci/vhci.h
 --- a/drivers/staging/t2bce/t2bce_vhci/vhci.h	1970-01-01 01:00:00.000000000 +0100
-+++ b/drivers/staging/t2bce/t2bce_vhci/vhci.h	2026-10-03 14:48:53.000000000 +0200
++++ b/drivers/staging/t2bce/t2bce_vhci/vhci.h	2026-10-13 14:33:30.000000000 +0200
 @@ -0,0 +1,69 @@
 +#ifndef BCE_VHCI_H
 +#define BCE_VHCI_H
@@ -26696,8 +26717,8 @@ diff -ruN --no-dereference -x .git a/drivers/staging/t2bce/t2bce_vhci/vhci.h b/d
 +
 +#endif //BCE_VHCI_H
 diff -ruN --no-dereference -x .git a/drivers/usb/core/message.c b/drivers/usb/core/message.c
---- a/drivers/usb/core/message.c	2026-08-16 23:32:26.000000000 +0200
-+++ b/drivers/usb/core/message.c	2026-10-03 14:48:53.000000000 +0200
+--- a/drivers/usb/core/message.c	2026-10-11 15:27:50.000000000 +0200
++++ b/drivers/usb/core/message.c	2026-10-13 14:33:30.000000000 +0200
 @@ -1052,6 +1052,25 @@
  			UTF16_LITTLE_ENDIAN, buf, size);
  	buf[err] = 0;
@@ -26725,8 +26746,8 @@ diff -ruN --no-dereference -x .git a/drivers/usb/core/message.c b/drivers/usb/co
  		dev_dbg(&dev->dev,
  			"wrong descriptor type %02x for string %d (\"%s\")\n",
 diff -ruN --no-dereference -x .git a/fs/readdir.c b/fs/readdir.c
---- a/fs/readdir.c	2026-08-16 23:32:26.000000000 +0200
-+++ b/fs/readdir.c	2026-10-03 14:48:53.000000000 +0200
+--- a/fs/readdir.c	2026-10-11 15:27:50.000000000 +0200
++++ b/fs/readdir.c	2026-10-13 14:33:30.000000000 +0200
 @@ -149,7 +149,7 @@
   */
  static int verify_dirent_name(const char *name, int len)
@@ -26737,8 +26758,8 @@ diff -ruN --no-dereference -x .git a/fs/readdir.c b/fs/readdir.c
  	if (memchr(name, '/', len))
  		return -EIO;
 diff -ruN --no-dereference -x .git a/include/drm/drm_connector.h b/include/drm/drm_connector.h
---- a/include/drm/drm_connector.h	2026-08-16 23:32:26.000000000 +0200
-+++ b/include/drm/drm_connector.h	2026-10-03 14:48:53.000000000 +0200
+--- a/include/drm/drm_connector.h	2026-10-11 15:27:50.000000000 +0200
++++ b/include/drm/drm_connector.h	2026-10-13 14:33:30.000000000 +0200
 @@ -255,6 +255,44 @@
  };
  
@@ -26814,8 +26835,8 @@ diff -ruN --no-dereference -x .git a/include/drm/drm_connector.h b/include/drm/d
  	 */
  	u8 *vics;
 diff -ruN --no-dereference -x .git a/include/drm/drm_modes.h b/include/drm/drm_modes.h
---- a/include/drm/drm_modes.h	2026-08-16 23:32:26.000000000 +0200
-+++ b/include/drm/drm_modes.h	2026-10-03 14:48:53.000000000 +0200
+--- a/include/drm/drm_modes.h	2026-10-11 15:27:50.000000000 +0200
++++ b/include/drm/drm_modes.h	2026-10-13 14:33:30.000000000 +0200
 @@ -417,6 +417,16 @@
  	 */
  	enum hdmi_picture_aspect picture_aspect_ratio;
@@ -26834,8 +26855,8 @@ diff -ruN --no-dereference -x .git a/include/drm/drm_modes.h b/include/drm/drm_m
  
  /**
 diff -ruN --no-dereference -x .git a/include/drm/ttm/ttm_resource.h b/include/drm/ttm/ttm_resource.h
---- a/include/drm/ttm/ttm_resource.h	2026-08-16 23:32:26.000000000 +0200
-+++ b/include/drm/ttm/ttm_resource.h	2026-10-03 14:48:53.000000000 +0200
+--- a/include/drm/ttm/ttm_resource.h	2026-10-11 15:27:50.000000000 +0200
++++ b/include/drm/ttm/ttm_resource.h	2026-10-13 14:33:30.000000000 +0200
 @@ -458,10 +458,14 @@
  void ttm_resource_fini(struct ttm_resource_manager *man,
  		       struct ttm_resource *res);
@@ -26854,7 +26875,7 @@ diff -ruN --no-dereference -x .git a/include/drm/ttm/ttm_resource.h b/include/dr
  			     struct ttm_resource *res,
 diff -ruN --no-dereference -x .git a/include/linux/cachy-t2.h b/include/linux/cachy-t2.h
 --- a/include/linux/cachy-t2.h	1970-01-01 01:00:00.000000000 +0100
-+++ b/include/linux/cachy-t2.h	2026-10-03 14:48:53.000000000 +0200
++++ b/include/linux/cachy-t2.h	2026-10-13 14:33:30.000000000 +0200
 @@ -0,0 +1,35 @@
 +#ifndef CACHYOS_T2_H
 +#define CACHYOS_T2_H
@@ -26892,8 +26913,8 @@ diff -ruN --no-dereference -x .git a/include/linux/cachy-t2.h b/include/linux/ca
 +
 +#endif
 diff -ruN --no-dereference -x .git a/include/linux/cgroup.h b/include/linux/cgroup.h
---- a/include/linux/cgroup.h	2026-08-16 23:32:26.000000000 +0200
-+++ b/include/linux/cgroup.h	2026-10-03 14:48:53.000000000 +0200
+--- a/include/linux/cgroup.h	2026-10-11 15:27:50.000000000 +0200
++++ b/include/linux/cgroup.h	2026-10-13 14:33:30.000000000 +0200
 @@ -624,6 +624,27 @@
  }
  
@@ -26923,8 +26944,8 @@ diff -ruN --no-dereference -x .git a/include/linux/cgroup.h b/include/linux/cgro
   * @task: the task to be tested
   * @ancestor: possible ancestor of @task's cgroup
 diff -ruN --no-dereference -x .git a/include/linux/cgroup_dmem.h b/include/linux/cgroup_dmem.h
---- a/include/linux/cgroup_dmem.h	2026-08-16 23:32:26.000000000 +0200
-+++ b/include/linux/cgroup_dmem.h	2026-10-03 14:48:53.000000000 +0200
+--- a/include/linux/cgroup_dmem.h	2026-10-11 15:27:50.000000000 +0200
++++ b/include/linux/cgroup_dmem.h	2026-10-13 14:33:30.000000000 +0200
 @@ -24,6 +24,12 @@
  bool dmem_cgroup_state_evict_valuable(struct dmem_cgroup_pool_state *limit_pool,
  				      struct dmem_cgroup_pool_state *test_pool,
@@ -26965,8 +26986,8 @@ diff -ruN --no-dereference -x .git a/include/linux/cgroup_dmem.h b/include/linux
  { }
  
 diff -ruN --no-dereference -x .git a/include/linux/cpuset.h b/include/linux/cpuset.h
---- a/include/linux/cpuset.h	2026-10-07 05:21:41.396626235 +0200
-+++ b/include/linux/cpuset.h	2026-10-03 14:48:53.000000000 +0200
+--- a/include/linux/cpuset.h	2026-10-11 15:27:50.000000000 +0200
++++ b/include/linux/cpuset.h	2026-10-13 14:33:30.000000000 +0200
 @@ -80,6 +80,7 @@
  extern void cpuset_cpus_allowed_locked(struct task_struct *p, struct cpumask *mask);
  extern void cpuset_cpus_allowed(struct task_struct *p, struct cpumask *mask);
@@ -26988,8 +27009,8 @@ diff -ruN --no-dereference -x .git a/include/linux/cpuset.h b/include/linux/cpus
  {
  	return node_possible_map;
 diff -ruN --no-dereference -x .git a/include/linux/hid.h b/include/linux/hid.h
---- a/include/linux/hid.h	2026-10-07 05:21:41.397844869 +0200
-+++ b/include/linux/hid.h	2026-10-03 14:48:53.000000000 +0200
+--- a/include/linux/hid.h	2026-10-11 15:27:50.000000000 +0200
++++ b/include/linux/hid.h	2026-10-13 14:33:30.000000000 +0200
 @@ -625,7 +625,9 @@
  enum hid_type {
  	HID_TYPE_OTHER = 0,
@@ -27011,8 +27032,8 @@ diff -ruN --no-dereference -x .git a/include/linux/hid.h b/include/linux/hid.h
  #define HID_REPORT_ID(rep) \
  	.report_type = (rep)
 diff -ruN --no-dereference -x .git a/include/linux/pagemap.h b/include/linux/pagemap.h
---- a/include/linux/pagemap.h	2026-08-16 23:32:26.000000000 +0200
-+++ b/include/linux/pagemap.h	2026-10-03 14:48:53.000000000 +0200
+--- a/include/linux/pagemap.h	2026-10-11 15:27:50.000000000 +0200
++++ b/include/linux/pagemap.h	2026-10-13 14:33:30.000000000 +0200
 @@ -1363,7 +1363,7 @@
  		._index = i,						\
  	}
@@ -27023,9 +27044,9 @@ diff -ruN --no-dereference -x .git a/include/linux/pagemap.h b/include/linux/pag
  void page_cache_ra_unbounded(struct readahead_control *,
  		unsigned long nr_to_read, unsigned long lookahead_count);
 diff -ruN --no-dereference -x .git a/include/linux/perf_event.h b/include/linux/perf_event.h
---- a/include/linux/perf_event.h	2026-10-07 05:21:41.401953601 +0200
-+++ b/include/linux/perf_event.h	2026-10-03 14:48:53.000000000 +0200
-@@ -1615,7 +1615,7 @@
+--- a/include/linux/perf_event.h	2026-10-11 15:27:50.000000000 +0200
++++ b/include/linux/perf_event.h	2026-10-13 14:33:30.000000000 +0200
+@@ -1616,7 +1616,7 @@
  		task->sched_migrated = 1;
  }
  
@@ -27035,8 +27056,8 @@ diff -ruN --no-dereference -x .git a/include/linux/perf_event.h b/include/linux/
  {
  	if (static_branch_unlikely(&perf_sched_events))
 diff -ruN --no-dereference -x .git a/include/linux/rmap.h b/include/linux/rmap.h
---- a/include/linux/rmap.h	2026-08-16 23:32:26.000000000 +0200
-+++ b/include/linux/rmap.h	2026-10-03 14:48:53.000000000 +0200
+--- a/include/linux/rmap.h	2026-10-11 15:27:50.000000000 +0200
++++ b/include/linux/rmap.h	2026-10-13 14:33:30.000000000 +0200
 @@ -843,7 +843,7 @@
   * Called from mm/vmscan.c to handle paging out
   */
@@ -27060,8 +27081,8 @@ diff -ruN --no-dereference -x .git a/include/linux/rmap.h b/include/linux/rmap.h
  }
  
 diff -ruN --no-dereference -x .git a/include/linux/sched/mm.h b/include/linux/sched/mm.h
---- a/include/linux/sched/mm.h	2026-08-16 23:32:26.000000000 +0200
-+++ b/include/linux/sched/mm.h	2026-10-03 14:48:53.000000000 +0200
+--- a/include/linux/sched/mm.h	2026-10-11 15:27:50.000000000 +0200
++++ b/include/linux/sched/mm.h	2026-10-13 14:33:30.000000000 +0200
 @@ -32,7 +32,7 @@
   * See also <Documentation/mm/active_mm.rst> for an in-depth explanation
   * of &mm_struct.mm_count vs &mm_struct.mm_users.
@@ -27146,8 +27167,8 @@ diff -ruN --no-dereference -x .git a/include/linux/sched/mm.h b/include/linux/sc
  	/*
  	 * The atomic_read() below prevents CSE. The following should
 diff -ruN --no-dereference -x .git a/include/linux/sched/topology.h b/include/linux/sched/topology.h
---- a/include/linux/sched/topology.h	2026-10-07 05:21:41.402719305 +0200
-+++ b/include/linux/sched/topology.h	2026-10-03 14:48:53.000000000 +0200
+--- a/include/linux/sched/topology.h	2026-10-11 15:27:50.000000000 +0200
++++ b/include/linux/sched/topology.h	2026-10-13 14:33:30.000000000 +0200
 @@ -86,6 +86,52 @@
  	unsigned long	util_avg;
  	unsigned long	capacity;
@@ -27202,8 +27223,8 @@ diff -ruN --no-dereference -x .git a/include/linux/sched/topology.h b/include/li
  
  struct sched_domain {
 diff -ruN --no-dereference -x .git a/include/linux/sched.h b/include/linux/sched.h
---- a/include/linux/sched.h	2026-10-07 05:21:41.402514566 +0200
-+++ b/include/linux/sched.h	2026-10-03 14:48:53.000000000 +0200
+--- a/include/linux/sched.h	2026-10-11 15:27:50.000000000 +0200
++++ b/include/linux/sched.h	2026-10-13 14:33:30.000000000 +0200
 @@ -575,6 +575,7 @@
  struct sched_entity {
  	/* For load-balancing: */
@@ -27239,8 +27260,8 @@ diff -ruN --no-dereference -x .git a/include/linux/sched.h b/include/linux/sched
  	unsigned long			preempt_disable_ip;
  #endif
 diff -ruN --no-dereference -x .git a/include/linux/smp.h b/include/linux/smp.h
---- a/include/linux/smp.h	2026-08-16 23:32:26.000000000 +0200
-+++ b/include/linux/smp.h	2026-10-03 14:48:53.000000000 +0200
+--- a/include/linux/smp.h	2026-10-11 15:27:50.000000000 +0200
++++ b/include/linux/smp.h	2026-10-13 14:33:30.000000000 +0200
 @@ -47,8 +47,7 @@
  /* total number of cpus in this system (may exceed NR_CPUS) */
  extern unsigned int total_cpus;
@@ -27272,7 +27293,7 @@ diff -ruN --no-dereference -x .git a/include/linux/smp.h b/include/linux/smp.h
   *
 diff -ruN --no-dereference -x .git a/include/linux/soc/apple/dockchannel.h b/include/linux/soc/apple/dockchannel.h
 --- a/include/linux/soc/apple/dockchannel.h	1970-01-01 01:00:00.000000000 +0100
-+++ b/include/linux/soc/apple/dockchannel.h	2026-10-03 14:48:53.000000000 +0200
++++ b/include/linux/soc/apple/dockchannel.h	2026-10-13 14:33:30.000000000 +0200
 @@ -0,0 +1,26 @@
 +/* SPDX-License-Identifier: GPL-2.0-only OR MIT */
 +/*
@@ -27301,8 +27322,8 @@ diff -ruN --no-dereference -x .git a/include/linux/soc/apple/dockchannel.h b/inc
 +#endif
 +#endif
 diff -ruN --no-dereference -x .git a/include/linux/tcp.h b/include/linux/tcp.h
---- a/include/linux/tcp.h	2026-08-16 23:32:26.000000000 +0200
-+++ b/include/linux/tcp.h	2026-10-03 14:48:53.000000000 +0200
+--- a/include/linux/tcp.h	2026-10-11 15:27:50.000000000 +0200
++++ b/include/linux/tcp.h	2026-10-13 14:33:30.000000000 +0200
 @@ -232,7 +232,8 @@
  		tcp_usec_ts : 1, /* TSval values in usec */
  		is_sack_reneg:1,    /* in recovery from loss with SACK reneg? */
@@ -27324,8 +27345,8 @@ diff -ruN --no-dereference -x .git a/include/linux/tcp.h b/include/linux/tcp.h
  		accecn_opt_sent_w_dsack:1,/* Sent ACCECN opt in previous ACK w/ D-SACK */
  		unused2:3;
 diff -ruN --no-dereference -x .git a/include/linux/tick.h b/include/linux/tick.h
---- a/include/linux/tick.h	2026-08-16 23:32:26.000000000 +0200
-+++ b/include/linux/tick.h	2026-10-03 14:48:53.000000000 +0200
+--- a/include/linux/tick.h	2026-10-11 15:27:50.000000000 +0200
++++ b/include/linux/tick.h	2026-10-13 14:33:30.000000000 +0200
 @@ -175,7 +175,7 @@
  #ifdef CONFIG_NO_HZ_FULL
  extern bool tick_nohz_full_running;
@@ -27345,8 +27366,8 @@ diff -ruN --no-dereference -x .git a/include/linux/tick.h b/include/linux/tick.h
  	if (tick_nohz_full_enabled())
  		__tick_nohz_task_switch();
 diff -ruN --no-dereference -x .git a/include/linux/vtime.h b/include/linux/vtime.h
---- a/include/linux/vtime.h	2026-08-16 23:32:26.000000000 +0200
-+++ b/include/linux/vtime.h	2026-10-03 14:48:53.000000000 +0200
+--- a/include/linux/vtime.h	2026-10-11 15:27:50.000000000 +0200
++++ b/include/linux/vtime.h	2026-10-13 14:33:30.000000000 +0200
 @@ -89,24 +89,24 @@
   * For now vtime state is tied to context tracking. We might want to decouple
   * those later if necessary.
@@ -27377,8 +27398,8 @@ diff -ruN --no-dereference -x .git a/include/linux/vtime.h b/include/linux/vtime
  	if (vtime_accounting_enabled_this_cpu())
  		vtime_task_switch_generic(prev);
 diff -ruN --no-dereference -x .git a/include/net/inet_connection_sock.h b/include/net/inet_connection_sock.h
---- a/include/net/inet_connection_sock.h	2026-08-16 23:32:26.000000000 +0200
-+++ b/include/net/inet_connection_sock.h	2026-10-03 14:48:53.000000000 +0200
+--- a/include/net/inet_connection_sock.h	2026-10-11 15:27:50.000000000 +0200
++++ b/include/net/inet_connection_sock.h	2026-10-13 14:33:30.000000000 +0200
 @@ -138,8 +138,8 @@
  	u32			  icsk_probes_tstamp;
  	u32			  icsk_user_timeout;
@@ -27391,8 +27412,8 @@ diff -ruN --no-dereference -x .git a/include/net/inet_connection_sock.h b/includ
  
  #define ICSK_TIME_RETRANS	1	/* Retransmit timer */
 diff -ruN --no-dereference -x .git a/include/net/tcp.h b/include/net/tcp.h
---- a/include/net/tcp.h	2026-10-07 05:21:41.406923367 +0200
-+++ b/include/net/tcp.h	2026-10-03 14:48:53.000000000 +0200
+--- a/include/net/tcp.h	2026-10-11 15:27:50.000000000 +0200
++++ b/include/net/tcp.h	2026-10-13 14:33:30.000000000 +0200
 @@ -428,6 +428,8 @@
  #define	TCP_ECN_DEMAND_CWR	BIT(2)
  #define	TCP_ECN_SEEN		BIT(3)
@@ -27554,8 +27575,8 @@ diff -ruN --no-dereference -x .git a/include/net/tcp.h b/include/net/tcp.h
  static inline void tcp_plb_init(const struct sock *sk,
  				struct tcp_plb_state *plb)
 diff -ruN --no-dereference -x .git a/include/net/tcp_ecn.h b/include/net/tcp_ecn.h
---- a/include/net/tcp_ecn.h	2026-08-16 23:32:26.000000000 +0200
-+++ b/include/net/tcp_ecn.h	2026-10-03 14:48:53.000000000 +0200
+--- a/include/net/tcp_ecn.h	2026-10-11 15:27:50.000000000 +0200
++++ b/include/net/tcp_ecn.h	2026-10-13 14:33:30.000000000 +0200
 @@ -606,10 +606,9 @@
  	use_ecn = tcp_ecn == TCP_ECN_IN_ECN_OUT_ECN ||
  		  tcp_ecn == TCP_ECN_IN_ACCECN_OUT_ECN ||
@@ -27580,7 +27601,7 @@ diff -ruN --no-dereference -x .git a/include/net/tcp_ecn.h b/include/net/tcp_ecn
  }
 diff -ruN --no-dereference -x .git a/include/sound/aw88399.h b/include/sound/aw88399.h
 --- a/include/sound/aw88399.h	1970-01-01 01:00:00.000000000 +0100
-+++ b/include/sound/aw88399.h	2026-10-03 14:48:53.000000000 +0200
++++ b/include/sound/aw88399.h	2026-10-13 14:33:30.000000000 +0200
 @@ -0,0 +1,621 @@
 +/* SPDX-License-Identifier: GPL-2.0-only
 + *
@@ -28204,8 +28225,8 @@ diff -ruN --no-dereference -x .git a/include/sound/aw88399.h b/include/sound/aw8
 +
 +#endif /* __SOUND_AW88399_H */
 diff -ruN --no-dereference -x .git a/include/uapi/linux/inet_diag.h b/include/uapi/linux/inet_diag.h
---- a/include/uapi/linux/inet_diag.h	2026-08-16 23:32:26.000000000 +0200
-+++ b/include/uapi/linux/inet_diag.h	2026-10-03 14:48:53.000000000 +0200
+--- a/include/uapi/linux/inet_diag.h	2026-10-11 15:27:50.000000000 +0200
++++ b/include/uapi/linux/inet_diag.h	2026-10-13 14:33:30.000000000 +0200
 @@ -238,6 +238,29 @@
  	__u32	bbr_min_rtt;		/* min-filtered RTT in uSec */
  	__u32	bbr_pacing_gain;	/* pacing gain shifted left 8 bits */
@@ -28237,8 +28258,8 @@ diff -ruN --no-dereference -x .git a/include/uapi/linux/inet_diag.h b/include/ua
  
  union tcp_cc_info {
 diff -ruN --no-dereference -x .git a/include/uapi/linux/rtnetlink.h b/include/uapi/linux/rtnetlink.h
---- a/include/uapi/linux/rtnetlink.h	2026-08-16 23:32:26.000000000 +0200
-+++ b/include/uapi/linux/rtnetlink.h	2026-10-03 14:48:53.000000000 +0200
+--- a/include/uapi/linux/rtnetlink.h	2026-10-11 15:27:50.000000000 +0200
++++ b/include/uapi/linux/rtnetlink.h	2026-10-13 14:33:30.000000000 +0200
 @@ -517,12 +517,14 @@
  #define RTAX_FEATURE_TIMESTAMP		(1 << 2) /* unused */
  #define RTAX_FEATURE_ALLFRAG		(1 << 3) /* unused */
@@ -28256,8 +28277,8 @@ diff -ruN --no-dereference -x .git a/include/uapi/linux/rtnetlink.h b/include/ua
  struct rta_session {
  	__u8	proto;
 diff -ruN --no-dereference -x .git a/include/uapi/linux/tcp.h b/include/uapi/linux/tcp.h
---- a/include/uapi/linux/tcp.h	2026-08-16 23:32:26.000000000 +0200
-+++ b/include/uapi/linux/tcp.h	2026-10-03 14:48:53.000000000 +0200
+--- a/include/uapi/linux/tcp.h	2026-10-11 15:27:50.000000000 +0200
++++ b/include/uapi/linux/tcp.h	2026-10-13 14:33:30.000000000 +0200
 @@ -185,6 +185,7 @@
  #define TCPI_OPT_SYN_DATA	32 /* SYN-ACK acked data in SYN sent or rcvd */
  #define TCPI_OPT_USEC_TS	64 /* usec timestamps */
@@ -28267,9 +28288,9 @@ diff -ruN --no-dereference -x .git a/include/uapi/linux/tcp.h b/include/uapi/lin
  /*
   * Sender's congestion state indicating normal or abnormal situations
 diff -ruN --no-dereference -x .git a/init/Kconfig b/init/Kconfig
---- a/init/Kconfig	2026-08-16 23:32:26.000000000 +0200
-+++ b/init/Kconfig	2026-10-03 14:48:53.000000000 +0200
-@@ -218,6 +218,10 @@
+--- a/init/Kconfig	2026-10-11 15:27:50.000000000 +0200
++++ b/init/Kconfig	2026-10-13 14:33:30.000000000 +0200
+@@ -223,6 +223,10 @@
  
  menu "General setup"
  
@@ -28280,7 +28301,7 @@ diff -ruN --no-dereference -x .git a/init/Kconfig b/init/Kconfig
  config BROKEN
  	bool
  	help
-@@ -1492,6 +1496,19 @@
+@@ -1497,6 +1501,19 @@
  	  desktop applications.  Task group autogeneration is currently based
  	  upon task session.
  
@@ -28300,7 +28321,7 @@ diff -ruN --no-dereference -x .git a/init/Kconfig b/init/Kconfig
  config RELAY
  	bool "Kernel->user space relay support (formerly relayfs)"
  	select IRQ_WORK
-@@ -1616,6 +1633,12 @@
+@@ -1621,6 +1638,12 @@
  	  with the "-O2" compiler flag for best performance and most
  	  helpful compile-time warnings.
  
@@ -28314,8 +28335,8 @@ diff -ruN --no-dereference -x .git a/init/Kconfig b/init/Kconfig
  	bool "Optimize for size (-Os)"
  	help
 diff -ruN --no-dereference -x .git a/kernel/Kconfig.hz b/kernel/Kconfig.hz
---- a/kernel/Kconfig.hz	2026-08-16 23:32:26.000000000 +0200
-+++ b/kernel/Kconfig.hz	2026-10-03 14:48:53.000000000 +0200
+--- a/kernel/Kconfig.hz	2026-10-11 15:27:50.000000000 +0200
++++ b/kernel/Kconfig.hz	2026-10-13 14:33:30.000000000 +0200
 @@ -40,6 +40,27 @@
  	 on SMP and NUMA systems and exactly dividing by both PAL and
  	 NTSC frame rates for video and multimedia work.
@@ -28355,8 +28376,8 @@ diff -ruN --no-dereference -x .git a/kernel/Kconfig.hz b/kernel/Kconfig.hz
  
  config SCHED_HRTICK
 diff -ruN --no-dereference -x .git a/kernel/Kconfig.preempt b/kernel/Kconfig.preempt
---- a/kernel/Kconfig.preempt	2026-10-07 05:21:41.409731629 +0200
-+++ b/kernel/Kconfig.preempt	2026-10-03 14:48:53.000000000 +0200
+--- a/kernel/Kconfig.preempt	2026-10-11 15:27:50.000000000 +0200
++++ b/kernel/Kconfig.preempt	2026-10-13 14:33:30.000000000 +0200
 @@ -91,7 +91,7 @@
  
  config PREEMPT_RT
@@ -28367,8 +28388,8 @@ diff -ruN --no-dereference -x .git a/kernel/Kconfig.preempt b/kernel/Kconfig.pre
  	help
  	  This option turns the kernel into a real-time kernel by replacing
 diff -ruN --no-dereference -x .git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
---- a/kernel/cgroup/cpuset.c	2026-10-07 05:21:41.415615872 +0200
-+++ b/kernel/cgroup/cpuset.c	2026-10-03 14:48:53.000000000 +0200
+--- a/kernel/cgroup/cpuset.c	2026-10-11 15:27:50.000000000 +0200
++++ b/kernel/cgroup/cpuset.c	2026-10-13 14:33:30.000000000 +0200
 @@ -4158,6 +4158,28 @@
  	return changed;
  }
@@ -28399,8 +28420,8 @@ diff -ruN --no-dereference -x .git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpus
  {
  	nodes_setall(current->mems_allowed);
 diff -ruN --no-dereference -x .git a/kernel/cgroup/dmem.c b/kernel/cgroup/dmem.c
---- a/kernel/cgroup/dmem.c	2026-08-16 23:32:26.000000000 +0200
-+++ b/kernel/cgroup/dmem.c	2026-10-03 14:48:53.000000000 +0200
+--- a/kernel/cgroup/dmem.c	2026-10-11 15:27:50.000000000 +0200
++++ b/kernel/cgroup/dmem.c	2026-10-13 14:33:30.000000000 +0200
 @@ -695,6 +695,110 @@
  }
  EXPORT_SYMBOL_GPL(dmem_cgroup_try_charge);
@@ -28513,8 +28534,8 @@ diff -ruN --no-dereference -x .git a/kernel/cgroup/dmem.c b/kernel/cgroup/dmem.c
  {
  	struct dmem_cgroup_region *region;
 diff -ruN --no-dereference -x .git a/kernel/fork.c b/kernel/fork.c
---- a/kernel/fork.c	2026-10-07 05:21:41.417534966 +0200
-+++ b/kernel/fork.c	2026-10-03 14:48:53.000000000 +0200
+--- a/kernel/fork.c	2026-10-11 15:27:50.000000000 +0200
++++ b/kernel/fork.c	2026-10-13 14:33:30.000000000 +0200
 @@ -127,6 +127,12 @@
  
  #include <kunit/visibility.h>
@@ -28561,7 +28582,7 @@ diff -ruN --no-dereference -x .git a/kernel/fork.c b/kernel/fork.c
  free_stack:
  	exit_task_stack_account(tsk);
  	free_thread_stack(tsk);
-@@ -2092,6 +2105,11 @@
+@@ -2093,6 +2106,11 @@
  			return ERR_PTR(-EPERM);
  	}
  
@@ -28573,7 +28594,7 @@ diff -ruN --no-dereference -x .git a/kernel/fork.c b/kernel/fork.c
  	/*
  	 * Force any signals received before this point to be delivered
  	 * before the fork happens.  Collect up signals sent to multiple
-@@ -3165,6 +3183,10 @@
+@@ -3167,6 +3185,10 @@
  		if (!current_is_single_threaded())
  			return -EINVAL;
  	}
@@ -28584,7 +28605,7 @@ diff -ruN --no-dereference -x .git a/kernel/fork.c b/kernel/fork.c
  
  	return 0;
  }
-@@ -3400,6 +3422,15 @@
+@@ -3402,6 +3424,15 @@
  		.mode		= 0644,
  		.proc_handler	= sysctl_max_threads,
  	},
@@ -28601,8 +28622,8 @@ diff -ruN --no-dereference -x .git a/kernel/fork.c b/kernel/fork.c
  
  static int __init init_fork_sysctl(void)
 diff -ruN --no-dereference -x .git a/kernel/scftorture.c b/kernel/scftorture.c
---- a/kernel/scftorture.c	2026-08-16 23:32:26.000000000 +0200
-+++ b/kernel/scftorture.c	2026-10-03 14:48:53.000000000 +0200
+--- a/kernel/scftorture.c	2026-10-11 15:27:50.000000000 +0200
++++ b/kernel/scftorture.c	2026-10-13 14:33:30.000000000 +0200
 @@ -348,6 +348,8 @@
  	int ret = 0;
  	struct scf_check *scfcp = NULL;
@@ -28655,8 +28676,8 @@ diff -ruN --no-dereference -x .git a/kernel/scftorture.c b/kernel/scftorture.c
  		schedule_timeout_idle((1 + longwait) * HZ);  // Let no-wait handlers complete.
  	else if (!(torture_random(trsp) & 0xfff))
 diff -ruN --no-dereference -x .git a/kernel/sched/core.c b/kernel/sched/core.c
---- a/kernel/sched/core.c	2026-10-07 05:21:41.420809544 +0200
-+++ b/kernel/sched/core.c	2026-10-03 14:48:53.000000000 +0200
+--- a/kernel/sched/core.c	2026-10-11 15:27:50.000000000 +0200
++++ b/kernel/sched/core.c	2026-10-13 14:33:30.000000000 +0200
 @@ -674,7 +674,7 @@
  
  	/* Matches synchronize_rcu() in __sched_core_enable() */
@@ -28761,8 +28782,8 @@ diff -ruN --no-dereference -x .git a/kernel/sched/core.c b/kernel/sched/core.c
  		return 1;
  	}
 diff -ruN --no-dereference -x .git a/kernel/sched/debug.c b/kernel/sched/debug.c
---- a/kernel/sched/debug.c	2026-08-16 23:32:26.000000000 +0200
-+++ b/kernel/sched/debug.c	2026-10-03 14:48:53.000000000 +0200
+--- a/kernel/sched/debug.c	2026-10-11 15:27:50.000000000 +0200
++++ b/kernel/sched/debug.c	2026-10-13 14:33:30.000000000 +0200
 @@ -633,6 +633,82 @@
  	}
  }
@@ -28890,9 +28911,9 @@ diff -ruN --no-dereference -x .git a/kernel/sched/debug.c b/kernel/sched/debug.c
  #ifdef CONFIG_CFS_BANDWIDTH
  	SEQ_printf(m, "  .%-30s: %d\n", "throttled",
 diff -ruN --no-dereference -x .git a/kernel/sched/ext/ext.c b/kernel/sched/ext/ext.c
---- a/kernel/sched/ext/ext.c	2026-10-07 05:21:41.421842335 +0200
-+++ b/kernel/sched/ext/ext.c	2026-10-03 14:48:53.000000000 +0200
-@@ -6368,6 +6368,9 @@
+--- a/kernel/sched/ext/ext.c	2026-10-11 15:27:50.000000000 +0200
++++ b/kernel/sched/ext/ext.c	2026-10-13 14:33:30.000000000 +0200
+@@ -6390,6 +6390,9 @@
  	mutex_unlock(&scx_enable_mutex);
  
  	WARN_ON_ONCE(scx_set_enable_state(SCX_DISABLED) != SCX_DISABLING);
@@ -28902,7 +28923,7 @@ diff -ruN --no-dereference -x .git a/kernel/sched/ext/ext.c b/kernel/sched/ext/e
  done:
  	scx_bypass(sch, false);
  }
-@@ -7584,6 +7587,10 @@
+@@ -7606,6 +7609,10 @@
  		}
  	}
  
@@ -28914,8 +28935,8 @@ diff -ruN --no-dereference -x .git a/kernel/sched/ext/ext.c b/kernel/sched/ext/e
  		sch->ops.name, scx_switched_all() ? "" : " (partial)");
  	kobject_uevent(&sch->kobj, KOBJ_ADD);
 diff -ruN --no-dereference -x .git a/kernel/sched/fair.c b/kernel/sched/fair.c
---- a/kernel/sched/fair.c	2026-10-07 05:21:41.422913619 +0200
-+++ b/kernel/sched/fair.c	2026-10-03 14:48:53.000000000 +0200
+--- a/kernel/sched/fair.c	2026-10-11 15:27:50.000000000 +0200
++++ b/kernel/sched/fair.c	2026-10-13 14:33:30.000000000 +0200
 @@ -38,6 +38,7 @@
  #include <linux/sched/isolation.h>
  #include <linux/sched/nohz.h>
@@ -29115,7 +29136,7 @@ diff -ruN --no-dereference -x .git a/kernel/sched/fair.c b/kernel/sched/fair.c
  #ifdef CONFIG_SCHED_CACHE
  
  /*
-@@ -2069,7 +2045,7 @@
+@@ -2189,7 +2165,7 @@
  	 * not necessarily be the actual task running
  	 * (rq->curr.se). This is easy to confuse!
  	 */
@@ -29124,7 +29145,7 @@ diff -ruN --no-dereference -x .git a/kernel/sched/fair.c b/kernel/sched/fair.c
  	struct rq *rq = rq_of(cfs_rq);
  	s64 delta_exec;
  	bool resched;
-@@ -2081,26 +2057,29 @@
+@@ -2201,26 +2177,29 @@
  	if (unlikely(delta_exec <= 0))
  		return;
  
@@ -29170,7 +29191,7 @@ diff -ruN --no-dereference -x .git a/kernel/sched/fair.c b/kernel/sched/fair.c
  		return;
  
  	if (resched || !protect_slice(curr)) {
-@@ -2111,7 +2090,10 @@
+@@ -2231,7 +2210,10 @@
  
  static void update_curr_fair(struct rq *rq)
  {
@@ -29182,7 +29203,7 @@ diff -ruN --no-dereference -x .git a/kernel/sched/fair.c b/kernel/sched/fair.c
  }
  
  static inline void
-@@ -2187,7 +2169,7 @@
+@@ -2307,7 +2289,7 @@
  	 * Are we enqueueing a waiting task? (for current tasks
  	 * a dequeue/enqueue event is a NOP)
  	 */
@@ -29191,7 +29212,7 @@ diff -ruN --no-dereference -x .git a/kernel/sched/fair.c b/kernel/sched/fair.c
  		update_stats_wait_start_fair(cfs_rq, se);
  
  	if (flags & ENQUEUE_WAKEUP)
-@@ -2205,7 +2187,7 @@
+@@ -2325,7 +2307,7 @@
  	 * Mark the end of the wait period if dequeueing a
  	 * waiting task:
  	 */
@@ -29200,7 +29221,7 @@ diff -ruN --no-dereference -x .git a/kernel/sched/fair.c b/kernel/sched/fair.c
  		update_stats_wait_end_fair(cfs_rq, se);
  
  	if ((flags & DEQUEUE_SLEEP) && entity_is_task(se)) {
-@@ -4551,6 +4533,7 @@
+@@ -4672,6 +4654,7 @@
  static void
  account_entity_enqueue(struct cfs_rq *cfs_rq, struct sched_entity *se)
  {
@@ -29208,7 +29229,7 @@ diff -ruN --no-dereference -x .git a/kernel/sched/fair.c b/kernel/sched/fair.c
  	update_load_add(&cfs_rq->load, se->load.weight);
  	if (entity_is_task(se)) {
  		struct task_struct *p = task_of(se);
-@@ -4566,6 +4549,7 @@
+@@ -4687,6 +4670,7 @@
  static void
  account_entity_dequeue(struct cfs_rq *cfs_rq, struct sched_entity *se)
  {
@@ -29216,7 +29237,7 @@ diff -ruN --no-dereference -x .git a/kernel/sched/fair.c b/kernel/sched/fair.c
  	update_load_sub(&cfs_rq->load, se->load.weight);
  	if (entity_is_task(se)) {
  		struct task_struct *p = task_of(se);
-@@ -4647,7 +4631,7 @@
+@@ -4768,7 +4752,7 @@
  static void
  rescale_entity(struct sched_entity *se, unsigned long weight, bool rel_vprot)
  {
@@ -29225,7 +29246,7 @@ diff -ruN --no-dereference -x .git a/kernel/sched/fair.c b/kernel/sched/fair.c
  
  	/*
  	 * VRUNTIME
-@@ -4747,16 +4731,17 @@
+@@ -4868,16 +4852,17 @@
  		se->vprot = div64_long(se->vprot * old_weight, weight);
  }
  
@@ -29248,7 +29269,7 @@ diff -ruN --no-dereference -x .git a/kernel/sched/fair.c b/kernel/sched/fair.c
  		avruntime = avg_vruntime(cfs_rq);
  		se->vlag = entity_lag(cfs_rq, se, avruntime);
  		se->deadline -= avruntime;
-@@ -4766,46 +4751,90 @@
+@@ -4887,46 +4872,90 @@
  			rel_vprot = true;
  		}
  
@@ -29356,7 +29377,7 @@ diff -ruN --no-dereference -x .git a/kernel/sched/fair.c b/kernel/sched/fair.c
  }
  
  static inline int throttled_hierarchy(struct cfs_rq *cfs_rq);
-@@ -4884,12 +4913,10 @@
+@@ -5005,12 +5034,10 @@
   *
   * hence icky!
   */
@@ -29371,7 +29392,7 @@ diff -ruN --no-dereference -x .git a/kernel/sched/fair.c b/kernel/sched/fair.c
  
  	load = max(scale_load_down(cfs_rq->load.weight), cfs_rq->avg.load_avg);
  
-@@ -4915,7 +4942,120 @@
+@@ -5036,7 +5063,120 @@
  	 * case no task is runnable on a CPU MIN_SHARES=2 should be returned
  	 * instead of 0.
  	 */
@@ -29493,7 +29514,7 @@ diff -ruN --no-dereference -x .git a/kernel/sched/fair.c b/kernel/sched/fair.c
  }
  
  /*
-@@ -4934,9 +5074,8 @@
+@@ -5055,9 +5195,8 @@
  	if (!gcfs_rq || !gcfs_rq->load.weight)
  		return;
  
@@ -29505,7 +29526,7 @@ diff -ruN --no-dereference -x .git a/kernel/sched/fair.c b/kernel/sched/fair.c
  }
  
  #else /* !CONFIG_FAIR_GROUP_SCHED: */
-@@ -5054,11 +5193,11 @@
+@@ -5175,11 +5314,11 @@
   * differential update where we store the last value we propagated. This in
   * turn allows skipping updates if the differential is 'small'.
   *
@@ -29519,7 +29540,7 @@ diff -ruN --no-dereference -x .git a/kernel/sched/fair.c b/kernel/sched/fair.c
  	u64 now;
  
  	/*
-@@ -5079,17 +5218,21 @@
+@@ -5200,17 +5339,21 @@
  	if (now - cfs_rq->last_update_tg_load_avg < NSEC_PER_MSEC)
  		return;
  
@@ -29545,7 +29566,7 @@ diff -ruN --no-dereference -x .git a/kernel/sched/fair.c b/kernel/sched/fair.c
  	u64 now;
  
  	/*
-@@ -5099,9 +5242,12 @@
+@@ -5220,9 +5363,12 @@
  		return;
  
  	now = rq_clock(rq_of(cfs_rq));
@@ -29560,7 +29581,7 @@ diff -ruN --no-dereference -x .git a/kernel/sched/fair.c b/kernel/sched/fair.c
  	cfs_rq->last_update_tg_load_avg = now;
  }
  
-@@ -5515,7 +5661,7 @@
+@@ -5636,7 +5782,7 @@
   * The cfs_rq avg is the direct sum of all its entities (blocked and runnable)
   * avg. The immediate corollary is that all (fair) tasks must be attached.
   *
@@ -29569,7 +29590,7 @@ diff -ruN --no-dereference -x .git a/kernel/sched/fair.c b/kernel/sched/fair.c
   *
   * Return: true if the load decayed or we removed load.
   *
-@@ -6053,6 +6199,7 @@
+@@ -6174,6 +6320,7 @@
  place_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
  {
  	u64 vslice, vruntime = avg_vruntime(cfs_rq);
@@ -29577,7 +29598,7 @@ diff -ruN --no-dereference -x .git a/kernel/sched/fair.c b/kernel/sched/fair.c
  	bool update_zero = false;
  	s64 lag = 0;
  
-@@ -6060,6 +6207,9 @@
+@@ -6181,6 +6328,9 @@
  		se->slice = sysctl_sched_base_slice;
  	vslice = calc_delta_fair(se->slice, se);
  
@@ -29587,7 +29608,7 @@ diff -ruN --no-dereference -x .git a/kernel/sched/fair.c b/kernel/sched/fair.c
  	/*
  	 * Due to how V is constructed as the weighted average of entities,
  	 * adding tasks with positive lag, or removing tasks with negative lag
-@@ -6068,7 +6218,7 @@
+@@ -6189,7 +6339,7 @@
  	 *
  	 * EEVDF: placement strategy #1 / #2
  	 */
@@ -29596,7 +29617,7 @@ diff -ruN --no-dereference -x .git a/kernel/sched/fair.c b/kernel/sched/fair.c
  		struct sched_entity *curr = cfs_rq->curr;
  		long load, weight;
  
-@@ -6128,9 +6278,9 @@
+@@ -6249,9 +6399,9 @@
  		 */
  		load = cfs_rq->sum_weight;
  		if (curr && curr->on_rq)
@@ -29608,7 +29629,7 @@ diff -ruN --no-dereference -x .git a/kernel/sched/fair.c b/kernel/sched/fair.c
  		lag *= load + weight;
  		if (WARN_ON_ONCE(!load))
  			load = 1;
-@@ -6189,22 +6339,8 @@
+@@ -6310,22 +6460,8 @@
  static inline int cfs_rq_throttled(struct cfs_rq *cfs_rq);
  
  static void
@@ -29631,7 +29652,7 @@ diff -ruN --no-dereference -x .git a/kernel/sched/fair.c b/kernel/sched/fair.c
  	/*
  	 * When enqueuing a sched_entity, we must:
  	 *   - Update loads to have both entity and cfs_rq synced with now.
-@@ -6223,13 +6359,6 @@
+@@ -6344,13 +6480,6 @@
  	 */
  	update_cfs_group(se);
  
@@ -29645,7 +29666,7 @@ diff -ruN --no-dereference -x .git a/kernel/sched/fair.c b/kernel/sched/fair.c
  	account_entity_enqueue(cfs_rq, se);
  
  	/* Entity has migrated, no longer consider this task hot */
-@@ -6238,8 +6367,6 @@
+@@ -6359,8 +6488,6 @@
  
  	check_schedstat_required();
  	update_stats_enqueue_fair(cfs_rq, se, flags);
@@ -29654,7 +29675,7 @@ diff -ruN --no-dereference -x .git a/kernel/sched/fair.c b/kernel/sched/fair.c
  	se->on_rq = 1;
  
  	if (cfs_rq->nr_queued == 1) {
-@@ -6257,21 +6384,19 @@
+@@ -6378,21 +6505,19 @@
  	}
  }
  
@@ -29683,16 +29704,16 @@ diff -ruN --no-dereference -x .git a/kernel/sched/fair.c b/kernel/sched/fair.c
  }
  
  static __always_inline void return_cfs_rq_runtime(struct cfs_rq *cfs_rq);
-@@ -6282,7 +6407,7 @@
- 
+@@ -6401,7 +6526,7 @@
+ {
  	/*
  	 * Delayed se of cfs_rq have no tasks queued on them.
 -	 * Do not adjust h_nr_runnable since dequeue_entities()
 +	 * Do not adjust h_nr_runnable since __dequeue_task()
  	 * will account it for blocked tasks.
- 	 */
- 	if (!entity_is_task(se))
-@@ -6315,45 +6440,16 @@
+ 	 *
+ 	 * This check can be removed because when flat pick
+@@ -6455,45 +6580,16 @@
  	}
  }
  
@@ -29741,7 +29762,7 @@ diff -ruN --no-dereference -x .git a/kernel/sched/fair.c b/kernel/sched/fair.c
  			action |= UPDATE_UTIL_EST;
  	}
  
-@@ -6371,14 +6467,6 @@
+@@ -6511,14 +6607,6 @@
  
  	update_stats_dequeue_fair(cfs_rq, se, flags);
  
@@ -29756,7 +29777,7 @@ diff -ruN --no-dereference -x .git a/kernel/sched/fair.c b/kernel/sched/fair.c
  	se->on_rq = 0;
  	account_entity_dequeue(cfs_rq, se);
  
-@@ -6387,9 +6475,6 @@
+@@ -6527,9 +6615,6 @@
  
  	update_cfs_group(se);
  
@@ -29766,7 +29787,7 @@ diff -ruN --no-dereference -x .git a/kernel/sched/fair.c b/kernel/sched/fair.c
  	if (cfs_rq->nr_queued == 0) {
  		update_idle_cfs_rq_clock_pelt(cfs_rq);
  #ifdef CONFIG_CFS_BANDWIDTH
-@@ -6402,15 +6487,11 @@
+@@ -6542,15 +6627,11 @@
  		}
  #endif
  	}
@@ -29783,7 +29804,7 @@ diff -ruN --no-dereference -x .git a/kernel/sched/fair.c b/kernel/sched/fair.c
  	/* 'current' is not kept within the tree. */
  	if (se->on_rq) {
  		/*
-@@ -6419,16 +6500,12 @@
+@@ -6559,16 +6640,12 @@
  		 * runqueue.
  		 */
  		update_stats_wait_end_fair(cfs_rq, se);
@@ -29802,7 +29823,7 @@ diff -ruN --no-dereference -x .git a/kernel/sched/fair.c b/kernel/sched/fair.c
  
  	/*
  	 * Track our maximum slice length, if the CPU's load is at
-@@ -6448,23 +6525,17 @@
+@@ -6588,23 +6665,17 @@
  	se->prev_sum_exec_runtime = se->sum_exec_runtime;
  }
  
@@ -29830,7 +29851,7 @@ diff -ruN --no-dereference -x .git a/kernel/sched/fair.c b/kernel/sched/fair.c
  		/*
  		 * Must not reference @se again, see __block_task().
  		 */
-@@ -6484,13 +6555,11 @@
+@@ -6624,13 +6695,11 @@
  
  	if (prev->on_rq) {
  		update_stats_wait_start_fair(cfs_rq, prev);
@@ -29846,7 +29867,7 @@ diff -ruN --no-dereference -x .git a/kernel/sched/fair.c b/kernel/sched/fair.c
  }
  
  static void
-@@ -7045,7 +7114,7 @@
+@@ -7185,7 +7254,7 @@
  	assert_list_leaf_cfs_rq(rq);
  
  	/* Determine whether we need to wake up potentially idle CPU: */
@@ -29855,7 +29876,7 @@ diff -ruN --no-dereference -x .git a/kernel/sched/fair.c b/kernel/sched/fair.c
  		resched_curr(rq);
  }
  
-@@ -7380,7 +7449,7 @@
+@@ -7520,7 +7589,7 @@
  		return;
  
  	/* an active group must be handled by the update_curr() path */
@@ -29864,7 +29885,7 @@ diff -ruN --no-dereference -x .git a/kernel/sched/fair.c b/kernel/sched/fair.c
  		return;
  
  	/* ensure the group is not already throttled */
-@@ -7752,7 +7821,7 @@
+@@ -7892,7 +7961,7 @@
  			resched_curr(rq);
  		return;
  	}
@@ -29873,7 +29894,7 @@ diff -ruN --no-dereference -x .git a/kernel/sched/fair.c b/kernel/sched/fair.c
  
  	/*
  	 * Correct for instantaneous load of other classes.
-@@ -7852,10 +7921,8 @@
+@@ -7992,10 +8061,8 @@
  }
  
  static void
@@ -29885,7 +29906,7 @@ diff -ruN --no-dereference -x .git a/kernel/sched/fair.c b/kernel/sched/fair.c
  	/*
  	 * se->sched_delayed should imply: se->on_rq == 1.
  	 * Because a delayed entity is one that is still on
-@@ -7867,19 +7934,58 @@
+@@ -8007,19 +8074,58 @@
  	update_curr(cfs_rq);
  
  	if (update_entity_lag(cfs_rq, se)) {
@@ -29946,7 +29967,7 @@ diff -ruN --no-dereference -x .git a/kernel/sched/fair.c b/kernel/sched/fair.c
  /*
   * The enqueue_task method is called before nr_running is
   * increased. Here we update the fair scheduling stats and
-@@ -7888,13 +7994,12 @@
+@@ -8028,13 +8134,12 @@
  static void
  enqueue_task_fair(struct rq *rq, struct task_struct *p, int flags)
  {
@@ -29965,7 +29986,7 @@ diff -ruN --no-dereference -x .git a/kernel/sched/fair.c b/kernel/sched/fair.c
  
  	if (task_is_throttled(p) && enqueue_throttled_task(p))
  		return;
-@@ -7906,10 +8011,10 @@
+@@ -8046,10 +8151,10 @@
  	 * estimated utilization, before we update schedutil.
  	 */
  	if (!p->se.sched_delayed || (flags & ENQUEUE_DELAYED))
@@ -29978,7 +29999,7 @@ diff -ruN --no-dereference -x .git a/kernel/sched/fair.c b/kernel/sched/fair.c
  		return;
  	}
  
-@@ -7921,57 +8026,22 @@
+@@ -8061,57 +8166,22 @@
  	if (p->in_iowait)
  		cpufreq_update_util(rq, SCHED_CPUFREQ_IOWAIT);
  
@@ -30049,7 +30070,7 @@ diff -ruN --no-dereference -x .git a/kernel/sched/fair.c b/kernel/sched/fair.c
  	}
  
  	if (!rq_h_nr_queued && rq->cfs.h_nr_queued)
-@@ -8002,105 +8072,109 @@
+@@ -8142,105 +8212,109 @@
  	hrtick_update(rq);
  }
  
@@ -30222,7 +30243,7 @@ diff -ruN --no-dereference -x .git a/kernel/sched/fair.c b/kernel/sched/fair.c
  		WARN_ON_ONCE(!task_sleep);
  		WARN_ON_ONCE(p->on_rq != 1);
  
-@@ -8112,7 +8186,7 @@
+@@ -8252,7 +8326,7 @@
  		__block_task(rq, p);
  	}
  
@@ -30231,7 +30252,7 @@ diff -ruN --no-dereference -x .git a/kernel/sched/fair.c b/kernel/sched/fair.c
  }
  
  /*
-@@ -8130,11 +8204,11 @@
+@@ -8270,11 +8344,11 @@
  	if (!p->se.sched_delayed)
  		util_est_dequeue(&rq->cfs, p);
  
@@ -30245,7 +30266,7 @@ diff -ruN --no-dereference -x .git a/kernel/sched/fair.c b/kernel/sched/fair.c
  	 */
  	return true;
  }
-@@ -8555,6 +8629,20 @@
+@@ -8695,6 +8769,20 @@
  }
  
  /*
@@ -30266,7 +30287,7 @@ diff -ruN --no-dereference -x .git a/kernel/sched/fair.c b/kernel/sched/fair.c
   * Scan the entire LLC domain for idle cores; this dynamically switches off if
   * there are no idle cores left in the system; tracked through
   * sd_balance_shared->has_idle_cores and enabled through update_idle_core()
-@@ -8881,16 +8969,38 @@
+@@ -9021,16 +9109,38 @@
  	return true;
  }
  
@@ -30306,7 +30327,7 @@ diff -ruN --no-dereference -x .git a/kernel/sched/fair.c b/kernel/sched/fair.c
  	/*
  	 * On asymmetric system, update task utilization because we will check
  	 * that the task fits with CPU's capacity.
-@@ -8907,23 +9017,13 @@
+@@ -9047,23 +9157,13 @@
  	 */
  	lockdep_assert_irqs_disabled();
  
@@ -30335,7 +30356,7 @@ diff -ruN --no-dereference -x .git a/kernel/sched/fair.c b/kernel/sched/fair.c
  
  	/*
  	 * Allow a per-cpu kthread to stack with the wakee if the
-@@ -8941,24 +9041,6 @@
+@@ -9081,24 +9181,6 @@
  		return prev;
  	}
  
@@ -30360,7 +30381,7 @@ diff -ruN --no-dereference -x .git a/kernel/sched/fair.c b/kernel/sched/fair.c
  	/*
  	 * For asymmetric CPU capacity systems, our domain of interest is
  	 * sd_asym_cpucapacity rather than sd_llc.
-@@ -8983,6 +9065,74 @@
+@@ -9123,6 +9205,74 @@
  	if (!sd)
  		return target;
  
@@ -30435,7 +30456,7 @@ diff -ruN --no-dereference -x .git a/kernel/sched/fair.c b/kernel/sched/fair.c
  	if (sched_smt_active()) {
  		has_idle_core = test_idle_cores(target);
  
-@@ -8997,6 +9147,9 @@
+@@ -9137,6 +9287,9 @@
  	if ((unsigned)i < nr_cpumask_bits)
  		return i;
  
@@ -30445,7 +30466,7 @@ diff -ruN --no-dereference -x .git a/kernel/sched/fair.c b/kernel/sched/fair.c
  	/*
  	 * For cluster machines which have lower sharing cache like L2 or
  	 * LLC Tag, we tend to find an idle CPU in the target's cluster
-@@ -9008,6 +9161,13 @@
+@@ -9148,6 +9301,13 @@
  	if ((unsigned int)recent_used_cpu < nr_cpumask_bits)
  		return recent_used_cpu;
  
@@ -30459,7 +30480,7 @@ diff -ruN --no-dereference -x .git a/kernel/sched/fair.c b/kernel/sched/fair.c
  	return target;
  }
  
-@@ -9690,7 +9850,7 @@
+@@ -9830,7 +9990,7 @@
  
  	/* Fast path */
  	if (wake_flags & WF_TTWU)
@@ -30468,7 +30489,7 @@ diff -ruN --no-dereference -x .git a/kernel/sched/fair.c b/kernel/sched/fair.c
  
  	return new_cpu;
  }
-@@ -9729,19 +9889,6 @@
+@@ -9869,19 +10029,6 @@
  static void task_dead_fair(struct task_struct *p)
  {
  	struct sched_entity *se = &p->se;
@@ -30488,7 +30509,7 @@ diff -ruN --no-dereference -x .git a/kernel/sched/fair.c b/kernel/sched/fair.c
  	remove_entity_load_avg(se);
  }
  
-@@ -9775,21 +9922,10 @@
+@@ -9915,21 +10062,10 @@
  	set_task_max_allowed_capacity(p);
  }
  
@@ -30511,7 +30532,7 @@ diff -ruN --no-dereference -x .git a/kernel/sched/fair.c b/kernel/sched/fair.c
  	PREEMPT_WAKEUP_RESCHED,	/* Force reschedule. */
  };
  
-@@ -9806,7 +9942,7 @@
+@@ -9946,7 +10082,7 @@
  	if (cfs_rq->next && entity_before(cfs_rq->next, pse))
  		return false;
  
@@ -30520,7 +30541,7 @@ diff -ruN --no-dereference -x .git a/kernel/sched/fair.c b/kernel/sched/fair.c
  	return true;
  }
  
-@@ -9859,7 +9995,7 @@
+@@ -9999,7 +10135,7 @@
  	enum preempt_wakeup_action preempt_action = PREEMPT_WAKEUP_PICK;
  	struct task_struct *donor = rq->donor;
  	struct sched_entity *nse, *se = &donor->se, *pse = &p->se;
@@ -30529,7 +30550,7 @@ diff -ruN --no-dereference -x .git a/kernel/sched/fair.c b/kernel/sched/fair.c
  	int cse_is_idle, pse_is_idle;
  
  	/*
-@@ -9897,7 +10033,6 @@
+@@ -10037,7 +10173,6 @@
  	if (!sched_feat(WAKEUP_PREEMPTION))
  		return;
  
@@ -30537,7 +30558,7 @@ diff -ruN --no-dereference -x .git a/kernel/sched/fair.c b/kernel/sched/fair.c
  	WARN_ON_ONCE(!pse);
  
  	cse_is_idle = se_is_idle(se);
-@@ -9925,8 +10060,7 @@
+@@ -10065,8 +10200,7 @@
  	if (unlikely(!normal_policy(p->policy)))
  		return;
  
@@ -30547,7 +30568,7 @@ diff -ruN --no-dereference -x .git a/kernel/sched/fair.c b/kernel/sched/fair.c
  	/*
  	 * If @p has a shorter slice than current and @p is eligible, override
  	 * current's slice protection in order to allow preemption.
-@@ -9970,18 +10104,15 @@
+@@ -10110,18 +10244,15 @@
  	}
  
  pick:
@@ -30575,7 +30596,7 @@ diff -ruN --no-dereference -x .git a/kernel/sched/fair.c b/kernel/sched/fair.c
  
  	if (sched_feat(RUN_TO_PARITY))
  		update_protect_slice(cfs_rq, se);
-@@ -10000,33 +10131,24 @@
+@@ -10140,33 +10271,24 @@
  struct task_struct *pick_task_fair(struct rq *rq, struct rq_flags *rf)
  	__must_hold(__rq_lockp(rq))
  {
@@ -30617,7 +30638,7 @@ diff -ruN --no-dereference -x .git a/kernel/sched/fair.c b/kernel/sched/fair.c
  	return p;
  
  idle:
-@@ -10063,7 +10185,7 @@
+@@ -10203,7 +10325,7 @@
  static void put_prev_task_fair(struct rq *rq, struct task_struct *prev, struct task_struct *next)
  {
  	struct sched_entity *se = &prev->se;
@@ -30626,7 +30647,7 @@ diff -ruN --no-dereference -x .git a/kernel/sched/fair.c b/kernel/sched/fair.c
  	struct sched_entity *nse = NULL;
  
  #ifdef CONFIG_FAIR_GROUP_SCHED
-@@ -10073,7 +10195,7 @@
+@@ -10213,7 +10335,7 @@
  
  	while (se) {
  		cfs_rq = cfs_rq_of(se);
@@ -30635,7 +30656,7 @@ diff -ruN --no-dereference -x .git a/kernel/sched/fair.c b/kernel/sched/fair.c
  			put_prev_entity(cfs_rq, se);
  #ifdef CONFIG_FAIR_GROUP_SCHED
  		if (nse) {
-@@ -10092,6 +10214,14 @@
+@@ -10232,6 +10354,14 @@
  #endif
  		se = parent_entity(se);
  	}
@@ -30650,7 +30671,7 @@ diff -ruN --no-dereference -x .git a/kernel/sched/fair.c b/kernel/sched/fair.c
  }
  
  /*
-@@ -10100,8 +10230,8 @@
+@@ -10240,8 +10370,8 @@
  static void yield_task_fair(struct rq *rq)
  {
  	struct task_struct *curr = rq->donor;
@@ -30660,7 +30681,7 @@ diff -ruN --no-dereference -x .git a/kernel/sched/fair.c b/kernel/sched/fair.c
  
  	/*
  	 * Are we the only task in the tree?
-@@ -10142,11 +10272,11 @@
+@@ -10282,11 +10412,11 @@
  	struct sched_entity *se = &p->se;
  
  	/* !se->on_rq also covers throttled task */
@@ -30674,7 +30695,7 @@ diff -ruN --no-dereference -x .git a/kernel/sched/fair.c b/kernel/sched/fair.c
  
  	yield_task_fair(rq);
  
-@@ -10485,15 +10615,10 @@
+@@ -10626,15 +10756,10 @@
   */
  static inline int task_is_ineligible_on_dst_cpu(struct task_struct *p, int dest_cpu)
  {
@@ -30693,7 +30714,7 @@ diff -ruN --no-dereference -x .git a/kernel/sched/fair.c b/kernel/sched/fair.c
  		return 1;
  
  	return 0;
-@@ -11281,7 +11406,7 @@
+@@ -11468,7 +11593,7 @@
  	while ((se = READ_ONCE(cfs_rq->h_load_next)) != NULL) {
  		load = cfs_rq->h_load;
  		load = div64_ul(load * se->avg.load_avg,
@@ -30702,7 +30723,7 @@ diff -ruN --no-dereference -x .git a/kernel/sched/fair.c b/kernel/sched/fair.c
  		cfs_rq = group_cfs_rq(se);
  		cfs_rq->h_load = load;
  		cfs_rq->last_h_load_update = now;
-@@ -13431,12 +13556,15 @@
+@@ -13641,12 +13766,15 @@
  		 * still unbalanced. ld_moved simply stays zero, so it is
  		 * correctly treated as an imbalance.
  		 */
@@ -30720,7 +30741,7 @@ diff -ruN --no-dereference -x .git a/kernel/sched/fair.c b/kernel/sched/fair.c
  		/*
  		 * cur_ld_moved - load moved in current iteration
  		 * ld_moved     - cumulative load moved across iterations
-@@ -14675,7 +14803,7 @@
+@@ -14895,7 +15023,7 @@
  	 * MIN_NR_TASKS_DURING_FORCEIDLE - 1 tasks and use that to check
  	 * if we need to give up the CPU.
  	 */
@@ -30729,7 +30750,7 @@ diff -ruN --no-dereference -x .git a/kernel/sched/fair.c b/kernel/sched/fair.c
  	    __entity_slice_used(&curr->se, MIN_NR_TASKS_DURING_FORCEIDLE))
  		resched_curr(rq);
  }
-@@ -14884,30 +15012,8 @@
+@@ -15104,30 +15232,8 @@
  
  	WARN_ON_ONCE(task_rq(b)->core != rq->core);
  
@@ -30760,7 +30781,7 @@ diff -ruN --no-dereference -x .git a/kernel/sched/fair.c b/kernel/sched/fair.c
  
  	/*
  	 * Find delta after normalizing se's vruntime with its cfs_rq's
-@@ -14946,11 +15052,20 @@
+@@ -15166,11 +15272,20 @@
  static void task_tick_fair(struct rq *rq, struct task_struct *curr, int queued)
  {
  	struct sched_entity *se = &curr->se;
@@ -30785,7 +30806,7 @@ diff -ruN --no-dereference -x .git a/kernel/sched/fair.c b/kernel/sched/fair.c
  	}
  
  	if (queued)
-@@ -14990,7 +15105,7 @@
+@@ -15210,7 +15325,7 @@
  	if (p->prio == oldprio)
  		return;
  
@@ -30794,7 +30815,7 @@ diff -ruN --no-dereference -x .git a/kernel/sched/fair.c b/kernel/sched/fair.c
  		return;
  
  	/*
-@@ -15119,33 +15234,44 @@
+@@ -15339,33 +15454,44 @@
  	}
  }
  
@@ -30850,7 +30871,7 @@ diff -ruN --no-dereference -x .git a/kernel/sched/fair.c b/kernel/sched/fair.c
  
  	if (task_on_rq_queued(p)) {
  		/*
-@@ -15258,17 +15384,8 @@
+@@ -15478,17 +15604,8 @@
  		struct sched_entity *se = tg_se(tg, cpu);
  		struct rq *rq = cpu_rq(cpu);
  
@@ -30870,8 +30891,8 @@ diff -ruN --no-dereference -x .git a/kernel/sched/fair.c b/kernel/sched/fair.c
  		/*
  		 * Only empty task groups can be destroyed; so we can speculatively
 diff -ruN --no-dereference -x .git a/kernel/sched/idle.c b/kernel/sched/idle.c
---- a/kernel/sched/idle.c	2026-08-16 23:32:26.000000000 +0200
-+++ b/kernel/sched/idle.c	2026-10-03 14:48:53.000000000 +0200
+--- a/kernel/sched/idle.c	2026-10-11 15:27:50.000000000 +0200
++++ b/kernel/sched/idle.c	2026-10-13 14:33:30.000000000 +0200
 @@ -305,6 +305,11 @@
  	__current_set_polling();
  	tick_nohz_idle_enter();
@@ -30897,8 +30918,8 @@ diff -ruN --no-dereference -x .git a/kernel/sched/idle.c b/kernel/sched/idle.c
  	 * Since we fell out of the loop above, we know TIF_NEED_RESCHED must
  	 * be set, propagate it into PREEMPT_NEED_RESCHED.
 diff -ruN --no-dereference -x .git a/kernel/sched/pelt.c b/kernel/sched/pelt.c
---- a/kernel/sched/pelt.c	2026-08-16 23:32:26.000000000 +0200
-+++ b/kernel/sched/pelt.c	2026-10-03 14:48:53.000000000 +0200
+--- a/kernel/sched/pelt.c	2026-10-11 15:27:50.000000000 +0200
++++ b/kernel/sched/pelt.c	2026-10-13 14:33:30.000000000 +0200
 @@ -206,7 +206,7 @@
  	/*
  	 * running is a subset of runnable (weight) so running can't be set if
@@ -30928,7 +30949,7 @@ diff -ruN --no-dereference -x .git a/kernel/sched/pelt.c b/kernel/sched/pelt.c
  		trace_pelt_cfs_tp(cfs_rq);
 diff -ruN --no-dereference -x .git a/kernel/sched/poc_selector.c b/kernel/sched/poc_selector.c
 --- a/kernel/sched/poc_selector.c	1970-01-01 01:00:00.000000000 +0100
-+++ b/kernel/sched/poc_selector.c	2026-10-03 14:48:53.000000000 +0200
++++ b/kernel/sched/poc_selector.c	2026-10-13 14:33:30.000000000 +0200
 @@ -0,0 +1,2038 @@
 +// SPDX-License-Identifier: GPL-2.0
 +/*
@@ -32969,8 +32990,8 @@ diff -ruN --no-dereference -x .git a/kernel/sched/poc_selector.c b/kernel/sched/
 +#endif /* CONFIG_SYSFS */
 +#endif /* CONFIG_SCHED_POC_SELECTOR */
 diff -ruN --no-dereference -x .git a/kernel/sched/sched.h b/kernel/sched/sched.h
---- a/kernel/sched/sched.h	2026-10-07 05:21:41.423770015 +0200
-+++ b/kernel/sched/sched.h	2026-10-03 14:48:53.000000000 +0200
+--- a/kernel/sched/sched.h	2026-10-11 15:27:50.000000000 +0200
++++ b/kernel/sched/sched.h	2026-10-13 14:33:30.000000000 +0200
 @@ -493,6 +493,8 @@
  	 * will also be accessed at each tick.
  	 */
@@ -33297,8 +33318,8 @@ diff -ruN --no-dereference -x .git a/kernel/sched/sched.h b/kernel/sched/sched.h
  
  #if defined(CONFIG_SCHED_CORE) && defined(CONFIG_SCHEDSTATS)
 diff -ruN --no-dereference -x .git a/kernel/sched/topology.c b/kernel/sched/topology.c
---- a/kernel/sched/topology.c	2026-10-07 05:21:41.423981807 +0200
-+++ b/kernel/sched/topology.c	2026-10-03 14:48:53.000000000 +0200
+--- a/kernel/sched/topology.c	2026-10-11 15:27:50.000000000 +0200
++++ b/kernel/sched/topology.c	2026-10-13 14:33:30.000000000 +0200
 @@ -3174,6 +3174,9 @@
  
  		if (sd->flags & SD_SHARE_LLC) {
@@ -33310,8 +33331,8 @@ diff -ruN --no-dereference -x .git a/kernel/sched/topology.c b/kernel/sched/topo
  			/*
  			 * In presence of higher domains, adjust the
 diff -ruN --no-dereference -x .git a/kernel/smp.c b/kernel/smp.c
---- a/kernel/smp.c	2026-08-16 23:32:26.000000000 +0200
-+++ b/kernel/smp.c	2026-10-03 14:48:53.000000000 +0200
+--- a/kernel/smp.c	2026-10-11 15:27:50.000000000 +0200
++++ b/kernel/smp.c	2026-10-13 14:33:30.000000000 +0200
 @@ -16,6 +16,7 @@
  #include <linux/init.h>
  #include <linux/interrupt.h>
@@ -33658,8 +33679,8 @@ diff -ruN --no-dereference -x .git a/kernel/smp.c b/kernel/smp.c
  EXPORT_SYMBOL(on_each_cpu_cond_mask);
  
 diff -ruN --no-dereference -x .git a/kernel/up.c b/kernel/up.c
---- a/kernel/up.c	2026-08-16 23:32:26.000000000 +0200
-+++ b/kernel/up.c	2026-10-03 14:48:53.000000000 +0200
+--- a/kernel/up.c	2026-10-11 15:27:50.000000000 +0200
++++ b/kernel/up.c	2026-10-13 14:33:30.000000000 +0200
 @@ -9,8 +9,7 @@
  #include <linux/smp.h>
  #include <linux/hypervisor.h>
@@ -33671,8 +33692,8 @@ diff -ruN --no-dereference -x .git a/kernel/up.c b/kernel/up.c
  	unsigned long flags;
  
 diff -ruN --no-dereference -x .git a/mm/compaction.c b/mm/compaction.c
---- a/mm/compaction.c	2026-10-07 05:21:41.431912495 +0200
-+++ b/mm/compaction.c	2026-10-03 14:48:53.000000000 +0200
+--- a/mm/compaction.c	2026-10-11 15:27:50.000000000 +0200
++++ b/mm/compaction.c	2026-10-13 14:33:30.000000000 +0200
 @@ -1935,7 +1935,11 @@
   * aggressively the kernel should compact memory in the
   * background. It takes values in the range [0, 100].
@@ -33686,8 +33707,8 @@ diff -ruN --no-dereference -x .git a/mm/compaction.c b/mm/compaction.c
  static int __read_mostly sysctl_compact_memory;
  
 diff -ruN --no-dereference -x .git a/mm/huge_memory.c b/mm/huge_memory.c
---- a/mm/huge_memory.c	2026-10-07 05:21:41.434853610 +0200
-+++ b/mm/huge_memory.c	2026-10-03 14:48:53.000000000 +0200
+--- a/mm/huge_memory.c	2026-10-11 15:27:50.000000000 +0200
++++ b/mm/huge_memory.c	2026-10-13 14:33:30.000000000 +0200
 @@ -65,7 +65,11 @@
  #ifdef CONFIG_TRANSPARENT_HUGEPAGE_MADVISE
  	(1<<TRANSPARENT_HUGEPAGE_REQ_MADV_FLAG)|
@@ -33701,8 +33722,8 @@ diff -ruN --no-dereference -x .git a/mm/huge_memory.c b/mm/huge_memory.c
  	(1<<TRANSPARENT_HUGEPAGE_USE_ZERO_PAGE_FLAG);
  
 diff -ruN --no-dereference -x .git a/mm/ksm.c b/mm/ksm.c
---- a/mm/ksm.c	2026-08-16 23:32:26.000000000 +0200
-+++ b/mm/ksm.c	2026-10-03 14:48:53.000000000 +0200
+--- a/mm/ksm.c	2026-10-11 15:27:50.000000000 +0200
++++ b/mm/ksm.c	2026-10-13 14:33:30.000000000 +0200
 @@ -195,22 +195,28 @@
   * @node: rb node of this rmap_item in the unstable tree
   * @head: pointer to stable_node heading this list in the stable tree
@@ -33840,8 +33861,8 @@ diff -ruN --no-dereference -x .git a/mm/ksm.c b/mm/ksm.c
  			cond_resched();
  			vma = vmac->vma;
 diff -ruN --no-dereference -x .git a/mm/page_alloc.c b/mm/page_alloc.c
---- a/mm/page_alloc.c	2026-10-07 05:21:41.439994772 +0200
-+++ b/mm/page_alloc.c	2026-10-03 14:48:53.000000000 +0200
+--- a/mm/page_alloc.c	2026-10-11 15:27:50.000000000 +0200
++++ b/mm/page_alloc.c	2026-10-13 14:33:30.000000000 +0200
 @@ -270,7 +270,11 @@
  
  int min_free_kbytes = 1024;
@@ -33855,8 +33876,8 @@ diff -ruN --no-dereference -x .git a/mm/page_alloc.c b/mm/page_alloc.c
  int defrag_mode;
  
 diff -ruN --no-dereference -x .git a/mm/rmap.c b/mm/rmap.c
---- a/mm/rmap.c	2026-10-07 05:21:41.440574713 +0200
-+++ b/mm/rmap.c	2026-10-03 14:48:53.000000000 +0200
+--- a/mm/rmap.c	2026-10-11 15:27:50.000000000 +0200
++++ b/mm/rmap.c	2026-10-13 14:33:30.000000000 +0200
 @@ -911,7 +911,7 @@
  struct folio_referenced_arg {
  	int mapcount;
@@ -33934,8 +33955,8 @@ diff -ruN --no-dereference -x .git a/mm/rmap.c b/mm/rmap.c
  	if (we_locked)
  		folio_unlock(folio);
 diff -ruN --no-dereference -x .git a/mm/swap.c b/mm/swap.c
---- a/mm/swap.c	2026-10-07 05:21:41.441439285 +0200
-+++ b/mm/swap.c	2026-10-03 14:48:53.000000000 +0200
+--- a/mm/swap.c	2026-10-11 15:27:50.000000000 +0200
++++ b/mm/swap.c	2026-10-13 14:33:30.000000000 +0200
 @@ -1198,17 +1198,8 @@
   */
  void __init swap_setup(void)
@@ -33957,8 +33978,8 @@ diff -ruN --no-dereference -x .git a/mm/swap.c b/mm/swap.c
  	register_sysctl_init("vm", swap_sysctl_table);
  }
 diff -ruN --no-dereference -x .git a/mm/vmscan.c b/mm/vmscan.c
---- a/mm/vmscan.c	2026-10-07 05:21:41.442576494 +0200
-+++ b/mm/vmscan.c	2026-10-03 14:48:53.000000000 +0200
+--- a/mm/vmscan.c	2026-10-11 15:27:50.000000000 +0200
++++ b/mm/vmscan.c	2026-10-13 14:33:30.000000000 +0200
 @@ -196,7 +196,11 @@
  /*
   * From 0 .. MAX_SWAPPINESS.  Higher means more swappy.
@@ -34190,8 +34211,8 @@ diff -ruN --no-dereference -x .git a/mm/vmscan.c b/mm/vmscan.c
  	lazy_mmu_mode_disable();
  
 diff -ruN --no-dereference -x .git a/net/ipv4/Kconfig b/net/ipv4/Kconfig
---- a/net/ipv4/Kconfig	2026-08-16 23:32:26.000000000 +0200
-+++ b/net/ipv4/Kconfig	2026-10-03 14:48:53.000000000 +0200
+--- a/net/ipv4/Kconfig	2026-10-11 15:27:50.000000000 +0200
++++ b/net/ipv4/Kconfig	2026-10-13 14:33:30.000000000 +0200
 @@ -668,15 +668,33 @@
  	default n
  	help
@@ -34254,8 +34275,8 @@ diff -ruN --no-dereference -x .git a/net/ipv4/Kconfig b/net/ipv4/Kconfig
  
  config TCP_AO
 diff -ruN --no-dereference -x .git a/net/ipv4/Makefile b/net/ipv4/Makefile
---- a/net/ipv4/Makefile	2026-08-16 23:32:26.000000000 +0200
-+++ b/net/ipv4/Makefile	2026-10-03 14:48:53.000000000 +0200
+--- a/net/ipv4/Makefile	2026-10-11 15:27:50.000000000 +0200
++++ b/net/ipv4/Makefile	2026-10-13 14:33:30.000000000 +0200
 @@ -45,6 +45,7 @@
  obj-$(CONFIG_INET_UDP_DIAG) += udp_diag.o
  obj-$(CONFIG_INET_RAW_DIAG) += raw_diag.o
@@ -34265,8 +34286,8 @@ diff -ruN --no-dereference -x .git a/net/ipv4/Makefile b/net/ipv4/Makefile
  obj-$(CONFIG_TCP_CONG_CDG) += tcp_cdg.o
  obj-$(CONFIG_TCP_CONG_CUBIC) += tcp_cubic.o
 diff -ruN --no-dereference -x .git a/net/ipv4/bpf_tcp_ca.c b/net/ipv4/bpf_tcp_ca.c
---- a/net/ipv4/bpf_tcp_ca.c	2026-08-16 23:32:26.000000000 +0200
-+++ b/net/ipv4/bpf_tcp_ca.c	2026-10-03 14:48:53.000000000 +0200
+--- a/net/ipv4/bpf_tcp_ca.c	2026-10-11 15:27:50.000000000 +0200
++++ b/net/ipv4/bpf_tcp_ca.c	2026-10-13 14:33:30.000000000 +0200
 @@ -284,7 +284,7 @@
  {
  }
@@ -34286,8 +34307,8 @@ diff -ruN --no-dereference -x .git a/net/ipv4/bpf_tcp_ca.c b/net/ipv4/bpf_tcp_ca
  	.undo_cwnd = bpf_tcp_ca_undo_cwnd,
  	.sndbuf_expand = bpf_tcp_ca_sndbuf_expand,
 diff -ruN --no-dereference -x .git a/net/ipv4/tcp.c b/net/ipv4/tcp.c
---- a/net/ipv4/tcp.c	2026-10-07 05:21:41.455659596 +0200
-+++ b/net/ipv4/tcp.c	2026-10-03 14:48:53.000000000 +0200
+--- a/net/ipv4/tcp.c	2026-10-11 15:27:50.000000000 +0200
++++ b/net/ipv4/tcp.c	2026-10-13 14:33:30.000000000 +0200
 @@ -3482,6 +3482,7 @@
  	tp->rx_opt.dsack = 0;
  	tp->rx_opt.num_sacks = 0;
@@ -34306,8 +34327,8 @@ diff -ruN --no-dereference -x .git a/net/ipv4/tcp.c b/net/ipv4/tcp.c
  		info->tcpi_options |= TCPI_OPT_SYN_DATA;
  	if (tp->tcp_usec_ts)
 diff -ruN --no-dereference -x .git a/net/ipv4/tcp_bbr.c b/net/ipv4/tcp_bbr.c
---- a/net/ipv4/tcp_bbr.c	2026-08-16 23:32:26.000000000 +0200
-+++ b/net/ipv4/tcp_bbr.c	2026-10-03 14:48:53.000000000 +0200
+--- a/net/ipv4/tcp_bbr.c	2026-10-11 15:27:50.000000000 +0200
++++ b/net/ipv4/tcp_bbr.c	2026-10-13 14:33:30.000000000 +0200
 @@ -302,6 +302,23 @@
  	return READ_ONCE(sk->sk_pacing_rate) < (bbr_min_tso_rate >> 3) ? 1 : 2;
  }
@@ -34343,7 +34364,7 @@ diff -ruN --no-dereference -x .git a/net/ipv4/tcp_bbr.c b/net/ipv4/tcp_bbr.c
  };
 diff -ruN --no-dereference -x .git a/net/ipv4/tcp_bbr3.c b/net/ipv4/tcp_bbr3.c
 --- a/net/ipv4/tcp_bbr3.c	1970-01-01 01:00:00.000000000 +0100
-+++ b/net/ipv4/tcp_bbr3.c	2026-10-03 14:48:53.000000000 +0200
++++ b/net/ipv4/tcp_bbr3.c	2026-10-13 14:33:30.000000000 +0200
 @@ -0,0 +1,2418 @@
 +// SPDX-License-Identifier: GPL-2.0
 +/* BBR (Bottleneck Bandwidth and RTT) congestion control
@@ -36764,8 +36785,8 @@ diff -ruN --no-dereference -x .git a/net/ipv4/tcp_bbr3.c b/net/ipv4/tcp_bbr3.c
 +MODULE_DESCRIPTION("TCP BBR (Bottleneck Bandwidth and RTT)");
 +MODULE_VERSION(__stringify(BBR_VERSION));
 diff -ruN --no-dereference -x .git a/net/ipv4/tcp_cong.c b/net/ipv4/tcp_cong.c
---- a/net/ipv4/tcp_cong.c	2026-08-16 23:32:26.000000000 +0200
-+++ b/net/ipv4/tcp_cong.c	2026-10-03 14:48:53.000000000 +0200
+--- a/net/ipv4/tcp_cong.c	2026-10-11 15:27:50.000000000 +0200
++++ b/net/ipv4/tcp_cong.c	2026-10-13 14:33:30.000000000 +0200
 @@ -238,6 +238,7 @@
  	struct inet_connection_sock *icsk = inet_csk(sk);
  
@@ -36775,8 +36796,8 @@ diff -ruN --no-dereference -x .git a/net/ipv4/tcp_cong.c b/net/ipv4/tcp_cong.c
  		icsk->icsk_ca_ops->init(sk);
  	if (tcp_ca_needs_ecn(sk))
 diff -ruN --no-dereference -x .git a/net/ipv4/tcp_input.c b/net/ipv4/tcp_input.c
---- a/net/ipv4/tcp_input.c	2026-10-07 05:21:41.456135740 +0200
-+++ b/net/ipv4/tcp_input.c	2026-10-03 14:48:53.000000000 +0200
+--- a/net/ipv4/tcp_input.c	2026-10-11 15:27:50.000000000 +0200
++++ b/net/ipv4/tcp_input.c	2026-10-13 14:33:30.000000000 +0200
 @@ -358,7 +358,7 @@
  			tcp_enter_quickack_mode(sk, 2);
  		break;
@@ -36932,7 +36953,7 @@ diff -ruN --no-dereference -x .git a/net/ipv4/tcp_input.c b/net/ipv4/tcp_input.c
  	return 1;
  
  old_ack:
-@@ -6121,13 +6149,14 @@
+@@ -6127,13 +6155,14 @@
  
  	    /* More than one full frame received... */
  	if (((tp->rcv_nxt - tp->rcv_wup) > inet_csk(sk)->icsk_ack.rcv_mss &&
@@ -36950,8 +36971,8 @@ diff -ruN --no-dereference -x .git a/net/ipv4/tcp_input.c b/net/ipv4/tcp_input.c
  	    tcp_in_quickack_mode(sk) ||
  	    /* Protocol state mandates a one-time immediate ACK */
 diff -ruN --no-dereference -x .git a/net/ipv4/tcp_minisocks.c b/net/ipv4/tcp_minisocks.c
---- a/net/ipv4/tcp_minisocks.c	2026-10-07 05:21:41.456585364 +0200
-+++ b/net/ipv4/tcp_minisocks.c	2026-10-03 14:48:53.000000000 +0200
+--- a/net/ipv4/tcp_minisocks.c	2026-10-11 15:27:50.000000000 +0200
++++ b/net/ipv4/tcp_minisocks.c	2026-10-13 14:33:30.000000000 +0200
 @@ -500,6 +500,8 @@
  	u32 ca_key = dst_metric(dst, RTAX_CC_ALGO);
  	bool ca_got_dst = false;
@@ -36962,8 +36983,8 @@ diff -ruN --no-dereference -x .git a/net/ipv4/tcp_minisocks.c b/net/ipv4/tcp_min
  		const struct tcp_congestion_ops *ca;
  
 diff -ruN --no-dereference -x .git a/net/ipv4/tcp_output.c b/net/ipv4/tcp_output.c
---- a/net/ipv4/tcp_output.c	2026-10-07 05:21:41.456777288 +0200
-+++ b/net/ipv4/tcp_output.c	2026-10-03 14:48:53.000000000 +0200
+--- a/net/ipv4/tcp_output.c	2026-10-11 15:27:50.000000000 +0200
++++ b/net/ipv4/tcp_output.c	2026-10-13 14:33:30.000000000 +0200
 @@ -365,7 +365,8 @@
  				th->cwr = 1;
  				skb_shinfo(skb)->gso_type |= SKB_GSO_TCP_ECN;
@@ -37085,8 +37106,8 @@ diff -ruN --no-dereference -x .git a/net/ipv4/tcp_output.c b/net/ipv4/tcp_output
  		goto rearm_timer;
  
 diff -ruN --no-dereference -x .git a/net/ipv4/tcp_timer.c b/net/ipv4/tcp_timer.c
---- a/net/ipv4/tcp_timer.c	2026-10-07 05:21:41.456951479 +0200
-+++ b/net/ipv4/tcp_timer.c	2026-10-03 14:48:53.000000000 +0200
+--- a/net/ipv4/tcp_timer.c	2026-10-11 15:27:50.000000000 +0200
++++ b/net/ipv4/tcp_timer.c	2026-10-13 14:33:30.000000000 +0200
 @@ -708,6 +708,7 @@
  			       tcp_timeout_expires(sk));
  		return;
@@ -37096,8 +37117,8 @@ diff -ruN --no-dereference -x .git a/net/ipv4/tcp_timer.c b/net/ipv4/tcp_timer.c
  	event = icsk->icsk_pending;
  
 diff -ruN --no-dereference -x .git a/scripts/package/PKGBUILD b/scripts/package/PKGBUILD
---- a/scripts/package/PKGBUILD	2026-08-16 23:32:26.000000000 +0200
-+++ b/scripts/package/PKGBUILD	2026-10-03 14:48:53.000000000 +0200
+--- a/scripts/package/PKGBUILD	2026-10-11 15:27:50.000000000 +0200
++++ b/scripts/package/PKGBUILD	2026-10-13 14:33:30.000000000 +0200
 @@ -90,6 +90,11 @@
  		"${srctree}/scripts/package/install-extmod-build" "${builddir}"
  	fi
@@ -37112,7 +37133,7 @@ diff -ruN --no-dereference -x .git a/scripts/package/PKGBUILD b/scripts/package/
  	cp System.map "${builddir}/System.map"
 diff -ruN --no-dereference -x .git a/sound/hda/codecs/helpers/razer_blade16_2025.c b/sound/hda/codecs/helpers/razer_blade16_2025.c
 --- a/sound/hda/codecs/helpers/razer_blade16_2025.c	1970-01-01 01:00:00.000000000 +0100
-+++ b/sound/hda/codecs/helpers/razer_blade16_2025.c	2026-10-03 14:48:53.000000000 +0200
++++ b/sound/hda/codecs/helpers/razer_blade16_2025.c	2026-10-13 14:33:30.000000000 +0200
 @@ -0,0 +1,820 @@
 +// SPDX-License-Identifier: GPL-2.0-or-later
 +/*
@@ -37935,8 +37956,8 @@ diff -ruN --no-dereference -x .git a/sound/hda/codecs/helpers/razer_blade16_2025
 +	}
 +}
 diff -ruN --no-dereference -x .git a/sound/hda/codecs/realtek/alc269.c b/sound/hda/codecs/realtek/alc269.c
---- a/sound/hda/codecs/realtek/alc269.c	2026-10-07 05:21:41.486992199 +0200
-+++ b/sound/hda/codecs/realtek/alc269.c	2026-10-03 14:48:53.000000000 +0200
+--- a/sound/hda/codecs/realtek/alc269.c	2026-10-11 15:27:50.000000000 +0200
++++ b/sound/hda/codecs/realtek/alc269.c	2026-10-13 14:33:30.000000000 +0200
 @@ -3262,6 +3262,36 @@
  	comp_generic_fixup(cdc, HDA_FIXUP_ACT_PRE_PROBE, bus, acpi_ids[i].hid, match, count);
  }
@@ -38056,7 +38077,7 @@ diff -ruN --no-dereference -x .git a/sound/hda/codecs/realtek/alc269.c b/sound/h
  	[ALC298_FIXUP_SAMSUNG_HEADPHONE_VERY_QUIET] = {
  		.type = HDA_FIXUP_VERBS,
  		.v.verbs = (const struct hda_verb[]) {
-@@ -6914,6 +6976,29 @@
+@@ -6916,6 +6978,29 @@
  		.chained = true,
  		.chain_id = ALC274_FIXUP_HP_89E9_GPIO,
  	},
@@ -38086,7 +38107,7 @@ diff -ruN --no-dereference -x .git a/sound/hda/codecs/realtek/alc269.c b/sound/h
  };
  
  static const struct hda_quirk alc269_fixup_tbl[] = {
-@@ -7550,6 +7635,7 @@
+@@ -7553,6 +7638,7 @@
  	SND_PCI_QUIRK(0x1043, 0x12a3, "Asus N7691ZM", ALC269_FIXUP_ASUS_N7601ZM),
  	SND_PCI_QUIRK(0x1043, 0x12af, "ASUS UX582ZS", ALC245_FIXUP_CS35L41_SPI_2),
  	SND_PCI_QUIRK(0x1043, 0x12b4, "ASUS B3405CCA / P3405CCA", ALC294_FIXUP_ASUS_CS35L41_SPI_2),
@@ -38094,7 +38115,7 @@ diff -ruN --no-dereference -x .git a/sound/hda/codecs/realtek/alc269.c b/sound/h
  	SND_PCI_QUIRK(0x1043, 0x12e0, "ASUS X541SA", ALC256_FIXUP_ASUS_MIC_NO_PRESENCE),
  	SND_PCI_QUIRK(0x1043, 0x12f0, "ASUS X541UV", ALC256_FIXUP_ASUS_MIC_NO_PRESENCE),
  	SND_PCI_QUIRK(0x1043, 0x1313, "Asus K42JZ", ALC269VB_FIXUP_ASUS_MIC_NO_PRESENCE),
-@@ -7732,6 +7818,11 @@
+@@ -7736,6 +7822,11 @@
  	SND_PCI_QUIRK(0x144d, 0xc876, "Samsung 730QED (NP730QED-KA2US)", ALC256_FIXUP_SAMSUNG_HEADPHONE_VERY_QUIET),
  	SND_PCI_QUIRK(0x144d, 0xca03, "Samsung Galaxy Book2 Pro 360 (NP930QED)", ALC298_FIXUP_SAMSUNG_AMP),
  	SND_PCI_QUIRK(0x144d, 0xca06, "Samsung Galaxy Book3 360 (NP730QFG)", ALC298_FIXUP_SAMSUNG_HEADPHONE_VERY_QUIET),
@@ -38106,7 +38127,7 @@ diff -ruN --no-dereference -x .git a/sound/hda/codecs/realtek/alc269.c b/sound/h
  	SND_PCI_QUIRK(0x144d, 0xc868, "Samsung Galaxy Book2 Pro (NP930XED)", ALC298_FIXUP_SAMSUNG_AMP),
  	SND_PCI_QUIRK(0x144d, 0xc870, "Samsung Galaxy Book2 Pro (NP950XED)", ALC298_FIXUP_SAMSUNG_AMP_V2_2_AMPS),
  	SND_PCI_QUIRK(0x144d, 0xc872, "Samsung Galaxy Book2 Pro (NP950XEE)", ALC298_FIXUP_SAMSUNG_AMP_V2_2_AMPS),
-@@ -7979,6 +8070,11 @@
+@@ -7983,6 +8074,11 @@
  	SND_PCI_QUIRK(0x17aa, 0x38b8, "Yoga S780-14.5 proX AMD YC Dual", ALC287_FIXUP_TAS2781_I2C),
  	SND_PCI_QUIRK(0x17aa, 0x38b9, "Yoga S780-14.5 proX AMD LX Dual", ALC287_FIXUP_TAS2781_I2C),
  	SND_PCI_QUIRK(0x17aa, 0x38ba, "Yoga S780-14.5 Air AMD quad YC", ALC287_FIXUP_TAS2781_I2C),
@@ -38118,7 +38139,7 @@ diff -ruN --no-dereference -x .git a/sound/hda/codecs/realtek/alc269.c b/sound/h
  	SND_PCI_QUIRK(0x17aa, 0x38bb, "Yoga S780-14.5 Air AMD quad AAC", ALC287_FIXUP_TAS2781_I2C),
  	SND_PCI_QUIRK(0x17aa, 0x38be, "Yoga S980-14.5 proX YC Dual", ALC287_FIXUP_TAS2781_I2C),
  	SND_PCI_QUIRK(0x17aa, 0x38bf, "Yoga S980-14.5 proX LX Dual", ALC287_FIXUP_TAS2781_I2C),
-@@ -8006,6 +8102,8 @@
+@@ -8010,6 +8106,8 @@
  	SND_PCI_QUIRK(0x17aa, 0x38fc, "Lenovo Yoga Pro 7 15ASH11", ALC287_FIXUP_LENOVO_YOGA_PRO7),
  	SND_PCI_QUIRK(0x17aa, 0x38fd, "ThinkBook plus Gen5 Hybrid", ALC287_FIXUP_TAS2781_I2C),
  	SND_PCI_QUIRK(0x17aa, 0x3902, "Lenovo E50-80", ALC269_FIXUP_DMIC_THINKPAD_ACPI),
@@ -38127,7 +38148,7 @@ diff -ruN --no-dereference -x .git a/sound/hda/codecs/realtek/alc269.c b/sound/h
  	SND_PCI_QUIRK(0x17aa, 0x390d, "Lenovo Yoga Pro 7 14ASP10", ALC287_FIXUP_YOGA9_14IAP7_BASS_SPK_PIN),
  	SND_PCI_QUIRK(0x17aa, 0x3911, "Lenovo Yoga Pro 7 14IAH10", ALC287_FIXUP_YOGA9_14IAP7_BASS_SPK_PIN),
  	SND_PCI_QUIRK(0x17aa, 0x3912, "Lenovo Xiaoxin 14 GT", ALC287_FIXUP_YOGA9_14IAP7_BASS_SPK_PIN),
-@@ -8014,6 +8112,8 @@
+@@ -8018,6 +8116,8 @@
  	SND_PCI_QUIRK(0x17aa, 0x3920, "Yoga S990-16 pro Quad VECO Quad", ALC287_FIXUP_TXNW2781_I2C),
  	SND_PCI_QUIRK(0x17aa, 0x3929, "Thinkbook 13x Gen 5", ALC287_FIXUP_MG_RTKC_CSAMP_CS35L41_I2C_THINKPAD),
  	SND_PCI_QUIRK(0x17aa, 0x392b, "Thinkbook 13x Gen 5", ALC287_FIXUP_MG_RTKC_CSAMP_CS35L41_I2C_THINKPAD),
@@ -38136,7 +38157,7 @@ diff -ruN --no-dereference -x .git a/sound/hda/codecs/realtek/alc269.c b/sound/h
  	HDA_CODEC_QUIRK(0x17aa, 0x394c, "Lenovo Yoga Slim 7 14AGP11", ALC287_FIXUP_YOGA9_14IAP7_BASS_SPK_PIN),
  	SND_PCI_QUIRK(0x17aa, 0x3977, "IdeaPad S210", ALC283_FIXUP_INT_MIC),
  	SND_PCI_QUIRK(0x17aa, 0x3978, "Lenovo B50-70", ALC269_FIXUP_DMIC_THINKPAD_ACPI),
-@@ -8051,6 +8151,8 @@
+@@ -8055,6 +8155,8 @@
  	SND_PCI_QUIRK(0x19e5, 0x3204, "Huawei MACH-WX9", ALC256_FIXUP_HUAWEI_MACH_WX9_PINS),
  	SND_PCI_QUIRK(0x19e5, 0x320f, "Huawei WRT-WX9 ", ALC256_FIXUP_ASUS_MIC_NO_PRESENCE),
  	SND_PCI_QUIRK(0x19e5, 0x3212, "Huawei KLV-WX9 ", ALC256_FIXUP_ACER_HEADSET_MIC),
@@ -38145,7 +38166,7 @@ diff -ruN --no-dereference -x .git a/sound/hda/codecs/realtek/alc269.c b/sound/h
  	SND_PCI_QUIRK(0x1b35, 0x1235, "CZC B20", ALC269_FIXUP_CZC_B20),
  	SND_PCI_QUIRK(0x1b35, 0x1236, "CZC TMI", ALC269_FIXUP_CZC_TMI),
  	SND_PCI_QUIRK(0x1b35, 0x1237, "CZC L101", ALC269_FIXUP_CZC_L101),
-@@ -8298,6 +8400,7 @@
+@@ -8302,6 +8404,7 @@
  	{.id = ALC298_FIXUP_SAMSUNG_AMP, .name = "alc298-samsung-amp"},
  	{.id = ALC298_FIXUP_SAMSUNG_AMP_V2_2_AMPS, .name = "alc298-samsung-amp-v2-2-amps"},
  	{.id = ALC298_FIXUP_SAMSUNG_AMP_V2_4_AMPS, .name = "alc298-samsung-amp-v2-4-amps"},
@@ -38153,7 +38174,7 @@ diff -ruN --no-dereference -x .git a/sound/hda/codecs/realtek/alc269.c b/sound/h
  	{.id = ALC256_FIXUP_SAMSUNG_HEADPHONE_VERY_QUIET, .name = "alc256-samsung-headphone"},
  	{.id = ALC255_FIXUP_XIAOMI_HEADSET_MIC, .name = "alc255-xiaomi-headset"},
  	{.id = ALC274_FIXUP_HP_MIC, .name = "alc274-hp-mic-detect"},
-@@ -8316,6 +8419,7 @@
+@@ -8320,6 +8423,7 @@
  	{.id = ALC2XX_FIXUP_HEADSET_MIC, .name = "alc2xx-fixup-headset-mic"},
  	{.id = ALC245_FIXUP_BASS_HP_DAC, .name = "alc245-fixup-bass-hp-dac"},
  	{.id = ALC256_FIXUP_HONOR_MRB_XXX_M1020_AUDIO, .name = "alc256-honor-mrb-xxx-m1020-audio"},
@@ -38162,8 +38183,8 @@ diff -ruN --no-dereference -x .git a/sound/hda/codecs/realtek/alc269.c b/sound/h
  };
  #define ALC225_STANDARD_PINS \
 diff -ruN --no-dereference -x .git a/sound/hda/codecs/side-codecs/Kconfig b/sound/hda/codecs/side-codecs/Kconfig
---- a/sound/hda/codecs/side-codecs/Kconfig	2026-08-16 23:32:26.000000000 +0200
-+++ b/sound/hda/codecs/side-codecs/Kconfig	2026-10-03 14:48:53.000000000 +0200
+--- a/sound/hda/codecs/side-codecs/Kconfig	2026-10-11 15:27:50.000000000 +0200
++++ b/sound/hda/codecs/side-codecs/Kconfig	2026-10-13 14:33:30.000000000 +0200
 @@ -13,6 +13,24 @@
  	  Documentation/dev-tools/kunit/.
  	  If in doubt, say "N".
@@ -38213,8 +38234,8 @@ diff -ruN --no-dereference -x .git a/sound/hda/codecs/side-codecs/Kconfig b/soun
 +comment "Set to Y if you want auto-loading the side codec driver"
 +	depends on SND_HDA=y && SND_HDA_SCODEC_MAX98390_I2C=m
 diff -ruN --no-dereference -x .git a/sound/hda/codecs/side-codecs/Makefile b/sound/hda/codecs/side-codecs/Makefile
---- a/sound/hda/codecs/side-codecs/Makefile	2026-08-16 23:32:26.000000000 +0200
-+++ b/sound/hda/codecs/side-codecs/Makefile	2026-10-03 14:48:53.000000000 +0200
+--- a/sound/hda/codecs/side-codecs/Makefile	2026-10-11 15:27:50.000000000 +0200
++++ b/sound/hda/codecs/side-codecs/Makefile	2026-10-13 14:33:30.000000000 +0200
 @@ -3,6 +3,8 @@
  
  snd-hda-cirrus-scodec-y :=	cirrus_scodec.o
@@ -38246,7 +38267,7 @@ diff -ruN --no-dereference -x .git a/sound/hda/codecs/side-codecs/Makefile b/sou
 +obj-$(CONFIG_SND_HDA_SCODEC_MAX98390_I2C) += snd-hda-scodec-max98390-i2c.o
 diff -ruN --no-dereference -x .git a/sound/hda/codecs/side-codecs/aw88399_hda.c b/sound/hda/codecs/side-codecs/aw88399_hda.c
 --- a/sound/hda/codecs/side-codecs/aw88399_hda.c	1970-01-01 01:00:00.000000000 +0100
-+++ b/sound/hda/codecs/side-codecs/aw88399_hda.c	2026-10-03 14:48:53.000000000 +0200
++++ b/sound/hda/codecs/side-codecs/aw88399_hda.c	2026-10-13 14:33:30.000000000 +0200
 @@ -0,0 +1,372 @@
 +// SPDX-License-Identifier: GPL-2.0-only
 +//
@@ -38622,7 +38643,7 @@ diff -ruN --no-dereference -x .git a/sound/hda/codecs/side-codecs/aw88399_hda.c 
 +MODULE_FIRMWARE("aw88399_acf.bin");
 diff -ruN --no-dereference -x .git a/sound/hda/codecs/side-codecs/aw88399_hda.h b/sound/hda/codecs/side-codecs/aw88399_hda.h
 --- a/sound/hda/codecs/side-codecs/aw88399_hda.h	1970-01-01 01:00:00.000000000 +0100
-+++ b/sound/hda/codecs/side-codecs/aw88399_hda.h	2026-10-03 14:48:53.000000000 +0200
++++ b/sound/hda/codecs/side-codecs/aw88399_hda.h	2026-10-13 14:33:30.000000000 +0200
 @@ -0,0 +1,36 @@
 +/* SPDX-License-Identifier: GPL-2.0-only
 + *
@@ -38662,7 +38683,7 @@ diff -ruN --no-dereference -x .git a/sound/hda/codecs/side-codecs/aw88399_hda.h 
 +#endif /* __AW88399_HDA_H__ */
 diff -ruN --no-dereference -x .git a/sound/hda/codecs/side-codecs/aw88399_hda_i2c.c b/sound/hda/codecs/side-codecs/aw88399_hda_i2c.c
 --- a/sound/hda/codecs/side-codecs/aw88399_hda_i2c.c	1970-01-01 01:00:00.000000000 +0100
-+++ b/sound/hda/codecs/side-codecs/aw88399_hda_i2c.c	2026-10-03 14:48:53.000000000 +0200
++++ b/sound/hda/codecs/side-codecs/aw88399_hda_i2c.c	2026-10-13 14:33:30.000000000 +0200
 @@ -0,0 +1,54 @@
 +// SPDX-License-Identifier: GPL-2.0-only
 +//
@@ -38720,7 +38741,7 @@ diff -ruN --no-dereference -x .git a/sound/hda/codecs/side-codecs/aw88399_hda_i2
 +MODULE_LICENSE("GPL");
 diff -ruN --no-dereference -x .git a/sound/hda/codecs/side-codecs/max98390_hda.c b/sound/hda/codecs/side-codecs/max98390_hda.c
 --- a/sound/hda/codecs/side-codecs/max98390_hda.c	1970-01-01 01:00:00.000000000 +0100
-+++ b/sound/hda/codecs/side-codecs/max98390_hda.c	2026-10-03 14:48:53.000000000 +0200
++++ b/sound/hda/codecs/side-codecs/max98390_hda.c	2026-10-13 14:33:30.000000000 +0200
 @@ -0,0 +1,214 @@
 +// SPDX-License-Identifier: GPL-2.0
 +//
@@ -38938,7 +38959,7 @@ diff -ruN --no-dereference -x .git a/sound/hda/codecs/side-codecs/max98390_hda.c
 +MODULE_LICENSE("GPL");
 diff -ruN --no-dereference -x .git a/sound/hda/codecs/side-codecs/max98390_hda.h b/sound/hda/codecs/side-codecs/max98390_hda.h
 --- a/sound/hda/codecs/side-codecs/max98390_hda.h	1970-01-01 01:00:00.000000000 +0100
-+++ b/sound/hda/codecs/side-codecs/max98390_hda.h	2026-10-03 14:48:53.000000000 +0200
++++ b/sound/hda/codecs/side-codecs/max98390_hda.h	2026-10-13 14:33:30.000000000 +0200
 @@ -0,0 +1,33 @@
 +/* SPDX-License-Identifier: GPL-2.0 */
 +/*
@@ -38975,7 +38996,7 @@ diff -ruN --no-dereference -x .git a/sound/hda/codecs/side-codecs/max98390_hda.h
 +#endif /* __MAX98390_HDA_H__ */
 diff -ruN --no-dereference -x .git a/sound/hda/codecs/side-codecs/max98390_hda_filters.c b/sound/hda/codecs/side-codecs/max98390_hda_filters.c
 --- a/sound/hda/codecs/side-codecs/max98390_hda_filters.c	1970-01-01 01:00:00.000000000 +0100
-+++ b/sound/hda/codecs/side-codecs/max98390_hda_filters.c	2026-10-03 14:48:53.000000000 +0200
++++ b/sound/hda/codecs/side-codecs/max98390_hda_filters.c	2026-10-13 14:33:30.000000000 +0200
 @@ -0,0 +1,236 @@
 +// High-pass filter configuration for MAX98390 HDA driver
 +// This file contains the filter configuration functions
@@ -39215,7 +39236,7 @@ diff -ruN --no-dereference -x .git a/sound/hda/codecs/side-codecs/max98390_hda_f
 +MODULE_LICENSE("GPL");
 diff -ruN --no-dereference -x .git a/sound/hda/codecs/side-codecs/max98390_hda_filters.h b/sound/hda/codecs/side-codecs/max98390_hda_filters.h
 --- a/sound/hda/codecs/side-codecs/max98390_hda_filters.h	1970-01-01 01:00:00.000000000 +0100
-+++ b/sound/hda/codecs/side-codecs/max98390_hda_filters.h	2026-10-03 14:48:53.000000000 +0200
++++ b/sound/hda/codecs/side-codecs/max98390_hda_filters.h	2026-10-13 14:33:30.000000000 +0200
 @@ -0,0 +1,15 @@
 +/* SPDX-License-Identifier: GPL-2.0 */
 +//
@@ -39235,7 +39256,7 @@ diff -ruN --no-dereference -x .git a/sound/hda/codecs/side-codecs/max98390_hda_f
 \ No newline at end of file
 diff -ruN --no-dereference -x .git a/sound/hda/codecs/side-codecs/max98390_hda_i2c.c b/sound/hda/codecs/side-codecs/max98390_hda_i2c.c
 --- a/sound/hda/codecs/side-codecs/max98390_hda_i2c.c	1970-01-01 01:00:00.000000000 +0100
-+++ b/sound/hda/codecs/side-codecs/max98390_hda_i2c.c	2026-10-03 14:48:53.000000000 +0200
++++ b/sound/hda/codecs/side-codecs/max98390_hda_i2c.c	2026-10-13 14:33:30.000000000 +0200
 @@ -0,0 +1,74 @@
 +// SPDX-License-Identifier: GPL-2.0
 +//
@@ -39312,8 +39333,8 @@ diff -ruN --no-dereference -x .git a/sound/hda/codecs/side-codecs/max98390_hda_i
 +MODULE_AUTHOR("Kevin Cuperus <cuperus.kevin@hotmail.com>");
 +MODULE_LICENSE("GPL");
 diff -ruN --no-dereference -x .git a/sound/soc/amd/yc/acp6x-mach.c b/sound/soc/amd/yc/acp6x-mach.c
---- a/sound/soc/amd/yc/acp6x-mach.c	2026-10-07 05:21:41.489368501 +0200
-+++ b/sound/soc/amd/yc/acp6x-mach.c	2026-10-03 14:48:53.000000000 +0200
+--- a/sound/soc/amd/yc/acp6x-mach.c	2026-10-11 15:27:50.000000000 +0200
++++ b/sound/soc/amd/yc/acp6x-mach.c	2026-10-13 14:33:30.000000000 +0200
 @@ -615,6 +615,13 @@
  	{
  		.driver_data = &acp6x_card,
@@ -39329,8 +39350,8 @@ diff -ruN --no-dereference -x .git a/sound/soc/amd/yc/acp6x-mach.c b/sound/soc/a
  			DMI_MATCH(DMI_PRODUCT_NAME, "15NBC1011"),
  		}
 diff -ruN --no-dereference -x .git a/sound/soc/codecs/Kconfig b/sound/soc/codecs/Kconfig
---- a/sound/soc/codecs/Kconfig	2026-08-16 23:32:26.000000000 +0200
-+++ b/sound/soc/codecs/Kconfig	2026-10-03 14:48:53.000000000 +0200
+--- a/sound/soc/codecs/Kconfig	2026-10-11 15:27:50.000000000 +0200
++++ b/sound/soc/codecs/Kconfig	2026-10-13 14:33:30.000000000 +0200
 @@ -726,6 +726,10 @@
  	  sound quality, which is a new high efficiency, low
  	  noise, constant large volume, 6th Smart K audio amplifier.
@@ -39351,8 +39372,8 @@ diff -ruN --no-dereference -x .git a/sound/soc/codecs/Kconfig b/sound/soc/codecs
  	  This option enables support for aw88399 Smart PA.
  	  The awinic AW88399 is an I2S/TDM input, high efficiency
 diff -ruN --no-dereference -x .git a/sound/soc/codecs/Makefile b/sound/soc/codecs/Makefile
---- a/sound/soc/codecs/Makefile	2026-08-16 23:32:26.000000000 +0200
-+++ b/sound/soc/codecs/Makefile	2026-10-03 14:48:53.000000000 +0200
+--- a/sound/soc/codecs/Makefile	2026-10-11 15:27:50.000000000 +0200
++++ b/sound/soc/codecs/Makefile	2026-10-13 14:33:30.000000000 +0200
 @@ -55,6 +55,7 @@
  snd-soc-aw88166-y := aw88166.o
  snd-soc-aw88261-y := aw88261.o
@@ -39371,7 +39392,7 @@ diff -ruN --no-dereference -x .git a/sound/soc/codecs/Makefile b/sound/soc/codec
  obj-$(CONFIG_SND_SOC_CHV3_CODEC) += snd-soc-chv3-codec.o
 diff -ruN --no-dereference -x .git a/sound/soc/codecs/aw88399-lib.c b/sound/soc/codecs/aw88399-lib.c
 --- a/sound/soc/codecs/aw88399-lib.c	1970-01-01 01:00:00.000000000 +0100
-+++ b/sound/soc/codecs/aw88399-lib.c	2026-10-03 14:48:53.000000000 +0200
++++ b/sound/soc/codecs/aw88399-lib.c	2026-10-13 14:33:30.000000000 +0200
 @@ -0,0 +1,1411 @@
 +// SPDX-License-Identifier: GPL-2.0-only
 +//
@@ -40785,8 +40806,8 @@ diff -ruN --no-dereference -x .git a/sound/soc/codecs/aw88399-lib.c b/sound/soc/
 +MODULE_DESCRIPTION("AW88399 common device library");
 +MODULE_LICENSE("GPL");
 diff -ruN --no-dereference -x .git a/sound/soc/codecs/aw88399.c b/sound/soc/codecs/aw88399.c
---- a/sound/soc/codecs/aw88399.c	2026-08-16 23:32:26.000000000 +0200
-+++ b/sound/soc/codecs/aw88399.c	2026-10-03 14:48:53.000000000 +0200
+--- a/sound/soc/codecs/aw88399.c	2026-10-11 15:27:50.000000000 +0200
++++ b/sound/soc/codecs/aw88399.c	2026-10-13 14:33:30.000000000 +0200
 @@ -10,1217 +10,12 @@
  #include <linux/crc32.h>
  #include <linux/gpio/consumer.h>
@@ -42164,8 +42185,8 @@ diff -ruN --no-dereference -x .git a/sound/soc/codecs/aw88399.c b/sound/soc/code
  {
  	struct aw88399 *aw88399;
 diff -ruN --no-dereference -x .git a/sound/soc/codecs/aw88399.h b/sound/soc/codecs/aw88399.h
---- a/sound/soc/codecs/aw88399.h	2026-08-16 23:32:26.000000000 +0200
-+++ b/sound/soc/codecs/aw88399.h	2026-10-03 14:48:53.000000000 +0200
+--- a/sound/soc/codecs/aw88399.h	2026-10-11 15:27:50.000000000 +0200
++++ b/sound/soc/codecs/aw88399.h	2026-10-13 14:33:30.000000000 +0200
 @@ -10,512 +10,10 @@
  #ifndef __AW88399_H__
  #define __AW88399_H__
@@ -42763,8 +42784,8 @@ diff -ruN --no-dereference -x .git a/sound/soc/codecs/aw88399.h b/sound/soc/code
 -#endif
 +#endif /* __AW88399_H__ */
 diff -ruN --no-dereference -x .git a/sound/soc/codecs/max98390.c b/sound/soc/codecs/max98390.c
---- a/sound/soc/codecs/max98390.c	2026-08-16 23:32:26.000000000 +0200
-+++ b/sound/soc/codecs/max98390.c	2026-10-03 14:48:53.000000000 +0200
+--- a/sound/soc/codecs/max98390.c	2026-10-11 15:27:50.000000000 +0200
++++ b/sound/soc/codecs/max98390.c	2026-10-13 14:33:30.000000000 +0200
 @@ -978,7 +978,7 @@
  	.endianness		= 1,
  };
@@ -42791,8 +42812,8 @@ diff -ruN --no-dereference -x .git a/sound/soc/codecs/max98390.c b/sound/soc/cod
  	{},
  };
 diff -ruN --no-dereference -x .git a/sound/soc/codecs/max98390.h b/sound/soc/codecs/max98390.h
---- a/sound/soc/codecs/max98390.h	2026-08-16 23:32:26.000000000 +0200
-+++ b/sound/soc/codecs/max98390.h	2026-10-03 14:48:53.000000000 +0200
+--- a/sound/soc/codecs/max98390.h	2026-10-11 15:27:50.000000000 +0200
++++ b/sound/soc/codecs/max98390.h	2026-10-13 14:33:30.000000000 +0200
 @@ -664,4 +664,8 @@
  	unsigned int ambient_temp_value;
  	const char *dsm_param_name;
@@ -42803,8 +42824,8 @@ diff -ruN --no-dereference -x .git a/sound/soc/codecs/max98390.h b/sound/soc/cod
 +
  #endif
 diff -ruN --no-dereference -x .git a/sound/soc/intel/boards/sof_sdw.c b/sound/soc/intel/boards/sof_sdw.c
---- a/sound/soc/intel/boards/sof_sdw.c	2026-10-07 05:21:41.493567674 +0200
-+++ b/sound/soc/intel/boards/sof_sdw.c	2026-10-03 14:48:53.000000000 +0200
+--- a/sound/soc/intel/boards/sof_sdw.c	2026-10-11 15:27:50.000000000 +0200
++++ b/sound/soc/intel/boards/sof_sdw.c	2026-10-13 14:33:30.000000000 +0200
 @@ -845,6 +845,15 @@
  		},
  		.driver_data = (void *)(SOC_SDW_PCH_DMIC),
@@ -42823,7 +42844,7 @@ diff -ruN --no-dereference -x .git a/sound/soc/intel/boards/sof_sdw.c b/sound/so
  
 diff -ruN --no-dereference -x .git a/tag-release.sh b/tag-release.sh
 --- a/tag-release.sh	1970-01-01 01:00:00.000000000 +0100
-+++ b/tag-release.sh	2026-10-03 14:48:53.000000000 +0200
++++ b/tag-release.sh	2026-10-13 14:33:30.000000000 +0200
 @@ -0,0 +1,271 @@
 +#!/bin/bash
 +# tag-release.sh - Create signed CachyOS kernel tags in cachyos/linux
@@ -43097,8 +43118,8 @@ diff -ruN --no-dereference -x .git a/tag-release.sh b/tag-release.sh
 +    echo "Push with: git push origin $TAG"
 +fi
 diff -ruN --no-dereference -x .git a/tools/testing/selftests/bpf/progs/tcp_ca_kfunc.c b/tools/testing/selftests/bpf/progs/tcp_ca_kfunc.c
---- a/tools/testing/selftests/bpf/progs/tcp_ca_kfunc.c	2026-08-16 23:32:26.000000000 +0200
-+++ b/tools/testing/selftests/bpf/progs/tcp_ca_kfunc.c	2026-10-03 14:48:53.000000000 +0200
+--- a/tools/testing/selftests/bpf/progs/tcp_ca_kfunc.c	2026-10-11 15:27:50.000000000 +0200
++++ b/tools/testing/selftests/bpf/progs/tcp_ca_kfunc.c	2026-10-13 14:33:30.000000000 +0200
 @@ -8,6 +8,7 @@
  extern void bbr_main(struct sock *sk, u32 ack, int flag, const struct rate_sample *rs) __ksym;
  extern u32 bbr_sndbuf_expand(struct sock *sk) __ksym;
@@ -43116,8 +43137,8 @@ diff -ruN --no-dereference -x .git a/tools/testing/selftests/bpf/progs/tcp_ca_kf
  }
  
 diff -ruN --no-dereference -x .git a/tools/testing/selftests/mm/rmap.c b/tools/testing/selftests/mm/rmap.c
---- a/tools/testing/selftests/mm/rmap.c	2026-08-16 23:32:26.000000000 +0200
-+++ b/tools/testing/selftests/mm/rmap.c	2026-10-03 14:48:53.000000000 +0200
+--- a/tools/testing/selftests/mm/rmap.c	2026-10-11 15:27:50.000000000 +0200
++++ b/tools/testing/selftests/mm/rmap.c	2026-10-13 14:33:30.000000000 +0200
 @@ -430,4 +430,85 @@
  	propagate_children(_metadata, data);
  }
