@@ -447,9 +447,6 @@
     "SuperReactionTweaks": {
       "enabled": false
     },
-    "TenorGifSearch": {
-      "enabled": false
-    },
     "TextReplace": {
       "enabled": false
     },
@@ -566,6 +563,9 @@
     },
     "FixDiscordCss": {
       "enabled": true
+    },
+    "GifProviderSwitcher": {
+      "enabled": false
     }
   }
 }

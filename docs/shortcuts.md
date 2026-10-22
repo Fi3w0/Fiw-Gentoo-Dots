@@ -4,7 +4,7 @@ Generated from the repo’s captured `kglobalshortcutsrc`. This describes
 Fiw’s bindings as configured; applying them is a separate installer action.
 It covers KDE global shortcuts, not every shortcut inside individual applications.
 
-**67 assigned actions · 193 unassigned actions · 260 total**
+**68 assigned actions · 194 unassigned actions · 262 total**
 
 `Meta` is the Super/Windows key. In the full tables, multiple keys for
 one action are alternatives. Grouped summary keys match the named actions
@@ -105,6 +105,7 @@ Bindings for desktops 1–3 are retained exactly as configured.
 | Toggle Grid View | <code>Meta+G</code> | <code>Meta+G</code> |
 | Kill Window | <code>Meta+Ctrl+Esc</code> | <code>Meta+Ctrl+Esc</code> |
 | Toggle Overview | <code>Meta+W</code> | <code>Meta+W</code> |
+| Suspend Compositing | <code>Alt+Shift+F12</code> | <code>Alt+Shift+F12</code> |
 | Switch One Desktop Down | <code>Meta+Ctrl+Down</code> | <code>Meta+Ctrl+Down</code> |
 | Switch One Desktop Up | <code>Meta+Ctrl+Up</code> | <code>Meta+Ctrl+Up</code> |
 | Switch One Desktop to the Left | <code>Meta+Ctrl+Left</code> | <code>Meta+Ctrl+Left</code> |
@@ -242,7 +243,7 @@ stored KDE default. Expand each section to review the full capture.
 </details>
 
 <details>
-<summary>KWin (138)</summary>
+<summary>KWin (139)</summary>
 
 | Action | Stored KDE default |
 |---|---|
@@ -349,6 +350,7 @@ stored KDE default. Expand each section to review the full capture.
 | Raise Window | Unassigned |
 | Resize Window | Unassigned |
 | Restore Window | <code>Meta+Backspace</code> |
+| Shade Window | Unassigned |
 | Shrink Window Horizontally | Unassigned |
 | Shrink Window Vertically | Unassigned |
 | Window to Desktop 10 | Unassigned |

@@ -1,10 +1,12 @@
 #!/usr/bin/env bash
-# fiw-shot: Spectacle in background mode (never opens the app window).
-# The shot goes straight to the clipboard, then a notification shows the
-# thumbnail (drag it into any app) with Save / Edit buttons.
+# fiw-shot: screenshot straight to the clipboard, then a notification with
+# Save (and Edit under KWin). Never opens a picker window of its own.
 #
-#   fiw-shot region   Alt+S  select area (adjust with handles, Enter = take)
-#   fiw-shot screen   Alt+D  monitor under the cursor
+#   fiw-shot region   Alt+S  select area (Enter = take)
+#   fiw-shot screen   Alt+D  full screen of the focused window's monitor
+#
+# KDE/KWin uses Spectacle (its region UI is KWin-only). Every other Wayland
+# session, TideWM included, uses grim + slurp.
 set -u
 
 mode=${1:-region}
@@ -12,10 +14,25 @@ tmp_dir="${XDG_RUNTIME_DIR:-/tmp}/fiw-shot"   # tmpfs, gone at logout
 save_dir="$HOME/Pictures/Screenshots"
 
 case $mode in
-    region) flag=-r ;;
-    screen) flag=-m ;;
+    region|screen) ;;
     *) echo "usage: fiw-shot region|screen" >&2; exit 2 ;;
 esac
+
+case ${XDG_CURRENT_DESKTOP:-} in
+    *KDE*|*Plasma*) backend=spectacle ;;
+    *) backend=grim ;;
+esac
+
+if [[ $backend == grim ]]; then
+    need="grim wl-copy"
+    [[ $mode == region ]] && need="grim slurp wl-copy"
+    for bin in $need; do
+        command -v "$bin" >/dev/null 2>&1 || {
+            echo "fiw-shot: $bin is missing (emerge gui-apps/slurp)" >&2
+            exit 1
+        }
+    done
+fi
 
 mkdir -p "$tmp_dir"
 # keep the last 20 unsaved shots, drop older ones
@@ -24,15 +41,41 @@ ls -1t "$tmp_dir"/*.png 2>/dev/null | tail -n +21 | xargs -r rm -f --
 name="Screenshot_$(date +%Y%m%d_%H%M%S).png"
 shot="$tmp_dir/$name"
 
-spectacle --background --nonotify $flag --output "$shot" 2>/dev/null
+if [[ $backend == spectacle ]]; then
+    [[ $mode == region ]] && flag=-r || flag=-m
+    spectacle --background --nonotify "$flag" --output "$shot" 2>/dev/null
+else
+    if [[ $mode == region ]]; then
+        geometry=$(slurp) || exit 0
+        [[ -n $geometry ]] || exit 0
+        grim -g "$geometry" "$shot"
+    else
+        # Monitor of the focused window; whole layout if nothing is focused.
+        output=$(tidectl focused-window 2>/dev/null |
+            sed -n 's/.*output=\([^ ]*\).*/\1/p' | head -n1)
+        if [[ -n ${output:-} ]]; then
+            grim -o "$output" "$shot"
+        else
+            grim "$shot"
+        fi
+    fi
+fi
+
 [[ -s $shot ]] || exit 0    # Esc during selection: nothing to do
 
 wl-copy --type image/png < "$shot"
 
-action=$(notify-send --app-name=Screenshot --icon="$shot" \
-    --hint="variant:x-kde-urls:@as ['file://$shot']" \
-    --action=save=Save --action=edit=Edit \
-    "Copied to clipboard" "$name")
+if [[ $backend == spectacle ]]; then
+    action=$(notify-send --app-name=Screenshot --icon="$shot" \
+        --hint="variant:x-kde-urls:@as ['file://$shot']" \
+        --action=save=Save --action=edit=Edit \
+        "Copied to clipboard" "$name")
+else
+    action=$(notify-send --app-name=Screenshot --icon="$shot" \
+        --hint="variant:x-kde-urls:@as ['file://$shot']" \
+        --action=save=Save \
+        "Copied to clipboard" "$name")
+fi
 
 case $action in
     save)
