@@ -368,7 +368,10 @@ def root_files(selection, repo_location=None):
             result['etc/portage/package.accept_keywords/fiw-dots-limine'] = 'sys-boot/limine ~amd64\n'
             result['etc/portage/package.use/fiw-dots-limine'] = 'sys-boot/limine uefi-x86-64 -bios -bios-cd -bios-pxe -uefi-cd -uefi-ia32 -uefi-aarch64 -uefi-riscv64 -uefi-loongarch64\n'
     if 'tidewm' in selection['groups']:
-        result['etc/portage/package.accept_keywords/fiw-dots-tidewm'] = 'gui-wm/tidewm::fiw-dots **\n'
+        result['etc/portage/package.accept_keywords/fiw-dots-tidewm'] = (
+            'gui-wm/tidewm::fiw-dots **\n'
+            'gui-apps/mpvpaper::fiw-dots ~amd64\n'
+        )
     return result
 
 
