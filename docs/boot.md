@@ -85,5 +85,5 @@ binary fallback booted, and addition/removal hooks and preservation of edited
 menus were checked. Physical firmware and unsupported storage layouts still
 need their own setup.
 
-`optional/fiw-cachy-patch` refreshes the custom kernel patch; it does not select
+`optional/fiw-nyx-bump` adds new custom kernel releases; it does not select
 a bootloader. See the [helper list](scripts.md) before using it.

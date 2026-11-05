@@ -1,2 +1,2 @@
-sys-kernel/gentoo-kernel fiw-dots-notmpfs.conf
+sys-kernel/fiw-nyx-kernel fiw-dots-notmpfs.conf
 sys-devel/gcc            fiw-dots-notmpfs.conf

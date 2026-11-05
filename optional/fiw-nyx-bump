@@ -1,0 +1,71 @@
+#!/usr/bin/env bash
+# fiw-nyx-bump [series]
+# Keeps sys-kernel/fiw-nyx-kernel::fiw on CachyOS's newest release in the
+# kernel series it is on (or in [series], e.g. 7.3, to move to a new one):
+#  - copies the newest fiw-nyx-kernel ebuild to <ver>-r<cachyos release>,
+#    taking the Gentoo patchset and config versions from ::gentoo's
+#    gentoo-kernel for that series, plus a matching virtual/dist-kernel
+#    (so nvidia-drivers and other dist-kernel modules rebuild for it),
+#    with Manifests;
+#  - writes /etc/portage/package.mask/fiw-nyx so virtual/dist-kernel and
+#    gentoo-kernel-bin never run ahead of the Nyx kernel (modules build for
+#    the newest kernel installed, which must be Nyx).
+# Run as root (the postsync hook does). Keeps the two newest Nyx versions.
+set -euo pipefail
+
+repo=${FIW_NYX_REPO:-$(portageq get_repo_path / fiw)}
+gentoo=$(portageq get_repo_path / gentoo)
+pkgdir=$repo/sys-kernel/fiw-nyx-kernel
+vdir=$repo/virtual/dist-kernel
+mask=${FIW_NYX_MASK:-/etc/portage/package.mask/fiw-nyx}
+
+newest=$(ls "$pkgdir"/fiw-nyx-kernel-*.ebuild | sort -V | tail -1)
+cur=$(basename "$newest" .ebuild); cur=${cur#fiw-nyx-kernel-}   # 7.2.11-r1
+cur_ver=${cur%-r*}
+series=${1:-${cur_ver%.*}}
+
+tag=$(curl -fsSL "https://api.github.com/repos/CachyOS/linux/releases?per_page=100" |
+	grep -oE "\"tag_name\": *\"cachyos-${series//./\\.}\.[0-9]+-[0-9]+\"" |
+	grep -oE "cachyos-[0-9.]+-[0-9]+" | sort -uV | tail -1) || true
+if [[ -z $tag ]]; then
+	echo "fiw-nyx-bump: CachyOS has no ${series}.x release; staying on ${cur}"
+	tag=cachyos-${cur%-r*}-${cur##*-r}
+fi
+ver=${tag#cachyos-}; rel=${ver##*-}; ver=${ver%-*}
+target=$pkgdir/fiw-nyx-kernel-${ver}-r${rel}.ebuild
+
+if [[ ! -e $target ]]; then
+	echo "fiw-nyx-bump: adding fiw-nyx-kernel-${ver}-r${rel} (${tag})"
+	cp "$newest" "$target"
+	# Gentoo's patchset/config for this series, from its own gentoo-kernel.
+	ref=$(ls "$gentoo"/sys-kernel/gentoo-kernel/gentoo-kernel-"${series}".*.ebuild 2>/dev/null | sort -V | tail -1 || true)
+	if [[ -n $ref ]]; then
+		for var in PATCHSET CONFIG_VER GENTOO_CONFIG_P; do
+			val=$(sed -n "s/^${var}=//p" "$ref" | head -1)
+			[[ -n $val ]] && sed -i "s|^${var}=.*|${var}=${val}|" "$target"
+		done
+		# the patchset's directory on distfiles.gentoo.org follows its series
+		pset=$(sed -n 's/^PATCHSET=linux-gentoo-patches-//p' "$target")
+		sed -i "s|patchsets/[0-9]*\.[0-9]*/|patchsets/${pset%.*}/|" "$target"
+	fi
+	vnewest=$(ls "$vdir"/dist-kernel-*.ebuild | sort -V | tail -1)
+	cp "$vnewest" "$vdir/dist-kernel-${ver}-r${rel}.ebuild"
+	# Keep the two newest versions (and their virtuals), then the Manifests
+	# (thin: they fetch every listed version's sources, so prune first).
+	ls "$pkgdir"/fiw-nyx-kernel-*.ebuild | sort -V | head -n -2 | while read -r old; do
+		v=$(basename "$old" .ebuild); v=${v#fiw-nyx-kernel-}
+		rm -f "$old" "$vdir/dist-kernel-${v}.ebuild"
+	done
+	ebuild "$target" manifest
+	ebuild "$vdir/dist-kernel-${ver}-r${rel}.ebuild" manifest
+	chown -R --reference="$repo" "$pkgdir" "$vdir"
+fi
+
+cat >"$mask.tmp" <<EOF
+# Written by fiw-nyx-bump: dist-kernel modules (nvidia-drivers) build for
+# the newest installed kernel, so nothing may get ahead of fiw-nyx-kernel.
+>virtual/dist-kernel-${ver}-r${rel}
+>sys-kernel/gentoo-kernel-bin-${ver}
+EOF
+mv "$mask.tmp" "$mask"
+echo "fiw-nyx-bump: Nyx is at ${ver}-r${rel} (${tag})"

@@ -89,7 +89,7 @@ def package_map(selection):
 def source_policy(selection):
     result = atoms(REPO / 'packages/source.list')
     if selection['kernel'] == 'custom' and 'system' in selection['groups']:
-        result += ['sys-kernel/gentoo-kernel']
+        result += ['sys-kernel/fiw-nyx-kernel']
         if 'nvidia' in selection.get('extras', []):
             result += ['x11-drivers/nvidia-drivers']
     return result
@@ -351,11 +351,13 @@ def root_files(selection, repo_location=None):
     if selection['kernel'] == 'custom' and 'system' in selection['groups']:
         for src in (REPO / 'optional/kernel/config.d').glob('*.config'):
             result['etc/kernel/config.d/' + src.name] = src.read_text()
-        result['etc/portage/package.accept_keywords/fiw-dots-kernel'] = 'sys-kernel/gentoo-kernel ~amd64\nsys-kernel/gentoo-kernel-bin ~amd64\nvirtual/dist-kernel ~amd64\n'
-        result['etc/portage/env/sys-kernel/gentoo-kernel'] = (REPO / 'optional/kernel/guard').read_text()
-        # Point releases of the tested series reuse the patch (see guard); a new series needs a new snapshot.
-        major, minor = json.loads((REPO / 'optional/kernel/snapshot.json').read_text())['patch_kernel'].split('.')[:2]
-        result['etc/portage/package.mask/fiw-dots-custom-kernel'] = '# Tested custom-kernel series; update snapshot and patch for the next one.\n>=sys-kernel/gentoo-kernel-' + major + '.' + str(int(minor) + 1) + '\n'
+        result['etc/portage/package.accept_keywords/fiw-dots-kernel'] = 'sys-kernel/fiw-nyx-kernel ~amd64\nsys-kernel/gentoo-kernel-bin ~amd64\nvirtual/dist-kernel ~amd64\n'
+        result['etc/portage/env/sys-kernel/fiw-nyx-kernel'] = (REPO / 'optional/kernel/env').read_text()
+        # dist-kernel modules build for the newest installed kernel, so nothing may pass Nyx.
+        snapshot = json.loads((REPO / 'optional/kernel/snapshot.json').read_text())
+        release = snapshot['atom'].split('fiw-nyx-kernel-', 1)[1]
+        result['etc/portage/package.mask/fiw-dots-custom-kernel'] = ('# Nyx release in this snapshot; dist-kernel modules build for the newest installed kernel.\n'
+                                                                     '>virtual/dist-kernel-' + release + '\n>sys-kernel/gentoo-kernel-bin-' + snapshot['kernel'] + '\n')
     if selection['profile'] == 'fiw-ryzen':
         result['etc/sysctl.d/70-fiw-dots-performance.conf'] = (REPO / 'optional/tuning/70-fiw-performance.conf').read_text()
         result['etc/modules-load.d/fiw-dots-bbr.conf'] = (REPO / 'optional/tuning/bbr.conf').read_text()
@@ -415,11 +417,6 @@ def export(selection, dest):
         target = dest / relative
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_text(content)
-    if selection['kernel'] == 'custom' and 'system' in selection['groups']:
-        patches = dest / 'etc/portage/patches/sys-kernel/gentoo-kernel'
-        patches.mkdir(parents=True, exist_ok=True)
-        for src in (REPO / 'optional/kernel/patches').glob('*.patch'):
-            shutil.copy2(src, patches / src.name)
     (dest / 'selection.json').write_text(json.dumps(selection, indent=2) + '\n')
     (dest / 'PLAN.txt').write_text(preview(selection) + '\n')
     print('Exported root configuration and plan to ' + str(dest))
@@ -569,7 +566,7 @@ def install_packages(selection):
             return {'status': 'skipped', 'requested': requested, 'skipped': skipped, 'missing': requested}
         build_modules = (selection['kernel'] == 'custom' and 'system' in selection['groups']
                          and 'x11-drivers/nvidia-drivers' in accepted
-                         and any(atom.startswith('=sys-kernel/gentoo-kernel-') for atom in accepted))
+                         and any(atom.startswith('=sys-kernel/fiw-nyx-kernel-') for atom in accepted))
         if build_modules:
             print('NVIDIA modules will be checked and compiled when needed for the selected custom kernel and binary fallback.')
         if ask('Apply the previewed Portage files and install the accepted packages?', ['apply', 'cancel'], 'cancel') != 'apply':
@@ -592,16 +589,6 @@ def install_packages(selection):
                 shutil.copy2(dest, backup, follow_symlinks=False)
             dest.parent.mkdir(parents=True, exist_ok=True)
             dest.write_text(content)
-        if selection['kernel'] == 'custom' and 'system' in selection['groups']:
-            patch_dir = Path('/etc/portage/patches/sys-kernel/gentoo-kernel')
-            patch_dir.mkdir(parents=True, exist_ok=True)
-            for src in (REPO / 'optional/kernel/patches').glob('*.patch'):
-                dest = patch_dir / src.name
-                if dest.exists():
-                    backup = backup_root / dest.relative_to('/')
-                    backup.parent.mkdir(parents=True, exist_ok=True)
-                    shutil.copy2(dest, backup)
-                shutil.copy2(src, dest)
         overlay = Path('/var/db/repos/fiw-dots')
         if overlay.exists():
             shutil.copytree(overlay, backup_root / 'overlay', symlinks=True)

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<longdescription>
+		CachyOS's released kernel tree with Gentoo's patchset and
+		distribution-kernel config, named -fiw-nyx-vN through
+		/etc/kernel/config.d. The ebuild revision is the CachyOS release.
+	</longdescription>
+	<upstream>
+		<remote-id type="github">CachyOS/linux</remote-id>
+	</upstream>
+</pkgmetadata>

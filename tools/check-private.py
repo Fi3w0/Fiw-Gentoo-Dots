@@ -25,7 +25,6 @@ def check():
                  and not any(part in ('local', 'build', '.git', '__pycache__') for part in p.relative_to(REPO).parts)]
     else:
         files = result.stdout.splitlines()
-    snapshot = json.loads((REPO / 'optional/kernel/snapshot.json').read_text())
     attribution = json.loads((REPO / 'tools/public-attribution.json').read_text())
     errors = []
     for relative in sorted(set(files)):
@@ -37,12 +36,6 @@ def check():
         if not path.is_file():
             continue
         raw = path.read_bytes()
-        if relative.startswith('optional/kernel/patches/'):
-            if hashlib.sha256(raw).hexdigest() != snapshot['patch_sha256']:
-                errors.append(relative + ': upstream patch checksum changed')
-            # Reviewed upstream source patch contains public test UUIDs and
-            # author addresses; only this fingerprinted artifact is exempt.
-            continue
         if b'\0' in raw:
             continue
         try:

@@ -1,0 +1,4 @@
+# Installed as /etc/portage/env/sys-kernel/fiw-nyx-kernel
+# /proc/version → "... (fiw@gentoo) ..."
+export KBUILD_BUILD_USER=fiw
+export KBUILD_BUILD_HOST=gentoo

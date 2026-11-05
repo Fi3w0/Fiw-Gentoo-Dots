@@ -73,9 +73,10 @@ Custom kernel installs with NVIDIA also check its modules against the selected
 custom kernel and binary fallback. Missing or outdated modules are compiled
 for each, and failures appear in the package report.
 
-The custom kernel uses the CachyOS 7.2.10-1 patch and is named `7.2.10-fiw-nyx-v1.2`. Newer
-7.2.x point releases reuse that patch and config; the next series stays masked
-until the snapshot is updated. Fiw's Ryzen preset also installs
+The custom kernel is `sys-kernel/fiw-nyx-kernel` from the bundled overlay: CachyOS's
+released 7.3.1-1 source built the Gentoo dist-kernel way, named `7.3.1-fiw-nyx-v1.2`.
+`virtual/dist-kernel` and `gentoo-kernel-bin` stay masked above that release, because
+modules build for the newest installed kernel. Fiw's Ryzen preset also installs
 `/etc/sysctl.d/70-fiw-dots-performance.conf` (CachyOS-style memory/network
 values, `vm.max_map_count` for Proton games, TCP BBR with fq) and loads
 `tcp_bbr`. No extra packages are needed for either.
