@@ -17,7 +17,9 @@
 To refresh the bundled kernel, run the helper against this checkout with
 `FIW_NYX_REPO` pointing at `overlay` and `FIW_NYX_MASK` at a temporary file, for
 example `fiw-nyx-bump 7.3`. It does not update `snapshot.json`, so review that
-together with the new ebuild and keep only the snapshot's release in the overlay.
+together with the new ebuild and keep only the snapshot's release in the overlay,
+plus any opt-in release candidate. The helper never copies or prunes `_rc` ebuilds;
+its mask follows one only where Portage can see it.
 
 Confirmed boot deployment installs its own refresh helper and kernel hooks.
 The default `keep` choice leaves them disabled. See [boot setup](boot.md).

@@ -1,0 +1,268 @@
+Build NVIDIA 595.104.02 against Linux 7.4.
+
+7.4 removes VM_SPECIAL, renames is_vm_hugetlb_page() to vma_is_hugetlb(), moves
+drm_fb_helper.h to drm/clients/drm_fbdev_helper.h and replaces the plane and CRTC
+.reset callbacks with .atomic_create_state. Older kernels keep their existing paths.
+
+Ported from NVIDIA/open-gpu-kernel-modules PR 1414 (written for 615.71.09, not merged);
+its dmem hunks are dropped because 595 has no dmem code. Remove this patch once
+NVIDIA ships 7.4 support.
+
+diff -ruN a/kernel-module-source/kernel-open/conftest.sh b/kernel-module-source/kernel-open/conftest.sh
+--- a/kernel-module-source/kernel-open/conftest.sh	2026-09-17 18:48:23.000000000 +0200
++++ b/kernel-module-source/kernel-open/conftest.sh	2026-11-05 18:44:00.655037573 +0100
+@@ -4265,7 +4265,11 @@
+             # in v6.11.
+             #
+             CODE="
++            #if defined(NV_DRM_CLIENTS_DRM_FBDEV_HELPER_H_PRESENT)
++            #include <drm/clients/drm_fbdev_helper.h>
++            #else
+             #include <drm/drm_fb_helper.h>
++            #endif
+             #if defined(NV_DRM_DRM_FBDEV_GENERIC_H_PRESENT)
+             #include <drm/drm_fbdev_generic.h>
+             #endif
+@@ -4285,7 +4289,11 @@
+             # 1000634477d8 ("drm/fbdev-ttm:Convert to client-setup") in v6.13.
+             #
+             CODE="
++            #if defined(NV_DRM_CLIENTS_DRM_FBDEV_HELPER_H_PRESENT)
++            #include <drm/clients/drm_fbdev_helper.h>
++            #else
+             #include <drm/drm_fb_helper.h>
++            #endif
+             #if defined(NV_DRM_DRM_FBDEV_TTM_H_PRESENT)
+             #include <drm/drm_fbdev_ttm.h>
+             #endif
+@@ -4307,7 +4315,11 @@
+             # in linux-next b86711c6d6e2.
+             #
+             CODE="
++            #if defined(NV_DRM_CLIENTS_DRM_FBDEV_HELPER_H_PRESENT)
++            #include <drm/clients/drm_fbdev_helper.h>
++            #else
+             #include <drm/drm_fb_helper.h>
++            #endif
+             #if defined(NV_DRM_DRM_CLIENT_SETUP_H_PRESENT)
+             #include <drm/drm_client_setup.h>
+             #elif defined(NV_DRM_CLIENTS_DRM_CLIENT_SETUP_H_PRESENT)
+@@ -5133,6 +5145,46 @@
+             compile_check_conftest "$CODE" "NV_MEMORY_DEVICE_COHERENT_PRESENT" "" "types"
+         ;;
+ 
++        drm_plane_funcs_has_atomic_create_state)
++            #
++            # Determine if drm_plane_funcs has an atomic_create_state callback.
++            #
++            CODE="
++            #include <drm/drm_plane.h>
++            int conftest_drm_plane_funcs_has_atomic_create_state(void) {
++                return offsetof(struct drm_plane_funcs, atomic_create_state);
++            }"
++
++            compile_check_conftest "$CODE" "NV_DRM_PLANE_FUNCS_HAS_ATOMIC_CREATE_STATE" "" "types"
++        ;;
++
++        drm_crtc_funcs_has_atomic_create_state)
++            #
++            # Determine if drm_crtc_funcs has an atomic_create_state callback.
++            #
++            CODE="
++            #include <drm/drm_crtc.h>
++            int conftest_drm_crtc_funcs_has_atomic_create_state(void) {
++                return offsetof(struct drm_crtc_funcs, atomic_create_state);
++            }"
++
++            compile_check_conftest "$CODE" "NV_DRM_CRTC_FUNCS_HAS_ATOMIC_CREATE_STATE" "" "types"
++        ;;
++
++        vma_is_hugetlb)
++            #
++            # Determine if the renamed hugetlb VMA helper is present.
++            # typeof requires a declaration even when implicit function
++            # declaration warnings are disabled for other conftests.
++            #
++            CODE="
++            #include <linux/mm.h>
++            typeof(vma_is_hugetlb) conftest_vma_is_hugetlb;
++            "
++
++            compile_check_conftest "$CODE" "NV_VMA_IS_HUGETLB_PRESENT" "" "types"
++        ;;
++
+         drm_crtc_funcs_has_get_vblank_timestamp)
+             #
+             # Determine if the 'drm_crtc_funcs' structure has a
+diff -ruN a/kernel-module-source/kernel-open/header-presence-tests.mk b/kernel-module-source/kernel-open/header-presence-tests.mk
+--- a/kernel-module-source/kernel-open/header-presence-tests.mk	2026-09-17 18:48:23.000000000 +0200
++++ b/kernel-module-source/kernel-open/header-presence-tests.mk	2026-11-05 18:44:00.643646321 +0100
+@@ -14,6 +14,7 @@
+   drm/drm_client_setup.h \
+   drm/drm_probe_helper.h \
+   drm/clients/drm_client_setup.h \
++  drm/clients/drm_fbdev_helper.h \
+   dt-bindings/interconnect/tegra_icc_id.h \
+   generated/autoconf.h \
+   generated/compile.h \
+diff -ruN a/kernel-module-source/kernel-open/nvidia-drm/nvidia-drm-crtc.c b/kernel-module-source/kernel-open/nvidia-drm/nvidia-drm-crtc.c
+--- a/kernel-module-source/kernel-open/nvidia-drm/nvidia-drm-crtc.c	2026-09-17 19:19:38.000000000 +0200
++++ b/kernel-module-source/kernel-open/nvidia-drm/nvidia-drm-crtc.c	2026-11-05 18:44:00.654796403 +0100
+@@ -1944,6 +1944,27 @@
+     return -EINVAL;
+ }
+ 
++#if defined(NV_DRM_PLANE_FUNCS_HAS_ATOMIC_CREATE_STATE)
++/**
++ * nv_drm_plane_atomic_create_state - plane state creation hook
++ * @plane: DRM plane
++ *
++ * Allocate an empty DRM plane state.
++ */
++static struct drm_plane_state *
++nv_drm_plane_atomic_create_state(struct drm_plane *plane)
++{
++    struct nv_drm_plane_state *nv_plane_state =
++        nv_drm_calloc(1, sizeof(*nv_plane_state));
++
++    if (!nv_plane_state) {
++        return ERR_PTR(-ENOMEM);
++    }
++
++    __drm_atomic_helper_plane_state_init(&nv_plane_state->base, plane);
++    return &nv_plane_state->base;
++}
++#else
+ /**
+  * nv_drm_plane_atomic_reset - plane state reset hook
+  * @plane: DRM plane
+@@ -1974,6 +1995,7 @@
+         kfree(nv_plane_state);
+     }
+ }
++#endif
+ 
+ 
+ static struct drm_plane_state *
+@@ -2088,7 +2110,11 @@
+     .update_plane           = drm_atomic_helper_update_plane,
+     .disable_plane          = drm_atomic_helper_disable_plane,
+     .destroy                = nv_drm_plane_destroy,
++#if defined(NV_DRM_PLANE_FUNCS_HAS_ATOMIC_CREATE_STATE)
++    .atomic_create_state    = nv_drm_plane_atomic_create_state,
++#else
+     .reset                  = nv_drm_plane_atomic_reset,
++#endif
+     .atomic_get_property    = nv_drm_plane_atomic_get_property,
+     .atomic_set_property    = nv_drm_plane_atomic_set_property,
+     .atomic_duplicate_state = nv_drm_plane_atomic_duplicate_state,
+@@ -2175,6 +2201,26 @@
+ }
+ 
+ 
++#if defined(NV_DRM_CRTC_FUNCS_HAS_ATOMIC_CREATE_STATE)
++/**
++ * nv_drm_atomic_crtc_create_state - crtc state creation hook
++ * @crtc: DRM crtc
++ *
++ * Allocate an empty DRM crtc state.
++ */
++static struct drm_crtc_state *
++nv_drm_atomic_crtc_create_state(struct drm_crtc *crtc)
++{
++    struct nv_drm_crtc_state *nv_state = nv_drm_crtc_state_alloc();
++
++    if (!nv_state) {
++        return ERR_PTR(-ENOMEM);
++    }
++
++    __drm_atomic_helper_crtc_state_init(&nv_state->base, crtc);
++    return &nv_state->base;
++}
++#else
+ /**
+  * nv_drm_atomic_crtc_reset - crtc state reset hook
+  * @crtc: DRM crtc
+@@ -2204,6 +2250,7 @@
+         kfree(nv_state);
+     }
+ }
++#endif
+ 
+ /**
+  * nv_drm_atomic_crtc_duplicate_state - crtc state duplicate hook
+@@ -2298,7 +2345,11 @@
+ static struct drm_crtc_funcs nv_crtc_funcs = {
+     .set_config             = drm_atomic_helper_set_config,
+     .page_flip              = drm_atomic_helper_page_flip,
++#if defined(NV_DRM_CRTC_FUNCS_HAS_ATOMIC_CREATE_STATE)
++    .atomic_create_state    = nv_drm_atomic_crtc_create_state,
++#else
+     .reset                  = nv_drm_atomic_crtc_reset,
++#endif
+     .destroy                = nv_drm_crtc_destroy,
+     .atomic_get_property    = nv_drm_atomic_crtc_get_property,
+     .atomic_set_property    = nv_drm_atomic_crtc_set_property,
+diff -ruN a/kernel-module-source/kernel-open/nvidia-drm/nvidia-drm-drv.c b/kernel-module-source/kernel-open/nvidia-drm/nvidia-drm-drv.c
+--- a/kernel-module-source/kernel-open/nvidia-drm/nvidia-drm-drv.c	2026-09-17 19:19:38.000000000 +0200
++++ b/kernel-module-source/kernel-open/nvidia-drm/nvidia-drm-drv.c	2026-11-05 18:44:00.643853497 +0100
+@@ -64,8 +64,12 @@
+ #endif
+ 
+ #if defined(NV_DRM_FBDEV_AVAILABLE)
++#if defined(NV_DRM_CLIENTS_DRM_FBDEV_HELPER_H_PRESENT)
++#include <drm/clients/drm_fbdev_helper.h>
++#else
+ #include <drm/drm_fb_helper.h>
+ #endif
++#endif
+ 
+ #if defined(NV_DRM_DRM_CLIENT_SETUP_H_PRESENT)
+ #include <drm/drm_client_setup.h>
+diff -ruN a/kernel-module-source/kernel-open/nvidia-drm/nvidia-drm-sources.mk b/kernel-module-source/kernel-open/nvidia-drm/nvidia-drm-sources.mk
+--- a/kernel-module-source/kernel-open/nvidia-drm/nvidia-drm-sources.mk	2026-09-17 18:49:36.000000000 +0200
++++ b/kernel-module-source/kernel-open/nvidia-drm/nvidia-drm-sources.mk	2026-11-05 18:44:00.643898712 +0100
+@@ -72,6 +72,8 @@
+ NV_CONFTEST_TYPE_COMPILE_TESTS += vm_fault_t
+ NV_CONFTEST_TYPE_COMPILE_TESTS += drm_gem_object_has_resv
+ NV_CONFTEST_TYPE_COMPILE_TESTS += drm_crtc_state_has_async_flip
++NV_CONFTEST_TYPE_COMPILE_TESTS += drm_crtc_funcs_has_atomic_create_state
++NV_CONFTEST_TYPE_COMPILE_TESTS += drm_plane_funcs_has_atomic_create_state
+ NV_CONFTEST_TYPE_COMPILE_TESTS += drm_crtc_state_has_pageflip_flags
+ NV_CONFTEST_TYPE_COMPILE_TESTS += drm_crtc_state_has_vrr_enabled
+ NV_CONFTEST_TYPE_COMPILE_TESTS += mm_has_mmap_lock
+diff -ruN a/kernel-module-source/kernel-open/nvidia-uvm/nvidia-uvm.Kbuild b/kernel-module-source/kernel-open/nvidia-uvm/nvidia-uvm.Kbuild
+--- a/kernel-module-source/kernel-open/nvidia-uvm/nvidia-uvm.Kbuild	2026-09-17 19:31:17.000000000 +0200
++++ b/kernel-module-source/kernel-open/nvidia-uvm/nvidia-uvm.Kbuild	2026-11-05 18:44:00.654859881 +0100
+@@ -70,6 +70,7 @@
+ NV_CONFTEST_TYPE_COMPILE_TESTS += sg_dma_page_iter
+ NV_CONFTEST_TYPE_COMPILE_TESTS += struct_page_has_zone_device_data
+ NV_CONFTEST_TYPE_COMPILE_TESTS += memory_device_coherent_present
++NV_CONFTEST_TYPE_COMPILE_TESTS += vma_is_hugetlb
+ 
+ NV_CONFTEST_SYMBOL_COMPILE_TESTS += is_export_symbol_present_int_active_memcg
+ NV_CONFTEST_SYMBOL_COMPILE_TESTS += is_export_symbol_present_migrate_vma_setup
+diff -ruN a/kernel-module-source/kernel-open/nvidia-uvm/uvm_hmm.c b/kernel-module-source/kernel-open/nvidia-uvm/uvm_hmm.c
+--- a/kernel-module-source/kernel-open/nvidia-uvm/uvm_hmm.c	2026-09-17 19:32:07.000000000 +0200
++++ b/kernel-module-source/kernel-open/nvidia-uvm/uvm_hmm.c	2026-11-05 18:44:00.644067646 +0100
+@@ -3967,14 +3967,18 @@
+     UVM_ASSERT(va_block->hmm.va_space->va_space_mm.mm == vma->vm_mm);
+     uvm_assert_mmap_lock_locked(vma->vm_mm);
+ 
+-    // migrate_vma_setup() can't migrate VM_SPECIAL so we have to force GPU
++    // migrate_vma_setup() can't migrate special mappings so we have to force GPU
+     // remote mapping.
+     // TODO: Bug 3660968: add support for file-backed migrations.
+     // TODO: Bug 3368756: add support for transparent huge page migrations.
+     return !vma_is_anonymous(vma) ||
+-           (vma->vm_flags & VM_SPECIAL) ||
++           (vma->vm_flags & (VM_IO | VM_DONTEXPAND | VM_PFNMAP | VM_MIXEDMAP)) ||
+            vma_is_dax(vma) ||
++#if defined(NV_VMA_IS_HUGETLB_PRESENT)
++           vma_is_hugetlb(vma);
++#else
+            is_vm_hugetlb_page(vma);
++#endif
+ }
+ 
+ #endif // UVM_IS_CONFIG_HMM()

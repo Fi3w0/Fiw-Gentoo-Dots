@@ -76,7 +76,26 @@ for each, and failures appear in the package report.
 The custom kernel is `sys-kernel/fiw-nyx-kernel` from the bundled overlay: CachyOS's
 released 7.3.1-1 source built the Gentoo dist-kernel way, named `7.3.1-fiw-nyx-v1.2`.
 `virtual/dist-kernel` and `gentoo-kernel-bin` stay masked above that release, because
-modules build for the newest installed kernel. Fiw's Ryzen preset also installs
+modules build for the newest installed kernel.
+
+The overlay also carries `fiw-nyx-kernel-7.4_rc1-r1` (CachyOS `cachyos-7.4-rc1-1`,
+named `7.4.0-rc1-fiw-nyx-v1.2`). Installs never pick it: its `KEYWORDS` is empty and
+`snapshot.json` stays on the stable release. It has no Gentoo patchset and uses the
+7.3.1 Fedora config as its base. To opt in on your own system:
+
+```sh
+echo '=sys-kernel/fiw-nyx-kernel-7.4_rc* **' >> /etc/portage/package.accept_keywords/fiw-dots-kernel
+sed -i 's/^>virtual\/dist-kernel-.*/>virtual\/dist-kernel-7.4_rc1-r1/' /etc/portage/package.mask/fiw-dots-custom-kernel
+emerge -1 =sys-kernel/fiw-nyx-kernel-7.4_rc1-r1 =virtual/dist-kernel-7.4_rc1-r1
+```
+
+NVIDIA 595.104.02 does not build against 7.4 by itself. Copy
+`optional/kernel/patches/x11-drivers` to `/etc/portage/patches/x11-drivers` before
+rebuilding `x11-drivers/nvidia-drivers`. The patch is ported from an unmerged
+community pull request and only applies to that driver version. Keep your previous
+kernel in the boot menu until 7.4 has proven itself on your hardware.
+
+Fiw's Ryzen preset also installs
 `/etc/sysctl.d/70-fiw-dots-performance.conf` (CachyOS-style memory/network
 values, `vm.max_map_count` for Proton games, TCP BBR with fq) and loads
 `tcp_bbr`. No extra packages are needed for either.

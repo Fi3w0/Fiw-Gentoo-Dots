@@ -10,6 +10,8 @@
 #  - writes /etc/portage/package.mask/fiw-nyx so virtual/dist-kernel and
 #    gentoo-kernel-bin never run ahead of the Nyx kernel (modules build for
 #    the newest kernel installed, which must be Nyx).
+# Release-candidate ebuilds are opt-in: they are never copied or pruned here,
+# and the mask only follows one that Portage can see (accept_keywords **).
 # Run as root (the postsync hook does). Keeps the two newest Nyx versions.
 set -euo pipefail
 
@@ -19,7 +21,7 @@ pkgdir=$repo/sys-kernel/fiw-nyx-kernel
 vdir=$repo/virtual/dist-kernel
 mask=${FIW_NYX_MASK:-/etc/portage/package.mask/fiw-nyx}
 
-newest=$(ls "$pkgdir"/fiw-nyx-kernel-*.ebuild | sort -V | tail -1)
+newest=$(ls "$pkgdir"/fiw-nyx-kernel-*.ebuild | grep -v _rc | sort -V | tail -1)
 cur=$(basename "$newest" .ebuild); cur=${cur#fiw-nyx-kernel-}   # 7.2.11-r1
 cur_ver=${cur%-r*}
 series=${1:-${cur_ver%.*}}
@@ -52,7 +54,7 @@ if [[ ! -e $target ]]; then
 	cp "$vnewest" "$vdir/dist-kernel-${ver}-r${rel}.ebuild"
 	# Keep the two newest versions (and their virtuals), then the Manifests
 	# (thin: they fetch every listed version's sources, so prune first).
-	ls "$pkgdir"/fiw-nyx-kernel-*.ebuild | sort -V | head -n -2 | while read -r old; do
+	ls "$pkgdir"/fiw-nyx-kernel-*.ebuild | grep -v _rc | sort -V | head -n -2 | while read -r old; do
 		v=$(basename "$old" .ebuild); v=${v#fiw-nyx-kernel-}
 		rm -f "$old" "$vdir/dist-kernel-${v}.ebuild"
 	done
@@ -61,11 +63,15 @@ if [[ ! -e $target ]]; then
 	chown -R --reference="$repo" "$pkgdir" "$vdir"
 fi
 
+mask_pvr=${ver}-r${rel}
+best=$(portageq best_visible / ebuild sys-kernel/fiw-nyx-kernel 2>/dev/null) || true
+[[ $best == *_rc* ]] && mask_pvr=${best##*/fiw-nyx-kernel-}
+
 cat >"$mask.tmp" <<EOF
 # Written by fiw-nyx-bump: dist-kernel modules (nvidia-drivers) build for
 # the newest installed kernel, so nothing may get ahead of fiw-nyx-kernel.
->virtual/dist-kernel-${ver}-r${rel}
->sys-kernel/gentoo-kernel-bin-${ver}
+>virtual/dist-kernel-${mask_pvr}
+>sys-kernel/gentoo-kernel-bin-${mask_pvr%-r*}
 EOF
 mv "$mask.tmp" "$mask"
-echo "fiw-nyx-bump: Nyx is at ${ver}-r${rel} (${tag})"
+echo "fiw-nyx-bump: Nyx is at ${mask_pvr} (newest stable ${ver}-r${rel}, ${tag})"
