@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
-# Spotify 1.2.96 runs its UI from xpui-snapshot.js, but spicetify 2.45.1 injects
-# the custom-app code (Marketplace) only into xpui-modules.js:
+# SpotX inlines the V8 snapshot modules into xpui-snapshot.js, which overrides
+# xpui-modules.js, the only file spicetify patches. Seen on 1.2.96 and 1.3.4:
 #   - Spicetify._renderNavLinks(...)          top-bar buttons
 #   - spicetifyAppN=X.lazy(...)               the app's page component
 #   - (0,y.jsx)(R,{path:"/app/*",...})        the app's route
+#   - e=Spicetify.expFeatureOverride(e);      experimental feature overrides
 # Copy each missing fragment into the snapshot after the same preceding code.
 # Run after every `spicetify apply`. Idempotent.
 import re, sys
@@ -14,8 +15,9 @@ mod, snap = open(mod_path).read(), open(snap_path).read()
 
 patterns = [
     r",Spicetify\._renderNavLinks\(\[[^\]]*\], *(?:true|false)\)",
-    r",spicetifyApp\d+=\w+\.lazy\(\(\(\)=>\w+\.e\(\"spicetify-routes-[^\"]+\"\)\.then\(\w+\.bind\(\w+,\"spicetify-routes-[^\"]+\"\)\)\)\)",
+    r",spicetifyApp\d+=\w+\.lazy\(\(\(\)=>.{1,200}?\w+\.bind\(\w+,\"spicetify-routes-[^\"]+\"\)\)\)\)",
     r",\(0,\w+\.jsx\)\([\w.]+,\{path:\"/[^\"]+/\*\",pathV6:\"/[^\"]+/\*\",element:\(0,\w+\.jsx\)\(spicetifyApp\d+,\{\}\)\}\)",
+    r"\w+=Spicetify\.expFeatureOverride\(\w+\);",
 ]
 
 added = 0

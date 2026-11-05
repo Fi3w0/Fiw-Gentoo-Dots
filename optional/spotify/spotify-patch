@@ -18,8 +18,14 @@ pkill -TERM -x spotify 2>/dev/null || true
 for _ in {1..40}; do pgrep -x spotify >/dev/null || break; sleep 0.25; done
 pgrep -x spotify >/dev/null && { echo "Spotify is still running, close it and retry." >&2; exit 1; }
 
-# Undo spicetify first, so xpui.spa is stock or SpotX-only again.
-"$spicetify" restore >/dev/null 2>&1 || true
+if [[ -f $client/Apps/xpui.spa ]]; then
+	# A Spotify update puts stock *.spa back but leaves the unowned dirs of the old
+	# spicetify apply. Spicetify's backup is from the old build too: never restore it.
+	rm -rf -- "$client/Apps/xpui" "$client/Apps/login"
+else
+	# Undo spicetify first, so xpui.spa is stock or SpotX-only again.
+	"$spicetify" restore >/dev/null 2>&1 </dev/null || true
+fi
 
 # SpotX backups left over from an older Spotify build (Portage replaced the
 # client but not the unowned *.bak files) must not be restored by --force.
@@ -35,6 +41,12 @@ if [[ -e $bak || -e $xbak ]]; then
 	fi
 fi
 
+# SpotX asks for sudo on files you do not own, and an update leaves them
+# root-owned. The directory ACL lets you swap them for copies you own.
+for f in "$client/spotify" "$client/Apps/xpui.spa"; do
+	[[ -O $f ]] || { cp -p -- "$f" "$f.fiw" && mv -f -- "$f.fiw" "$f"; }
+done
+
 tmp=$(mktemp --tmpdir spotx.XXXXXXXX.sh)
 trap 'rm -f -- "$tmp"' EXIT
 curl --proto '=https' --tlsv1.2 -fsSL "$spotx_url" -o "$tmp"
@@ -44,7 +56,7 @@ bash "$tmp" -f -P "$client" "$@"
 # Fresh spicetify backup of the SpotX-patched client, then apply.
 "$spicetify" clear >/dev/null 2>&1 || true
 "$spicetify" backup apply --no-restart
-# spicetify 2.45.1 patches custom apps (Marketplace) into xpui-modules.js only
+# spicetify patches custom apps (Marketplace) into xpui-modules.js only
 "$HOME/.local/bin/spicetify-snapshotfix"
 
 nohup spotify --enable-features=UseOzonePlatform --ozone-platform=wayland >/dev/null 2>&1 &

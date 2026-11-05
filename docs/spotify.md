@@ -17,4 +17,5 @@ does not grant these permissions or install a Portage ACL hook.
 If you choose to use it, install the snapshot helper into `~/.local/bin` and
 run the patch script as your regular user. The snapshot fix is specific to
 the captured Spotify/Spicetify versions and should be reviewed against future
-versions rather than assumed to work unchanged.
+versions rather than assumed to work unchanged. Last checked on Spotify 1.3.4
+with Spicetify 2.46.4 and Marketplace 1.0.12.
